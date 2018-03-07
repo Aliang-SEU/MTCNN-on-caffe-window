@@ -1,0 +1,295 @@
+Log file created at: 2018/01/12 16:42:27
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0112 16:42:27.409303  2120 caffe.cpp:219] Using GPUs 0
+I0112 16:42:27.650629  2120 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0112 16:42:28.028635  2120 solver.cpp:44] Initializing solver from parameters: 
+base_lr: 0.001
+display: 100
+max_iter: 500000
+lr_policy: "step"
+gamma: 0.8
+momentum: 0.9
+weight_decay: 0.004
+stepsize: 30000
+snapshot: 10000
+snapshot_prefix: "E:/DeepLearning/mtcnn_train/models-12/"
+solver_mode: GPU
+device_id: 0
+debug_info: true
+net: "E:/DeepLearning/mtcnn_train/det1_train.ptototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0112 16:42:28.029636  2120 solver.cpp:87] Creating training net from net file: E:/DeepLearning/mtcnn_train/det1_train.ptototxt
+I0112 16:42:28.030639  2120 net.cpp:51] Initializing net from parameters: 
+name: "PNet"
+state {
+  phase: TRAIN
+  level: 0
+  stage: ""
+}
+layer {
+  name: "data"
+  type: "MTCNNData"
+  top: "data"
+  top: "label"
+  top: "roi"
+  transform_param {
+    scale: 0.0078125
+    mirror: false
+    mean_value: 127.5
+  }
+  data_param {
+    source: "E:/DeepLearning/mtcnn_train/mtcnn_train_12"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 10
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU1"
+  type: "PReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU2"
+  type: "PReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 32
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU3"
+  type: "PReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4-1"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4-1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 2
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "conv4-1"
+  bottom: "label"
+  top: "cls_loss"
+  loss_weight: 1
+  propagate_down: true
+  propagate_down: false
+  loss_param {
+    ignore_label: -1
+  }
+}
+layer {
+  name: "cls_Acc"
+  type: "Accuracy"
+  bottom: "conv4-1"
+  bottom: "label"
+  top: "cls_acc"
+  include {
+    phase: TRAIN
+  }
+  accuracy_param {
+    ignore_label: -1
+  }
+}
+layer {
+  name: "conv4-2"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4-2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 4
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "roi_loss"
+  type: "MTCNNEuclideanLoss"
+  bottom: "conv4-2"
+  bottom: "roi"
+  bottom: "label"
+  top: "roi_loss"
+  loss_weight: 0.5
+  loss_param {
+    ignore_label: 0
+  }
+}
+I0112 16:42:28.031642  2120 layer_factory.hpp:77] Creating layer data
+I0112 16:42:28.032649  2120 db_lmdb.cpp:40] Opened lmdb E:/DeepLearning/mtcnn_train/mtcnn_train_12
+I0112 16:42:28.032649  2120 net.cpp:84] Creating Layer data
+I0112 16:42:28.032649  2120 net.cpp:380] data -> data
+I0112 16:42:28.033648  2120 net.cpp:380] data -> label
+I0112 16:42:28.033648  2120 net.cpp:380] data -> roi
+I0112 16:42:28.035652  2120 mtcnn_data_layer.cpp:45] output data size: 64,12,12,3
+I0112 16:42:28.037658  2120 net.cpp:122] Setting up data
+I0112 16:42:28.038661  2120 net.cpp:129] Top shape: 64 12 12 3 (27648)
+I0112 16:42:28.038661  2120 net.cpp:129] Top shape: 64 (64)
+I0112 16:42:28.038661  2120 net.cpp:129] Top shape: 64 4 (256)
+I0112 16:42:28.039664  2120 net.cpp:137] Memory required for data: 111872
+I0112 16:42:28.041668  2120 layer_factory.hpp:77] Creating layer label_data_1_split
+I0112 16:42:28.042671  2120 net.cpp:84] Creating Layer label_data_1_split
+I0112 16:42:28.042671  2120 net.cpp:406] label_data_1_split <- label
+I0112 16:42:28.042671  2120 net.cpp:380] label_data_1_split -> label_data_1_split_0
+I0112 16:42:28.042671  2120 net.cpp:380] label_data_1_split -> label_data_1_split_1
+I0112 16:42:28.043674  2120 net.cpp:380] label_data_1_split -> label_data_1_split_2
+I0112 16:42:28.043674  2120 net.cpp:122] Setting up label_data_1_split
+I0112 16:42:28.043674  2120 net.cpp:129] Top shape: 64 (64)
+I0112 16:42:28.043674  2120 net.cpp:129] Top shape: 64 (64)
+I0112 16:42:28.043674  2120 net.cpp:129] Top shape: 64 (64)
+I0112 16:42:28.044677  2120 net.cpp:137] Memory required for data: 112640
+I0112 16:42:28.044677  2120 layer_factory.hpp:77] Creating layer conv1
+I0112 16:42:28.044677  2120 net.cpp:84] Creating Layer conv1
+I0112 16:42:28.044677  2120 net.cpp:406] conv1 <- data
+I0112 16:42:28.045680  2120 net.cpp:380] conv1 -> conv1
+I0112 16:42:28.693426  2120 net.cpp:122] Setting up conv1
+I0112 16:42:28.693426  2120 net.cpp:129] Top shape: 64 10 10 1 (6400)
+I0112 16:42:28.694407  2120 net.cpp:137] Memory required for data: 138240
+I0112 16:42:28.694407  2120 layer_factory.hpp:77] Creating layer PReLU1
+I0112 16:42:28.695410  2120 net.cpp:84] Creating Layer PReLU1
+I0112 16:42:28.695410  2120 net.cpp:406] PReLU1 <- conv1
+I0112 16:42:28.695410  2120 net.cpp:367] PReLU1 -> conv1 (in-place)
+I0112 16:42:28.696413  2120 net.cpp:122] Setting up PReLU1
+I0112 16:42:28.696413  2120 net.cpp:129] Top shape: 64 10 10 1 (6400)
+I0112 16:42:28.696413  2120 net.cpp:137] Memory required for data: 163840
+I0112 16:42:28.697415  2120 layer_factory.hpp:77] Creating layer pool1
+I0112 16:42:28.697415  2120 net.cpp:84] Creating Layer pool1
+I0112 16:42:28.697415  2120 net.cpp:406] pool1 <- conv1
+I0112 16:42:28.698417  2120 net.cpp:380] pool1 -> pool1
+I0112 16:42:28.698417  2120 net.cpp:122] Setting up pool1
+I0112 16:42:28.698417  2120 net.cpp:129] Top shape: 64 10 5 1 (3200)
+I0112 16:42:28.698417  2120 net.cpp:137] Memory required for data: 176640
+I0112 16:42:28.699421  2120 layer_factory.hpp:77] Creating layer conv2
+I0112 16:42:28.699421  2120 net.cpp:84] Creating Layer conv2
+I0112 16:42:28.699421  2120 net.cpp:406] conv2 <- pool1
+I0112 16:42:28.700423  2120 net.cpp:380] conv2 -> conv2
+F0112 16:42:28.701426  2120 blob.cpp:36] Check failed: shape[i] >= 0 (-1 vs. 0) 

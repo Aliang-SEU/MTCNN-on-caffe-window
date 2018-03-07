@@ -1,0 +1,7 @@
+﻿  caffe_.cpp
+C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(1189,5): warning MSB8012: TargetPath(E:\DeepLearning\caffe-windows\windows\..\Build\x64\Release\caffe_.mexw64) does not match the Linker's OutputFile property value (E:\DeepLearning\caffe-windows\matlab\+caffe\private\caffe_.mexw64). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+    正在创建库 E:\DeepLearning\caffe-windows\windows\\..\matlab\+caffe\private\caffe_.lib 和对象 E:\DeepLearning\caffe-windows\windows\\..\matlab\+caffe\private\caffe_.exp
+  正在生成代码
+  已完成代码的生成
+  matcaffe.vcxproj -> E:\DeepLearning\caffe-windows\windows\..\Build\x64\Release\caffe_.mexw64
+  matcaffe.vcxproj -> E:\DeepLearning\caffe-windows\windows\\..\matlab\+caffe\private\caffe_.pdb (Full PDB)

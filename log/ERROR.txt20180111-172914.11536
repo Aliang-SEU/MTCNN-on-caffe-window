@@ -1,0 +1,4 @@
+Log file created at: 2018/01/11 17:29:14
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0111 17:29:14.655297 13688 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (555.055, 2253.75); L2 norm = (8.24661, 55.9113)

@@ -1,0 +1,4 @@
+Log file created at: 2018/02/28 20:26:31
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0228 20:26:31.623862 19096 upgrade_proto.cpp:88] Check failed: ReadProtoFromTextFile(param_file, param) Failed to parse NetParameter file: E:/DeepLearning/caffe-windows/examples/mydata/lenet.prototxt

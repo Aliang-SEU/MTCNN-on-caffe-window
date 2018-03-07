@@ -1,0 +1,4 @@
+Log file created at: 2018/01/10 20:57:31
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0110 20:57:31.614907 53104 io.cpp:41] Check failed: fd != -1 (-1 vs. -1) File not found: det1_train.prototxt

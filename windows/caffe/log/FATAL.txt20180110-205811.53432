@@ -1,0 +1,4 @@
+Log file created at: 2018/01/10 20:58:11
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0110 20:58:11.380720  5360 io.cpp:41] Check failed: fd != -1 (-1 vs. -1) File not found: E:/DeepLearning/mtcnn_train/det1_train.prototxt

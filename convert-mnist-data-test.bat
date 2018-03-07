@@ -1,0 +1,2 @@
+Build\x64\Release\convert_mnist_data.exe --backend=lmdb examples\mnist\mnist_data\t10k-images.idx3-ubyte examples\mnist\mnist_data\t10k-labels.idx1-ubyte examples\mnist\mnist_data\mnist_test_lmdb  
+Pause  

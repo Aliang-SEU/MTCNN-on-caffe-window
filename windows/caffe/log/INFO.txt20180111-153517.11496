@@ -1,0 +1,837 @@
+Log file created at: 2018/01/11 15:35:17
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0111 15:35:17.415894  9144 caffe.cpp:219] Using GPUs 0
+I0111 15:35:17.984648  9144 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0111 15:35:18.393301  9144 solver.cpp:44] Initializing solver from parameters: 
+base_lr: 0.001
+display: 1000
+max_iter: 500000
+lr_policy: "step"
+gamma: 0.8
+momentum: 0.9
+weight_decay: 0.004
+stepsize: 30000
+snapshot: 10000
+snapshot_prefix: "E:/DeepLearning/mtcnn_train/models-12/"
+solver_mode: GPU
+device_id: 0
+debug_info: true
+net: "E:/DeepLearning/mtcnn_train/det1_train.ptototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0111 15:35:18.415668  9144 solver.cpp:87] Creating training net from net file: E:/DeepLearning/mtcnn_train/det1_train.ptototxt
+I0111 15:35:18.416622  9144 net.cpp:51] Initializing net from parameters: 
+name: "PNet"
+state {
+  phase: TRAIN
+  level: 0
+  stage: ""
+}
+layer {
+  name: "data"
+  type: "MTCNNData"
+  top: "data"
+  top: "label"
+  top: "roi"
+  transform_param {
+    scale: 0.0078125
+    mirror: false
+    mean_value: 127.5
+  }
+  data_param {
+    source: "E:/DeepLearning/mtcnn_train/mtcnn_train_lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 10
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU1"
+  type: "PReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU2"
+  type: "PReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 32
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU3"
+  type: "PReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4-1"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4-1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 2
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "conv4-1"
+  bottom: "label"
+  top: "cls_loss"
+  loss_weight: 1
+  propagate_down: true
+  propagate_down: false
+  loss_param {
+    ignore_label: -1
+  }
+}
+layer {
+  name: "conv4-2"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4-2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 4
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "roi_loss"
+  type: "MTCNNEuclideanLoss"
+  bottom: "conv4-2"
+  bottom: "roi"
+  bottom: "label"
+  top: "roi_loss"
+  loss_weight: 0.5
+  loss_param {
+    ignore_label: 0
+  }
+}
+I0111 15:35:18.418629  9144 layer_factory.hpp:77] Creating layer data
+I0111 15:35:18.444519  9144 db_lmdb.cpp:40] Opened lmdb E:/DeepLearning/mtcnn_train/mtcnn_train_lmdb
+I0111 15:35:18.444519  9144 net.cpp:84] Creating Layer data
+I0111 15:35:18.445521  9144 net.cpp:380] data -> data
+I0111 15:35:18.445521  9144 net.cpp:380] data -> label
+I0111 15:35:18.446524  9144 net.cpp:380] data -> roi
+I0111 15:35:18.447543  9144 mtcnn_data_layer.cpp:45] output data size: 64,3,12,12
+I0111 15:35:18.450542  9144 net.cpp:122] Setting up data
+I0111 15:35:18.450542  9144 net.cpp:129] Top shape: 64 3 12 12 (27648)
+I0111 15:35:18.451537  9144 net.cpp:129] Top shape: 64 (64)
+I0111 15:35:18.451537  9144 net.cpp:129] Top shape: 64 4 (256)
+I0111 15:35:18.451537  9144 net.cpp:137] Memory required for data: 111872
+I0111 15:35:18.451537  9144 layer_factory.hpp:77] Creating layer label_data_1_split
+I0111 15:35:18.452550  9144 net.cpp:84] Creating Layer label_data_1_split
+I0111 15:35:18.452550  9144 net.cpp:406] label_data_1_split <- label
+I0111 15:35:18.452550  9144 net.cpp:380] label_data_1_split -> label_data_1_split_0
+I0111 15:35:18.452550  9144 net.cpp:380] label_data_1_split -> label_data_1_split_1
+I0111 15:35:18.453541  9144 net.cpp:122] Setting up label_data_1_split
+I0111 15:35:18.455548  9144 net.cpp:129] Top shape: 64 (64)
+I0111 15:35:18.455548  9144 net.cpp:129] Top shape: 64 (64)
+I0111 15:35:18.456560  9144 net.cpp:137] Memory required for data: 112384
+I0111 15:35:18.456560  9144 layer_factory.hpp:77] Creating layer conv1
+I0111 15:35:18.456560  9144 net.cpp:84] Creating Layer conv1
+I0111 15:35:18.457553  9144 net.cpp:406] conv1 <- data
+I0111 15:35:18.457553  9144 net.cpp:380] conv1 -> conv1
+I0111 15:35:19.526890  9144 net.cpp:122] Setting up conv1
+I0111 15:35:19.526890  9144 net.cpp:129] Top shape: 64 10 10 10 (64000)
+I0111 15:35:19.527909  9144 net.cpp:137] Memory required for data: 368384
+I0111 15:35:19.527909  9144 layer_factory.hpp:77] Creating layer PReLU1
+I0111 15:35:19.527909  9144 net.cpp:84] Creating Layer PReLU1
+I0111 15:35:19.528895  9144 net.cpp:406] PReLU1 <- conv1
+I0111 15:35:19.528895  9144 net.cpp:367] PReLU1 -> conv1 (in-place)
+I0111 15:35:19.528895  9144 net.cpp:122] Setting up PReLU1
+I0111 15:35:19.529903  9144 net.cpp:129] Top shape: 64 10 10 10 (64000)
+I0111 15:35:19.529903  9144 net.cpp:137] Memory required for data: 624384
+I0111 15:35:19.529903  9144 layer_factory.hpp:77] Creating layer pool1
+I0111 15:35:19.529903  9144 net.cpp:84] Creating Layer pool1
+I0111 15:35:19.529903  9144 net.cpp:406] pool1 <- conv1
+I0111 15:35:19.530900  9144 net.cpp:380] pool1 -> pool1
+I0111 15:35:19.530900  9144 net.cpp:122] Setting up pool1
+I0111 15:35:19.530900  9144 net.cpp:129] Top shape: 64 10 5 5 (16000)
+I0111 15:35:19.530900  9144 net.cpp:137] Memory required for data: 688384
+I0111 15:35:19.530900  9144 layer_factory.hpp:77] Creating layer conv2
+I0111 15:35:19.531903  9144 net.cpp:84] Creating Layer conv2
+I0111 15:35:19.531903  9144 net.cpp:406] conv2 <- pool1
+I0111 15:35:19.531903  9144 net.cpp:380] conv2 -> conv2
+I0111 15:35:19.533908  9144 net.cpp:122] Setting up conv2
+I0111 15:35:19.533908  9144 net.cpp:129] Top shape: 64 16 3 3 (9216)
+I0111 15:35:19.534910  9144 net.cpp:137] Memory required for data: 725248
+I0111 15:35:19.534910  9144 layer_factory.hpp:77] Creating layer PReLU2
+I0111 15:35:19.534910  9144 net.cpp:84] Creating Layer PReLU2
+I0111 15:35:19.534910  9144 net.cpp:406] PReLU2 <- conv2
+I0111 15:35:19.534910  9144 net.cpp:367] PReLU2 -> conv2 (in-place)
+I0111 15:35:19.535913  9144 net.cpp:122] Setting up PReLU2
+I0111 15:35:19.535913  9144 net.cpp:129] Top shape: 64 16 3 3 (9216)
+I0111 15:35:19.535913  9144 net.cpp:137] Memory required for data: 762112
+I0111 15:35:19.535913  9144 layer_factory.hpp:77] Creating layer conv3
+I0111 15:35:19.536916  9144 net.cpp:84] Creating Layer conv3
+I0111 15:35:19.538920  9144 net.cpp:406] conv3 <- conv2
+I0111 15:35:19.539924  9144 net.cpp:380] conv3 -> conv3
+I0111 15:35:19.541930  9144 net.cpp:122] Setting up conv3
+I0111 15:35:19.541930  9144 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0111 15:35:19.541930  9144 net.cpp:137] Memory required for data: 770304
+I0111 15:35:19.542933  9144 layer_factory.hpp:77] Creating layer PReLU3
+I0111 15:35:19.542933  9144 net.cpp:84] Creating Layer PReLU3
+I0111 15:35:19.542933  9144 net.cpp:406] PReLU3 <- conv3
+I0111 15:35:19.542933  9144 net.cpp:367] PReLU3 -> conv3 (in-place)
+I0111 15:35:19.543936  9144 net.cpp:122] Setting up PReLU3
+I0111 15:35:19.543936  9144 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0111 15:35:19.543936  9144 net.cpp:137] Memory required for data: 778496
+I0111 15:35:19.544936  9144 layer_factory.hpp:77] Creating layer conv3_PReLU3_0_split
+I0111 15:35:19.544936  9144 net.cpp:84] Creating Layer conv3_PReLU3_0_split
+I0111 15:35:19.544936  9144 net.cpp:406] conv3_PReLU3_0_split <- conv3
+I0111 15:35:19.544936  9144 net.cpp:380] conv3_PReLU3_0_split -> conv3_PReLU3_0_split_0
+I0111 15:35:19.544936  9144 net.cpp:380] conv3_PReLU3_0_split -> conv3_PReLU3_0_split_1
+I0111 15:35:19.545939  9144 net.cpp:122] Setting up conv3_PReLU3_0_split
+I0111 15:35:19.545939  9144 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0111 15:35:19.545939  9144 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0111 15:35:19.545939  9144 net.cpp:137] Memory required for data: 794880
+I0111 15:35:19.545939  9144 layer_factory.hpp:77] Creating layer conv4-1
+I0111 15:35:19.546942  9144 net.cpp:84] Creating Layer conv4-1
+I0111 15:35:19.546942  9144 net.cpp:406] conv4-1 <- conv3_PReLU3_0_split_0
+I0111 15:35:19.546942  9144 net.cpp:380] conv4-1 -> conv4-1
+I0111 15:35:19.548949  9144 net.cpp:122] Setting up conv4-1
+I0111 15:35:19.549952  9144 net.cpp:129] Top shape: 64 2 1 1 (128)
+I0111 15:35:19.549952  9144 net.cpp:137] Memory required for data: 795392
+I0111 15:35:19.549952  9144 layer_factory.hpp:77] Creating layer cls_loss
+I0111 15:35:19.550954  9144 net.cpp:84] Creating Layer cls_loss
+I0111 15:35:19.550954  9144 net.cpp:406] cls_loss <- conv4-1
+I0111 15:35:19.551956  9144 net.cpp:406] cls_loss <- label_data_1_split_0
+I0111 15:35:19.551956  9144 net.cpp:380] cls_loss -> cls_loss
+I0111 15:35:19.551956  9144 layer_factory.hpp:77] Creating layer cls_loss
+I0111 15:35:19.552958  9144 net.cpp:122] Setting up cls_loss
+I0111 15:35:19.552958  9144 net.cpp:129] Top shape: (1)
+I0111 15:35:19.552958  9144 net.cpp:132]     with loss weight 1
+I0111 15:35:19.552958  9144 net.cpp:137] Memory required for data: 795396
+I0111 15:35:19.553961  9144 layer_factory.hpp:77] Creating layer conv4-2
+I0111 15:35:19.553961  9144 net.cpp:84] Creating Layer conv4-2
+I0111 15:35:19.553961  9144 net.cpp:406] conv4-2 <- conv3_PReLU3_0_split_1
+I0111 15:35:19.553961  9144 net.cpp:380] conv4-2 -> conv4-2
+I0111 15:35:19.555968  9144 net.cpp:122] Setting up conv4-2
+I0111 15:35:19.555968  9144 net.cpp:129] Top shape: 64 4 1 1 (256)
+I0111 15:35:19.555968  9144 net.cpp:137] Memory required for data: 796420
+I0111 15:35:19.555968  9144 layer_factory.hpp:77] Creating layer roi_loss
+I0111 15:35:19.555968  9144 net.cpp:84] Creating Layer roi_loss
+I0111 15:35:19.556969  9144 net.cpp:406] roi_loss <- conv4-2
+I0111 15:35:19.556969  9144 net.cpp:406] roi_loss <- roi
+I0111 15:35:19.556969  9144 net.cpp:406] roi_loss <- label_data_1_split_1
+I0111 15:35:19.556969  9144 net.cpp:380] roi_loss -> roi_loss
+I0111 15:35:19.556969  9144 net.cpp:122] Setting up roi_loss
+I0111 15:35:19.557972  9144 net.cpp:129] Top shape: (1)
+I0111 15:35:19.557972  9144 net.cpp:132]     with loss weight 0.5
+I0111 15:35:19.557972  9144 net.cpp:137] Memory required for data: 796424
+I0111 15:35:19.557972  9144 net.cpp:198] roi_loss needs backward computation.
+I0111 15:35:19.557972  9144 net.cpp:198] conv4-2 needs backward computation.
+I0111 15:35:19.558974  9144 net.cpp:198] cls_loss needs backward computation.
+I0111 15:35:19.560979  9144 net.cpp:198] conv4-1 needs backward computation.
+I0111 15:35:19.560979  9144 net.cpp:198] conv3_PReLU3_0_split needs backward computation.
+I0111 15:35:19.561982  9144 net.cpp:198] PReLU3 needs backward computation.
+I0111 15:35:19.561982  9144 net.cpp:198] conv3 needs backward computation.
+I0111 15:35:19.561982  9144 net.cpp:198] PReLU2 needs backward computation.
+I0111 15:35:19.561982  9144 net.cpp:198] conv2 needs backward computation.
+I0111 15:35:19.562985  9144 net.cpp:198] pool1 needs backward computation.
+I0111 15:35:19.562985  9144 net.cpp:198] PReLU1 needs backward computation.
+I0111 15:35:19.562985  9144 net.cpp:198] conv1 needs backward computation.
+I0111 15:35:19.562985  9144 net.cpp:200] label_data_1_split does not need backward computation.
+I0111 15:35:19.563988  9144 net.cpp:200] data does not need backward computation.
+I0111 15:35:19.563988  9144 net.cpp:242] This network produces output cls_loss
+I0111 15:35:19.563988  9144 net.cpp:242] This network produces output roi_loss
+I0111 15:35:19.563988  9144 net.cpp:255] Network initialization done.
+I0111 15:35:19.563988  9144 solver.cpp:56] Solver scaffolding done.
+I0111 15:35:19.564990  9144 caffe.cpp:249] Starting Optimization
+I0111 15:35:19.564990  9144 solver.cpp:278] Solving PNet
+I0111 15:35:19.564990  9144 solver.cpp:279] Learning Rate Policy: step
+I0111 15:35:19.565994  9144 net.cpp:591]     [Forward] Layer data, top blob data data: 0.422276
+I0111 15:35:19.565994  9144 net.cpp:591]     [Forward] Layer data, top blob label data: 0.453125
+I0111 15:35:19.566995  9144 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.808517
+I0111 15:35:19.566995  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.453125
+I0111 15:35:19.567998  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.453125
+I0111 15:35:19.569006  9144 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.416348
+I0111 15:35:19.569006  9144 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.16651
+I0111 15:35:19.569006  9144 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0
+I0111 15:35:19.570003  9144 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.251238
+I0111 15:35:19.572010  9144 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.25
+I0111 15:35:19.573011  9144 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.296164
+I0111 15:35:19.574015  9144 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.346473
+I0111 15:35:19.574015  9144 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0885139
+I0111 15:35:19.574015  9144 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0
+I0111 15:35:19.574015  9144 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.235242
+I0111 15:35:19.575016  9144 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.25
+I0111 15:35:19.576021  9144 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.270063
+I0111 15:35:19.576021  9144 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0726763
+I0111 15:35:19.576021  9144 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0
+I0111 15:35:19.576021  9144 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.159522
+I0111 15:35:19.577023  9144 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.25
+I0111 15:35:19.577023  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.159522
+I0111 15:35:19.577023  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.159522
+I0111 15:35:19.578025  9144 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 0.119593
+I0111 15:35:19.578025  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.153907
+I0111 15:35:19.578025  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0
+I0111 15:35:19.580030  9144 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.676505
+I0111 15:35:19.580030  9144 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.183893
+I0111 15:35:19.580030  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.157954
+I0111 15:35:19.581033  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0
+I0111 15:35:19.587049  9144 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 34.9439
+I0111 15:35:19.588052  9144 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.14329
+I0111 15:35:19.588052  9144 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.0536227
+I0111 15:35:19.589056  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 1.08577
+I0111 15:35:19.589056  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 8.52551
+I0111 15:35:19.590057  9144 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1 diff: 0.00763449
+I0111 15:35:19.590057  9144 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.00157148
+I0111 15:35:19.591059  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.0225738
+I0111 15:35:19.592062  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.109788
+I0111 15:35:19.593066  9144 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.0545297
+I0111 15:35:19.593066  9144 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.0329712
+I0111 15:35:19.594068  9144 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.422956
+I0111 15:35:19.594068  9144 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.0165548
+I0111 15:35:19.594068  9144 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.360413
+I0111 15:35:19.595072  9144 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 1.9862
+I0111 15:35:19.595072  9144 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.0109971
+I0111 15:35:19.596073  9144 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.446544
+I0111 15:35:19.596073  9144 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.00906478
+I0111 15:35:19.596073  9144 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.400944
+I0111 15:35:19.597075  9144 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 1.48289
+I0111 15:35:19.597075  9144 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.00226619
+I0111 15:35:19.598078  9144 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.00163145
+I0111 15:35:19.598078  9144 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.236842
+I0111 15:35:19.598078  9144 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.394619
+I0111 15:35:19.599081  9144 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 1.27852
+E0111 15:35:19.604094  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (551.878, 2642.55); L2 norm = (8.19844, 60.2648)
+I0111 15:35:19.605098  9144 solver.cpp:224] Iteration 0 (0 iter/s, 0.038762s/1000 iters), loss = 18.1485
+I0111 15:35:19.605098  9144 solver.cpp:243]     Train net output #0: cls_loss = 0.676505 (* 1 = 0.676505 loss)
+I0111 15:35:19.605098  9144 solver.cpp:243]     Train net output #1: roi_loss = 34.9439 (* 0.5 = 17.4719 loss)
+I0111 15:35:19.606101  9144 sgd_solver.cpp:137] Iteration 0, lr = 0.001
+I0111 15:35:19.607102  9144 sgd_solver.cpp:185] prelu slope:0.250000 0.250000 0.250000 
+I0111 15:35:19.608105  9144 sgd_solver.cpp:200] weight diff/data:0.004879 0.013594 0.021683 0.001038 0.018717 
+I0111 15:35:25.245096  9144 net.cpp:591]     [Forward] Layer data, top blob data data: 0.470201
+I0111 15:35:25.245096  9144 net.cpp:591]     [Forward] Layer data, top blob label data: 0.40625
+I0111 15:35:25.246099  9144 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.824612
+I0111 15:35:25.246099  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.40625
+I0111 15:35:25.246099  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.40625
+I0111 15:35:25.246099  9144 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.303009
+I0111 15:35:25.247102  9144 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.161633
+I0111 15:35:25.247102  9144 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0984029
+I0111 15:35:25.247102  9144 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.17747
+I0111 15:35:25.247102  9144 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.261973
+I0111 15:35:25.248116  9144 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.222628
+I0111 15:35:25.248116  9144 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.346789
+I0111 15:35:25.248116  9144 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0870639
+I0111 15:35:25.248116  9144 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.102712
+I0111 15:35:25.249107  9144 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.212088
+I0111 15:35:25.249107  9144 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.249714
+I0111 15:35:25.249107  9144 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.368798
+I0111 15:35:25.250110  9144 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0705031
+I0111 15:35:25.250110  9144 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.137515
+I0111 15:35:25.250110  9144 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.212502
+I0111 15:35:25.250110  9144 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.244268
+I0111 15:35:25.251112  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.212502
+I0111 15:35:25.251112  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.212502
+I0111 15:35:25.251112  9144 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 1.18031
+I0111 15:35:25.251112  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.188694
+I0111 15:35:25.251112  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.0778558
+I0111 15:35:25.252115  9144 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.320504
+I0111 15:35:25.252115  9144 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.577253
+I0111 15:35:25.252115  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.135801
+I0111 15:35:25.253118  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.451479
+I0111 15:35:25.255122  9144 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.60198
+I0111 15:35:25.257128  9144 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0171623
+I0111 15:35:25.257128  9144 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00519191
+I0111 15:35:25.257128  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0429877
+I0111 15:35:25.258131  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.258824
+I0111 15:35:25.258131  9144 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1 diff: 0.00333795
+I0111 15:35:25.258131  9144 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.000980833
+I0111 15:35:25.259135  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.00481951
+I0111 15:35:25.259135  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.0300572
+I0111 15:35:25.260136  9144 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.00575628
+I0111 15:35:25.260136  9144 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.00279715
+I0111 15:35:25.260136  9144 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.0206693
+I0111 15:35:25.261138  9144 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00170401
+I0111 15:35:25.261138  9144 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.00824781
+I0111 15:35:25.261138  9144 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.0341472
+I0111 15:35:25.261138  9144 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.00105726
+I0111 15:35:25.262141  9144 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0170252
+I0111 15:35:25.262141  9144 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.00103153
+I0111 15:35:25.262141  9144 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.0102391
+I0111 15:35:25.262141  9144 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.0324117
+I0111 15:35:25.263146  9144 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.000257883
+I0111 15:35:25.263146  9144 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.000185944
+I0111 15:35:25.263146  9144 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0113081
+I0111 15:35:25.264147  9144 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0239987
+I0111 15:35:25.264147  9144 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.0548254
+E0111 15:35:25.269160  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (546.771, 69.3426); L2 norm = (8.26261, 1.85823)
+I0111 15:35:25.269160  9144 solver.cpp:224] Iteration 1000 (176.578 iter/s, 5.66321s/1000 iters), loss = 0.621494
+I0111 15:35:25.270176  9144 solver.cpp:243]     Train net output #0: cls_loss = 0.320504 (* 1 = 0.320504 loss)
+I0111 15:35:25.270176  9144 solver.cpp:243]     Train net output #1: roi_loss = 0.60198 (* 0.5 = 0.30099 loss)
+I0111 15:35:25.271165  9144 sgd_solver.cpp:137] Iteration 1000, lr = 0.001
+I0111 15:35:25.271165  9144 sgd_solver.cpp:185] prelu slope:0.261973 0.249714 0.244268 
+I0111 15:35:25.272168  9144 sgd_solver.cpp:200] weight diff/data:0.002268 0.001270 0.005512 0.000232 0.002909 
+I0111 15:35:30.993865  9144 net.cpp:591]     [Forward] Layer data, top blob data data: 0.424756
+I0111 15:35:30.993865  9144 net.cpp:591]     [Forward] Layer data, top blob label data: 0.453125
+I0111 15:35:30.993865  9144 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.815799
+I0111 15:35:30.993865  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.453125
+I0111 15:35:30.994868  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.453125
+I0111 15:35:30.994868  9144 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.300961
+I0111 15:35:30.994868  9144 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.164015
+I0111 15:35:30.994868  9144 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.105414
+I0111 15:35:30.994868  9144 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.188005
+I0111 15:35:30.994868  9144 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.263539
+I0111 15:35:30.995872  9144 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.244366
+I0111 15:35:30.995872  9144 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.373755
+I0111 15:35:30.995872  9144 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0858475
+I0111 15:35:30.995872  9144 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.12888
+I0111 15:35:30.995872  9144 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.23914
+I0111 15:35:30.996873  9144 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.241603
+I0111 15:35:30.996873  9144 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.394133
+I0111 15:35:30.997876  9144 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0685514
+I0111 15:35:30.997876  9144 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.1434
+I0111 15:35:30.997876  9144 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.221224
+I0111 15:35:30.997876  9144 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.23747
+I0111 15:35:30.998879  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.221224
+I0111 15:35:30.998879  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.221224
+I0111 15:35:30.998879  9144 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 1.33378
+I0111 15:35:30.998879  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.206656
+I0111 15:35:30.999881  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.0239084
+I0111 15:35:30.999881  9144 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.22425
+I0111 15:35:31.000885  9144 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.608335
+I0111 15:35:31.000885  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.130472
+I0111 15:35:31.000885  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.462833
+I0111 15:35:31.003891  9144 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.780714
+I0111 15:35:31.005897  9144 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0191242
+I0111 15:35:31.005897  9144 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00599961
+I0111 15:35:31.006899  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0722074
+I0111 15:35:31.006899  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.337244
+I0111 15:35:31.006899  9144 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1 diff: 0.00210084
+I0111 15:35:31.006899  9144 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.000719181
+I0111 15:35:31.007902  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.0035336
+I0111 15:35:31.007902  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.00475747
+I0111 15:35:31.007902  9144 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.00646605
+I0111 15:35:31.007902  9144 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.00321386
+I0111 15:35:31.008904  9144 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.025911
+I0111 15:35:31.008904  9144 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00189158
+I0111 15:35:31.008904  9144 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.0123077
+I0111 15:35:31.008904  9144 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.0543989
+I0111 15:35:31.008904  9144 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.00119808
+I0111 15:35:31.009908  9144 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0169854
+I0111 15:35:31.009908  9144 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.00125308
+I0111 15:35:31.009908  9144 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.0177821
+I0111 15:35:31.009908  9144 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.084931
+I0111 15:35:31.010910  9144 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.00031327
+I0111 15:35:31.010910  9144 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.000241684
+I0111 15:35:31.010910  9144 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0139654
+I0111 15:35:31.010910  9144 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0442811
+I0111 15:35:31.011914  9144 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.179926
+E0111 15:35:31.015923  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (537.42, 111.242); L2 norm = (8.26952, 2.97195)
+I0111 15:35:31.015923  9144 solver.cpp:224] Iteration 2000 (174.068 iter/s, 5.74487s/1000 iters), loss = 0.614607
+I0111 15:35:31.016927  9144 solver.cpp:243]     Train net output #0: cls_loss = 0.22425 (* 1 = 0.22425 loss)
+I0111 15:35:31.016927  9144 solver.cpp:243]     Train net output #1: roi_loss = 0.780714 (* 0.5 = 0.390357 loss)
+I0111 15:35:31.016927  9144 sgd_solver.cpp:137] Iteration 2000, lr = 0.001
+I0111 15:35:31.017930  9144 sgd_solver.cpp:185] prelu slope:0.263539 0.241603 0.237470 
+I0111 15:35:31.018934  9144 sgd_solver.cpp:200] weight diff/data:0.001386 0.001118 0.001707 0.000191 0.002347 
+I0111 15:35:36.620828  9144 net.cpp:591]     [Forward] Layer data, top blob data data: 0.447773
+I0111 15:35:36.620828  9144 net.cpp:591]     [Forward] Layer data, top blob label data: 0.484375
+I0111 15:35:36.621832  9144 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.793073
+I0111 15:35:36.621832  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.484375
+I0111 15:35:36.622835  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.484375
+I0111 15:35:36.622835  9144 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.324123
+I0111 15:35:36.622835  9144 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.16458
+I0111 15:35:36.623837  9144 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.117877
+I0111 15:35:36.623837  9144 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.216741
+I0111 15:35:36.623837  9144 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.259647
+I0111 15:35:36.624840  9144 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.284602
+I0111 15:35:36.624840  9144 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.427848
+I0111 15:35:36.624840  9144 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0847325
+I0111 15:35:36.624840  9144 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.142821
+I0111 15:35:36.625844  9144 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.279245
+I0111 15:35:36.625844  9144 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.2313
+I0111 15:35:36.625844  9144 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.450394
+I0111 15:35:36.625844  9144 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0666646
+I0111 15:35:36.626845  9144 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.144973
+I0111 15:35:36.626845  9144 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.257357
+I0111 15:35:36.626845  9144 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.22847
+I0111 15:35:36.626845  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.257357
+I0111 15:35:36.626845  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.257357
+I0111 15:35:36.627848  9144 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 2.00302
+I0111 15:35:36.627848  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.216418
+I0111 15:35:36.627848  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.0851492
+I0111 15:35:36.628850  9144 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.235778
+I0111 15:35:36.628850  9144 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.611457
+I0111 15:35:36.629853  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.125999
+I0111 15:35:36.631860  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.468331
+I0111 15:35:36.634867  9144 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.495488
+I0111 15:35:36.636871  9144 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0166414
+I0111 15:35:36.636871  9144 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00472457
+I0111 15:35:36.636871  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0502298
+I0111 15:35:36.637874  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.202139
+I0111 15:35:36.637874  9144 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1 diff: 0.00221243
+I0111 15:35:36.638887  9144 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.000819996
+I0111 15:35:36.638887  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.0160688
+I0111 15:35:36.638887  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.0841587
+I0111 15:35:36.639880  9144 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.00511381
+I0111 15:35:36.639880  9144 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.00258995
+I0111 15:35:36.639880  9144 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.0130174
+I0111 15:35:36.640883  9144 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00168427
+I0111 15:35:36.641885  9144 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.0130664
+I0111 15:35:36.641885  9144 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.0496958
+I0111 15:35:36.642887  9144 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.00116009
+I0111 15:35:36.642887  9144 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0228387
+I0111 15:35:36.642887  9144 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.00132361
+I0111 15:35:36.643890  9144 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.0237642
+I0111 15:35:36.643890  9144 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.0902976
+I0111 15:35:36.643890  9144 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.000330901
+I0111 15:35:36.644893  9144 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.00025749
+I0111 15:35:36.644893  9144 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0198647
+I0111 15:35:36.644893  9144 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0704864
+I0111 15:35:36.644893  9144 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.214063
+E0111 15:35:36.649907  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (527.376, 128.053); L2 norm = (8.24733, 3.12532)
+I0111 15:35:36.651912  9144 solver.cpp:224] Iteration 3000 (177.49 iter/s, 5.63413s/1000 iters), loss = 0.483522
+I0111 15:35:36.651912  9144 solver.cpp:243]     Train net output #0: cls_loss = 0.235778 (* 1 = 0.235778 loss)
+I0111 15:35:36.652915  9144 solver.cpp:243]     Train net output #1: roi_loss = 0.495488 (* 0.5 = 0.247744 loss)
+I0111 15:35:36.652915  9144 sgd_solver.cpp:137] Iteration 3000, lr = 0.001
+I0111 15:35:36.653918  9144 sgd_solver.cpp:185] prelu slope:0.259647 0.231300 0.228470 
+I0111 15:35:36.654919  9144 sgd_solver.cpp:200] weight diff/data:0.001357 0.008700 0.001340 0.000096 0.003188 
+I0111 15:35:42.301937  9144 net.cpp:591]     [Forward] Layer data, top blob data data: 0.441611
+I0111 15:35:42.301937  9144 net.cpp:591]     [Forward] Layer data, top blob label data: 0.375
+I0111 15:35:42.302942  9144 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.840945
+I0111 15:35:42.303958  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.375
+I0111 15:35:42.303958  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.375
+I0111 15:35:42.304945  9144 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.327129
+I0111 15:35:42.304945  9144 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.164087
+I0111 15:35:42.304945  9144 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.129381
+I0111 15:35:42.304945  9144 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.224594
+I0111 15:35:42.305949  9144 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.251599
+I0111 15:35:42.305949  9144 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.29663
+I0111 15:35:42.305949  9144 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.427612
+I0111 15:35:42.305949  9144 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0835184
+I0111 15:35:42.306951  9144 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.151918
+I0111 15:35:42.306951  9144 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.272517
+I0111 15:35:42.306951  9144 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.221273
+I0111 15:35:42.306951  9144 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.436195
+I0111 15:35:42.307955  9144 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0648111
+I0111 15:35:42.307955  9144 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.146082
+I0111 15:35:42.307955  9144 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.241034
+I0111 15:35:42.307955  9144 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.219254
+I0111 15:35:42.307955  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.241034
+I0111 15:35:42.308955  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.241034
+I0111 15:35:42.308955  9144 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 2.07478
+I0111 15:35:42.308955  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.221598
+I0111 15:35:42.308955  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.128222
+I0111 15:35:42.309958  9144 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.127455
+I0111 15:35:42.310961  9144 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.613579
+I0111 15:35:42.312968  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.123808
+I0111 15:35:42.312968  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.469437
+I0111 15:35:42.316977  9144 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.37224
+I0111 15:35:42.316977  9144 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0119363
+I0111 15:35:42.317981  9144 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00355913
+I0111 15:35:42.317981  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0375648
+I0111 15:35:42.318984  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.181841
+I0111 15:35:42.318984  9144 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1 diff: 0.00135767
+I0111 15:35:42.318984  9144 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.000525822
+I0111 15:35:42.319985  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.00425956
+I0111 15:35:42.319985  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.0191478
+I0111 15:35:42.319985  9144 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.00393778
+I0111 15:35:42.320988  9144 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.00167362
+I0111 15:35:42.320988  9144 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.0217936
+I0111 15:35:42.320988  9144 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00113573
+I0111 15:35:42.320988  9144 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.00723207
+I0111 15:35:42.321990  9144 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.020013
+I0111 15:35:42.321990  9144 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.000753643
+I0111 15:35:42.323997  9144 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0116823
+I0111 15:35:42.325001  9144 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.000874935
+I0111 15:35:42.325001  9144 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.0100065
+I0111 15:35:42.325001  9144 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.0243903
+I0111 15:35:42.325001  9144 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.000218734
+I0111 15:35:42.326001  9144 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.000171407
+I0111 15:35:42.326001  9144 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0120855
+I0111 15:35:42.327004  9144 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0184259
+I0111 15:35:42.327004  9144 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.0272659
+E0111 15:35:42.332018  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (516.855, 60.8648); L2 norm = (8.21112, 1.4642)
+I0111 15:35:42.333019  9144 solver.cpp:224] Iteration 4000 (176.071 iter/s, 5.67951s/1000 iters), loss = 0.313574
+I0111 15:35:42.333019  9144 solver.cpp:243]     Train net output #0: cls_loss = 0.127455 (* 1 = 0.127455 loss)
+I0111 15:35:42.334025  9144 solver.cpp:243]     Train net output #1: roi_loss = 0.37224 (* 0.5 = 0.18612 loss)
+I0111 15:35:42.335033  9144 sgd_solver.cpp:137] Iteration 4000, lr = 0.001
+I0111 15:35:42.336028  9144 sgd_solver.cpp:185] prelu slope:0.251599 0.221273 0.219254 
+I0111 15:35:42.337031  9144 sgd_solver.cpp:200] weight diff/data:0.005028 0.002380 0.002075 0.000187 0.002431 
+I0111 15:35:47.998100  9144 net.cpp:591]     [Forward] Layer data, top blob data data: 0.43701
+I0111 15:35:47.998100  9144 net.cpp:591]     [Forward] Layer data, top blob label data: 0.5
+I0111 15:35:47.999089  9144 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.780159
+I0111 15:35:47.999089  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.5
+I0111 15:35:48.000092  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.5
+I0111 15:35:48.000092  9144 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.339778
+I0111 15:35:48.001102  9144 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.163605
+I0111 15:35:48.001102  9144 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.141682
+I0111 15:35:48.001102  9144 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.238586
+I0111 15:35:48.002096  9144 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.241645
+I0111 15:35:48.002096  9144 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.317859
+I0111 15:35:48.002096  9144 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.445969
+I0111 15:35:48.003099  9144 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0824639
+I0111 15:35:48.003099  9144 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.160893
+I0111 15:35:48.003099  9144 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.273553
+I0111 15:35:48.003099  9144 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.210312
+I0111 15:35:48.003099  9144 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.405519
+I0111 15:35:48.004101  9144 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0630365
+I0111 15:35:48.004101  9144 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.145864
+I0111 15:35:48.004101  9144 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.211631
+I0111 15:35:48.004101  9144 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.210307
+I0111 15:35:48.004101  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.211631
+I0111 15:35:48.005105  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.211631
+I0111 15:35:48.005105  9144 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 1.78555
+I0111 15:35:48.005105  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.225475
+I0111 15:35:48.005105  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.16436
+I0111 15:35:48.006108  9144 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.187511
+I0111 15:35:48.006108  9144 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.618104
+I0111 15:35:48.006108  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.122755
+I0111 15:35:48.006108  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.462654
+I0111 15:35:48.010118  9144 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.563352
+I0111 15:35:48.011121  9144 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0178154
+I0111 15:35:48.011121  9144 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00513406
+I0111 15:35:48.012123  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0473307
+I0111 15:35:48.012123  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.19189
+I0111 15:35:48.012123  9144 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1 diff: 0.00174108
+I0111 15:35:48.013125  9144 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.000694007
+I0111 15:35:48.013125  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.00445629
+I0111 15:35:48.013125  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.031713
+I0111 15:35:48.013125  9144 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.0055465
+I0111 15:35:48.014128  9144 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.0026215
+I0111 15:35:48.014128  9144 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.0222574
+I0111 15:35:48.014128  9144 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00177462
+I0111 15:35:48.015131  9144 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.0103981
+I0111 15:35:48.015131  9144 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.037723
+I0111 15:35:48.015131  9144 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.00118157
+I0111 15:35:48.015131  9144 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0162245
+I0111 15:35:48.016135  9144 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.00137566
+I0111 15:35:48.016135  9144 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.014081
+I0111 15:35:48.016135  9144 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.0464785
+I0111 15:35:48.016135  9144 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.000343915
+I0111 15:35:48.017136  9144 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.00028132
+I0111 15:35:48.017136  9144 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0109385
+I0111 15:35:48.017136  9144 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0360576
+I0111 15:35:48.018139  9144 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.0874498
+E0111 15:35:48.022151  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (506.886, 89.0076); L2 norm = (8.16996, 2.08959)
+I0111 15:35:48.023154  9144 solver.cpp:224] Iteration 5000 (175.829 iter/s, 5.68733s/1000 iters), loss = 0.469187
+I0111 15:35:48.023154  9144 solver.cpp:243]     Train net output #0: cls_loss = 0.187511 (* 1 = 0.187511 loss)
+I0111 15:35:48.023154  9144 solver.cpp:243]     Train net output #1: roi_loss = 0.563352 (* 0.5 = 0.281676 loss)
+I0111 15:35:48.024155  9144 sgd_solver.cpp:137] Iteration 5000, lr = 0.001
+I0111 15:35:48.025159  9144 sgd_solver.cpp:185] prelu slope:0.241645 0.210312 0.210307 
+I0111 15:35:48.026160  9144 sgd_solver.cpp:200] weight diff/data:0.001975 0.001115 0.001451 0.000067 0.003596 
+I0111 15:35:53.708160  9144 net.cpp:591]     [Forward] Layer data, top blob data data: 0.456069
+I0111 15:35:53.708160  9144 net.cpp:591]     [Forward] Layer data, top blob label data: 0.421875
+I0111 15:35:53.709163  9144 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.820116
+I0111 15:35:53.710171  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.421875
+I0111 15:35:53.710171  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.421875
+I0111 15:35:53.711169  9144 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.342439
+I0111 15:35:53.711169  9144 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.163525
+I0111 15:35:53.711169  9144 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.153617
+I0111 15:35:53.711169  9144 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.243265
+I0111 15:35:53.711169  9144 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.231055
+I0111 15:35:53.712172  9144 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.323864
+I0111 15:35:53.712172  9144 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.442433
+I0111 15:35:53.712172  9144 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.081589
+I0111 15:35:53.712172  9144 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.173258
+I0111 15:35:53.713174  9144 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.280269
+I0111 15:35:53.713174  9144 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.198824
+I0111 15:35:53.713174  9144 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.422055
+I0111 15:35:53.713174  9144 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0613796
+I0111 15:35:53.713174  9144 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.144825
+I0111 15:35:53.714177  9144 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.233844
+I0111 15:35:53.714177  9144 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.202025
+I0111 15:35:53.714177  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.233844
+I0111 15:35:53.714177  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.233844
+I0111 15:35:53.714177  9144 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 2.17892
+I0111 15:35:53.715179  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.228342
+I0111 15:35:53.715179  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.190013
+I0111 15:35:53.716182  9144 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.0719053
+I0111 15:35:53.716182  9144 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.627234
+I0111 15:35:53.716182  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.122392
+I0111 15:35:53.717185  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.461834
+I0111 15:35:53.719190  9144 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.408674
+I0111 15:35:53.721195  9144 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0133349
+I0111 15:35:53.721195  9144 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00390989
+I0111 15:35:53.721195  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0473639
+I0111 15:35:53.722198  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.272353
+I0111 15:35:53.722198  9144 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1 diff: 0.000896872
+I0111 15:35:53.723201  9144 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.000365334
+I0111 15:35:53.723201  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.00499439
+I0111 15:35:53.723201  9144 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.0219505
+I0111 15:35:53.724203  9144 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.00419048
+I0111 15:35:53.724203  9144 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.00200154
+I0111 15:35:53.724203  9144 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.0200282
+I0111 15:35:53.724203  9144 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00132797
+I0111 15:35:53.725206  9144 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.0116015
+I0111 15:35:53.725206  9144 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.0384112
+I0111 15:35:53.725206  9144 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.000857683
+I0111 15:35:53.726208  9144 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0175019
+I0111 15:35:53.726208  9144 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.000965766
+I0111 15:35:53.726208  9144 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.0189188
+I0111 15:35:53.727211  9144 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.0603893
+I0111 15:35:53.727211  9144 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.000241441
+I0111 15:35:53.727211  9144 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.000191641
+I0111 15:35:53.727211  9144 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0157635
+I0111 15:35:53.728214  9144 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0605485
+I0111 15:35:53.728214  9144 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.107233
+E0111 15:35:53.733227  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (497.884, 108.912); L2 norm = (8.13317, 2.48691)
+I0111 15:35:53.733227  9144 solver.cpp:224] Iteration 6000 (175.176 iter/s, 5.70853s/1000 iters), loss = 0.276242
+I0111 15:35:53.733227  9144 solver.cpp:243]     Train net output #0: cls_loss = 0.0719053 (* 1 = 0.0719053 loss)
+I0111 15:35:53.734230  9144 solver.cpp:243]     Train net output #1: roi_loss = 0.408674 (* 0.5 = 0.204337 loss)
+I0111 15:35:53.734230  9144 sgd_solver.cpp:137] Iteration 6000, lr = 0.001
+I0111 15:35:53.735234  9144 sgd_solver.cpp:185] prelu slope:0.231055 0.198824 0.202025 
+I0111 15:35:53.735234  9144 sgd_solver.cpp:200] weight diff/data:0.002375 0.002578 0.001779 0.000297 0.003501 
+I0111 15:35:59.388993  9144 net.cpp:591]     [Forward] Layer data, top blob data data: 0.416939
+I0111 15:35:59.389995  9144 net.cpp:591]     [Forward] Layer data, top blob label data: 0.4375
+I0111 15:35:59.389995  9144 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.816329
+I0111 15:35:59.390998  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.4375
+I0111 15:35:59.390998  9144 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.4375
+I0111 15:35:59.390998  9144 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.347122
+I0111 15:35:59.392000  9144 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.163553
+I0111 15:35:59.392000  9144 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.161108
+I0111 15:35:59.392000  9144 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.242914
+I0111 15:35:59.393003  9144 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.220323
+I0111 15:35:59.393003  9144 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.322396
+I0111 15:35:59.393003  9144 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.42027
+I0111 15:35:59.394006  9144 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0808428
+I0111 15:35:59.394006  9144 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.18221
+I0111 15:35:59.394006  9144 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.27088
+I0111 15:35:59.394006  9144 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.186796
+I0111 15:35:59.395009  9144 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.394393
+I0111 15:35:59.395009  9144 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.059747
+I0111 15:35:59.395009  9144 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.143421
+I0111 15:35:59.395009  9144 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.227623
+I0111 15:35:59.396010  9144 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.194225
+I0111 15:35:59.397014  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.227623
+I0111 15:35:59.397014  9144 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.227623
+I0111 15:35:59.397014  9144 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 2.19635
+I0111 15:35:59.397014  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.230494
+I0111 15:35:59.398016  9144 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.21291
+I0111 15:35:59.399020  9144 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.116
+I0111 15:35:59.401024  9144 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.636511
+I0111 15:35:59.402026  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.121897
+I0111 15:35:59.402026  9144 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.467692
+I0111 15:35:59.406038  9144 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.485685
+I0111 15:35:59.407040  9144 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0135099
+I0111 15:35:59.407040  9144 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00388604
+I0111 15:35:59.407040  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0314572
+I0111 15:35:59.407040  9144 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.162014
+I0111 15:35:59.408043  9144 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1 di

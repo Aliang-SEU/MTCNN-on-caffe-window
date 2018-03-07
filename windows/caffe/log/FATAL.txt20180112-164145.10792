@@ -1,0 +1,4 @@
+Log file created at: 2018/01/12 16:41:45
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0112 16:41:45.156744  5360 db_lmdb.hpp:15] Check failed: mdb_status == 0 (3 vs. 0) 系统找不到指定的路径。

@@ -1,0 +1,1178 @@
+Log file created at: 2018/01/10 21:05:51
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0110 21:05:51.948588 24740 caffe.cpp:219] Using GPUs 0
+I0110 21:05:52.180203 24740 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0110 21:05:52.560214 24740 solver.cpp:44] Initializing solver from parameters: 
+base_lr: 0.001
+display: 100
+max_iter: 500000
+lr_policy: "step"
+gamma: 0.8
+momentum: 0.9
+weight_decay: 0.004
+stepsize: 30000
+snapshot: 10000
+snapshot_prefix: "E:/DeepLearning/mtcnn_train/models-12/"
+solver_mode: GPU
+device_id: 0
+net: "E:/DeepLearning/mtcnn_train/det1_train.ptototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0110 21:05:52.561218 24740 solver.cpp:87] Creating training net from net file: E:/DeepLearning/mtcnn_train/det1_train.ptototxt
+I0110 21:05:52.562219 24740 net.cpp:51] Initializing net from parameters: 
+name: "PNet"
+state {
+  phase: TRAIN
+  level: 0
+  stage: ""
+}
+layer {
+  name: "data"
+  type: "MTCNNData"
+  top: "data"
+  top: "label"
+  top: "roi"
+  transform_param {
+    scale: 0.0078125
+    mirror: false
+    mean_value: 127.5
+  }
+  data_param {
+    source: "E:/DeepLearning/mtcnn_train/mtcnn_train_lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 10
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU1"
+  type: "PReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU2"
+  type: "PReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 32
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU3"
+  type: "PReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4-1"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4-1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 2
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "conv4-1"
+  bottom: "label"
+  top: "cls_loss"
+  loss_weight: 1
+  propagate_down: true
+  propagate_down: false
+  loss_param {
+    ignore_label: -1
+  }
+}
+layer {
+  name: "cls_Acc"
+  type: "Accuracy"
+  bottom: "conv4-1"
+  bottom: "label"
+  top: "cls_acc"
+  include {
+    phase: TRAIN
+  }
+  accuracy_param {
+    ignore_label: -1
+  }
+}
+layer {
+  name: "conv4-2"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4-2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 4
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "roi_loss"
+  type: "MTCNNEuclideanLoss"
+  bottom: "conv4-2"
+  bottom: "roi"
+  bottom: "label"
+  top: "roi_loss"
+  loss_weight: 0.5
+  loss_param {
+    ignore_label: 0
+  }
+}
+I0110 21:05:52.563222 24740 layer_factory.hpp:77] Creating layer data
+I0110 21:05:52.566241 24740 db_lmdb.cpp:40] Opened lmdb E:/DeepLearning/mtcnn_train/mtcnn_train_lmdb
+I0110 21:05:52.569241 24740 net.cpp:84] Creating Layer data
+I0110 21:05:52.570242 24740 net.cpp:380] data -> data
+I0110 21:05:52.574265 24740 net.cpp:380] data -> label
+I0110 21:05:52.576258 24740 net.cpp:380] data -> roi
+I0110 21:05:52.578264 24740 mtcnn_data_layer.cpp:45] output data size: 64,3,12,12
+I0110 21:05:52.580281 24740 net.cpp:122] Setting up data
+I0110 21:05:52.580281 24740 net.cpp:129] Top shape: 64 3 12 12 (27648)
+I0110 21:05:52.582275 24740 net.cpp:129] Top shape: 64 (64)
+I0110 21:05:52.585283 24740 net.cpp:129] Top shape: 64 4 (256)
+I0110 21:05:52.587286 24740 net.cpp:137] Memory required for data: 111872
+I0110 21:05:52.588289 24740 layer_factory.hpp:77] Creating layer label_data_1_split
+I0110 21:05:52.589292 24740 net.cpp:84] Creating Layer label_data_1_split
+I0110 21:05:52.590294 24740 net.cpp:406] label_data_1_split <- label
+I0110 21:05:52.591297 24740 net.cpp:380] label_data_1_split -> label_data_1_split_0
+I0110 21:05:52.592299 24740 net.cpp:380] label_data_1_split -> label_data_1_split_1
+I0110 21:05:52.593302 24740 net.cpp:380] label_data_1_split -> label_data_1_split_2
+I0110 21:05:52.597312 24740 net.cpp:122] Setting up label_data_1_split
+I0110 21:05:52.598315 24740 net.cpp:129] Top shape: 64 (64)
+I0110 21:05:52.600320 24740 net.cpp:129] Top shape: 64 (64)
+I0110 21:05:52.601323 24740 net.cpp:129] Top shape: 64 (64)
+I0110 21:05:52.602326 24740 net.cpp:137] Memory required for data: 112640
+I0110 21:05:52.603328 24740 layer_factory.hpp:77] Creating layer conv1
+I0110 21:05:52.606336 24740 net.cpp:84] Creating Layer conv1
+I0110 21:05:52.607342 24740 net.cpp:406] conv1 <- data
+I0110 21:05:52.609344 24740 net.cpp:380] conv1 -> conv1
+I0110 21:05:53.278125 24740 net.cpp:122] Setting up conv1
+I0110 21:05:53.278125 24740 net.cpp:129] Top shape: 64 10 10 10 (64000)
+I0110 21:05:53.280129 24740 net.cpp:137] Memory required for data: 368640
+I0110 21:05:53.281131 24740 layer_factory.hpp:77] Creating layer PReLU1
+I0110 21:05:53.282146 24740 net.cpp:84] Creating Layer PReLU1
+I0110 21:05:53.283138 24740 net.cpp:406] PReLU1 <- conv1
+I0110 21:05:53.284139 24740 net.cpp:367] PReLU1 -> conv1 (in-place)
+I0110 21:05:53.286145 24740 net.cpp:122] Setting up PReLU1
+I0110 21:05:53.286145 24740 net.cpp:129] Top shape: 64 10 10 10 (64000)
+I0110 21:05:53.287147 24740 net.cpp:137] Memory required for data: 624640
+I0110 21:05:53.289152 24740 layer_factory.hpp:77] Creating layer pool1
+I0110 21:05:53.291158 24740 net.cpp:84] Creating Layer pool1
+I0110 21:05:53.293164 24740 net.cpp:406] pool1 <- conv1
+I0110 21:05:53.294165 24740 net.cpp:380] pool1 -> pool1
+I0110 21:05:53.295168 24740 net.cpp:122] Setting up pool1
+I0110 21:05:53.296172 24740 net.cpp:129] Top shape: 64 10 5 5 (16000)
+I0110 21:05:53.296172 24740 net.cpp:137] Memory required for data: 688640
+I0110 21:05:53.297173 24740 layer_factory.hpp:77] Creating layer conv2
+I0110 21:05:53.299180 24740 net.cpp:84] Creating Layer conv2
+I0110 21:05:53.302188 24740 net.cpp:406] conv2 <- pool1
+I0110 21:05:53.303190 24740 net.cpp:380] conv2 -> conv2
+I0110 21:05:53.306197 24740 net.cpp:122] Setting up conv2
+I0110 21:05:53.307199 24740 net.cpp:129] Top shape: 64 16 3 3 (9216)
+I0110 21:05:53.308204 24740 net.cpp:137] Memory required for data: 725504
+I0110 21:05:53.309206 24740 layer_factory.hpp:77] Creating layer PReLU2
+I0110 21:05:53.311211 24740 net.cpp:84] Creating Layer PReLU2
+I0110 21:05:53.312213 24740 net.cpp:406] PReLU2 <- conv2
+I0110 21:05:53.313217 24740 net.cpp:367] PReLU2 -> conv2 (in-place)
+I0110 21:05:53.314218 24740 net.cpp:122] Setting up PReLU2
+I0110 21:05:53.315222 24740 net.cpp:129] Top shape: 64 16 3 3 (9216)
+I0110 21:05:53.316226 24740 net.cpp:137] Memory required for data: 762368
+I0110 21:05:53.317227 24740 layer_factory.hpp:77] Creating layer conv3
+I0110 21:05:53.318230 24740 net.cpp:84] Creating Layer conv3
+I0110 21:05:53.320236 24740 net.cpp:406] conv3 <- conv2
+I0110 21:05:53.322242 24740 net.cpp:380] conv3 -> conv3
+I0110 21:05:53.325250 24740 net.cpp:122] Setting up conv3
+I0110 21:05:53.325250 24740 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0110 21:05:53.326252 24740 net.cpp:137] Memory required for data: 770560
+I0110 21:05:53.327255 24740 layer_factory.hpp:77] Creating layer PReLU3
+I0110 21:05:53.328258 24740 net.cpp:84] Creating Layer PReLU3
+I0110 21:05:53.330263 24740 net.cpp:406] PReLU3 <- conv3
+I0110 21:05:53.331266 24740 net.cpp:367] PReLU3 -> conv3 (in-place)
+I0110 21:05:53.332268 24740 net.cpp:122] Setting up PReLU3
+I0110 21:05:53.333271 24740 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0110 21:05:53.335278 24740 net.cpp:137] Memory required for data: 778752
+I0110 21:05:53.336279 24740 layer_factory.hpp:77] Creating layer conv3_PReLU3_0_split
+I0110 21:05:53.337282 24740 net.cpp:84] Creating Layer conv3_PReLU3_0_split
+I0110 21:05:53.338284 24740 net.cpp:406] conv3_PReLU3_0_split <- conv3
+I0110 21:05:53.340289 24740 net.cpp:380] conv3_PReLU3_0_split -> conv3_PReLU3_0_split_0
+I0110 21:05:53.341292 24740 net.cpp:380] conv3_PReLU3_0_split -> conv3_PReLU3_0_split_1
+I0110 21:05:53.342295 24740 net.cpp:122] Setting up conv3_PReLU3_0_split
+I0110 21:05:53.343298 24740 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0110 21:05:53.344300 24740 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0110 21:05:53.345304 24740 net.cpp:137] Memory required for data: 795136
+I0110 21:05:53.345304 24740 layer_factory.hpp:77] Creating layer conv4-1
+I0110 21:05:53.346307 24740 net.cpp:84] Creating Layer conv4-1
+I0110 21:05:53.347308 24740 net.cpp:406] conv4-1 <- conv3_PReLU3_0_split_0
+I0110 21:05:53.348311 24740 net.cpp:380] conv4-1 -> conv4-1
+I0110 21:05:53.353324 24740 net.cpp:122] Setting up conv4-1
+I0110 21:05:53.353324 24740 net.cpp:129] Top shape: 64 2 1 1 (128)
+I0110 21:05:53.354327 24740 net.cpp:137] Memory required for data: 795648
+I0110 21:05:53.355330 24740 layer_factory.hpp:77] Creating layer conv4-1_conv4-1_0_split
+I0110 21:05:53.356333 24740 net.cpp:84] Creating Layer conv4-1_conv4-1_0_split
+I0110 21:05:53.357336 24740 net.cpp:406] conv4-1_conv4-1_0_split <- conv4-1
+I0110 21:05:53.357336 24740 net.cpp:380] conv4-1_conv4-1_0_split -> conv4-1_conv4-1_0_split_0
+I0110 21:05:53.358337 24740 net.cpp:380] conv4-1_conv4-1_0_split -> conv4-1_conv4-1_0_split_1
+I0110 21:05:53.361346 24740 net.cpp:122] Setting up conv4-1_conv4-1_0_split
+I0110 21:05:53.362349 24740 net.cpp:129] Top shape: 64 2 1 1 (128)
+I0110 21:05:53.362349 24740 net.cpp:129] Top shape: 64 2 1 1 (128)
+I0110 21:05:53.364353 24740 net.cpp:137] Memory required for data: 796672
+I0110 21:05:53.365356 24740 layer_factory.hpp:77] Creating layer cls_loss
+I0110 21:05:53.366358 24740 net.cpp:84] Creating Layer cls_loss
+I0110 21:05:53.367360 24740 net.cpp:406] cls_loss <- conv4-1_conv4-1_0_split_0
+I0110 21:05:53.368381 24740 net.cpp:406] cls_loss <- label_data_1_split_0
+I0110 21:05:53.371371 24740 net.cpp:380] cls_loss -> cls_loss
+I0110 21:05:53.372375 24740 layer_factory.hpp:77] Creating layer cls_loss
+I0110 21:05:53.373375 24740 net.cpp:122] Setting up cls_loss
+I0110 21:05:53.374380 24740 net.cpp:129] Top shape: (1)
+I0110 21:05:53.375381 24740 net.cpp:132]     with loss weight 1
+I0110 21:05:53.376384 24740 net.cpp:137] Memory required for data: 796676
+I0110 21:05:53.376384 24740 layer_factory.hpp:77] Creating layer cls_Acc
+I0110 21:05:53.377388 24740 net.cpp:84] Creating Layer cls_Acc
+I0110 21:05:53.378391 24740 net.cpp:406] cls_Acc <- conv4-1_conv4-1_0_split_1
+I0110 21:05:53.379392 24740 net.cpp:406] cls_Acc <- label_data_1_split_1
+I0110 21:05:53.382400 24740 net.cpp:380] cls_Acc -> cls_acc
+I0110 21:05:53.384407 24740 net.cpp:122] Setting up cls_Acc
+I0110 21:05:53.385408 24740 net.cpp:129] Top shape: (1)
+I0110 21:05:53.386412 24740 net.cpp:137] Memory required for data: 796680
+I0110 21:05:53.386412 24740 layer_factory.hpp:77] Creating layer conv4-2
+I0110 21:05:53.387413 24740 net.cpp:84] Creating Layer conv4-2
+I0110 21:05:53.388417 24740 net.cpp:406] conv4-2 <- conv3_PReLU3_0_split_1
+I0110 21:05:53.389420 24740 net.cpp:380] conv4-2 -> conv4-2
+I0110 21:05:53.394433 24740 net.cpp:122] Setting up conv4-2
+I0110 21:05:53.394433 24740 net.cpp:129] Top shape: 64 4 1 1 (256)
+I0110 21:05:53.395436 24740 net.cpp:137] Memory required for data: 797704
+I0110 21:05:53.396437 24740 layer_factory.hpp:77] Creating layer roi_loss
+I0110 21:05:53.397440 24740 net.cpp:84] Creating Layer roi_loss
+I0110 21:05:53.398443 24740 net.cpp:406] roi_loss <- conv4-2
+I0110 21:05:53.399446 24740 net.cpp:406] roi_loss <- roi
+I0110 21:05:53.401451 24740 net.cpp:406] roi_loss <- label_data_1_split_2
+I0110 21:05:53.402454 24740 net.cpp:380] roi_loss -> roi_loss
+I0110 21:05:53.403457 24740 net.cpp:122] Setting up roi_loss
+I0110 21:05:53.404459 24740 net.cpp:129] Top shape: (1)
+I0110 21:05:53.405462 24740 net.cpp:132]     with loss weight 0.5
+I0110 21:05:53.406466 24740 net.cpp:137] Memory required for data: 797708
+I0110 21:05:53.407467 24740 net.cpp:198] roi_loss needs backward computation.
+I0110 21:05:53.407467 24740 net.cpp:198] conv4-2 needs backward computation.
+I0110 21:05:53.408483 24740 net.cpp:200] cls_Acc does not need backward computation.
+I0110 21:05:53.409472 24740 net.cpp:198] cls_loss needs backward computation.
+I0110 21:05:53.414486 24740 net.cpp:198] conv4-1_conv4-1_0_split needs backward computation.
+I0110 21:05:53.415488 24740 net.cpp:198] conv4-1 needs backward computation.
+I0110 21:05:53.415488 24740 net.cpp:198] conv3_PReLU3_0_split needs backward computation.
+I0110 21:05:53.416491 24740 net.cpp:198] PReLU3 needs backward computation.
+I0110 21:05:53.417493 24740 net.cpp:198] conv3 needs backward computation.
+I0110 21:05:53.418495 24740 net.cpp:198] PReLU2 needs backward computation.
+I0110 21:05:53.419498 24740 net.cpp:198] conv2 needs backward computation.
+I0110 21:05:53.420501 24740 net.cpp:198] pool1 needs backward computation.
+I0110 21:05:53.423509 24740 net.cpp:198] PReLU1 needs backward computation.
+I0110 21:05:53.425514 24740 net.cpp:198] conv1 needs backward computation.
+I0110 21:05:53.426518 24740 net.cpp:200] label_data_1_split does not need backward computation.
+I0110 21:05:53.427520 24740 net.cpp:200] data does not need backward computation.
+I0110 21:05:53.428524 24740 net.cpp:242] This network produces output cls_acc
+I0110 21:05:53.429527 24740 net.cpp:242] This network produces output cls_loss
+I0110 21:05:53.431530 24740 net.cpp:242] This network produces output roi_loss
+I0110 21:05:53.432534 24740 net.cpp:255] Network initialization done.
+I0110 21:05:53.433535 24740 solver.cpp:56] Solver scaffolding done.
+I0110 21:05:53.434540 24740 caffe.cpp:249] Starting Optimization
+I0110 21:05:53.435542 24740 solver.cpp:278] Solving PNet
+I0110 21:05:53.435542 24740 solver.cpp:279] Learning Rate Policy: step
+I0110 21:05:53.446573 24740 solver.cpp:224] Iteration 0 (0 iter/s, 0.00883405s/100 iters), loss = 1.43293
+I0110 21:05:53.446573 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.5
+I0110 21:05:53.448577 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.709447 (* 1 = 0.709447 loss)
+I0110 21:05:53.449580 24740 solver.cpp:243]     Train net output #2: roi_loss = 1.44696 (* 0.5 = 0.723481 loss)
+I0110 21:05:53.450583 24740 sgd_solver.cpp:137] Iteration 0, lr = 0.001
+I0110 21:05:53.453591 24740 sgd_solver.cpp:185] prelu slope:0.250000 0.250000 0.250000 
+I0110 21:05:53.454594 24740 sgd_solver.cpp:200] weight diff/data:0.005446 0.003576 0.003982 0.000431 0.002660 
+I0110 21:05:54.078251 24740 solver.cpp:224] Iteration 100 (159.972 iter/s, 0.62511s/100 iters), loss = 0.56812
+I0110 21:05:54.078251 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.730769
+I0110 21:05:54.079253 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.543976 (* 1 = 0.543976 loss)
+I0110 21:05:54.080256 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0482863 (* 0.5 = 0.0241432 loss)
+I0110 21:05:54.081259 24740 sgd_solver.cpp:137] Iteration 100, lr = 0.001
+I0110 21:05:54.083263 24740 sgd_solver.cpp:185] prelu slope:0.243920 0.247629 0.247592 
+I0110 21:05:54.085269 24740 sgd_solver.cpp:200] weight diff/data:0.000787 0.000623 0.000882 0.001126 0.001916 
+I0110 21:05:54.133399 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:05:54.698900 24740 solver.cpp:224] Iteration 200 (162.377 iter/s, 0.615852s/100 iters), loss = 0.537257
+I0110 21:05:54.698900 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.744681
+I0110 21:05:54.699903 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.516183 (* 1 = 0.516183 loss)
+I0110 21:05:54.700917 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0421494 (* 0.5 = 0.0210747 loss)
+I0110 21:05:54.702911 24740 sgd_solver.cpp:137] Iteration 200, lr = 0.001
+I0110 21:05:54.704917 24740 sgd_solver.cpp:185] prelu slope:0.241176 0.246946 0.246300 
+I0110 21:05:54.705921 24740 sgd_solver.cpp:200] weight diff/data:0.000546 0.000790 0.000512 0.001214 0.000446 
+I0110 21:05:54.827244 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:05:55.285462 24740 solver.cpp:224] Iteration 300 (172.05 iter/s, 0.581226s/100 iters), loss = 0.531228
+I0110 21:05:55.285462 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.717391
+I0110 21:05:55.286465 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.512414 (* 1 = 0.512414 loss)
+I0110 21:05:55.287467 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0376283 (* 0.5 = 0.0188142 loss)
+I0110 21:05:55.288470 24740 sgd_solver.cpp:137] Iteration 300, lr = 0.001
+I0110 21:05:55.289474 24740 sgd_solver.cpp:185] prelu slope:0.239465 0.246483 0.245123 
+I0110 21:05:55.291476 24740 sgd_solver.cpp:200] weight diff/data:0.000613 0.000641 0.000463 0.002027 0.000313 
+I0110 21:05:55.495018 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:05:55.893077 24740 solver.cpp:224] Iteration 400 (165.474 iter/s, 0.604326s/100 iters), loss = 0.520601
+I0110 21:05:55.894094 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.714286
+I0110 21:05:55.896085 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.50709 (* 1 = 0.50709 loss)
+I0110 21:05:55.898092 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0270225 (* 0.5 = 0.0135112 loss)
+I0110 21:05:55.899093 24740 sgd_solver.cpp:137] Iteration 400, lr = 0.001
+I0110 21:05:55.900096 24740 sgd_solver.cpp:185] prelu slope:0.238153 0.246164 0.244113 
+I0110 21:05:55.901099 24740 sgd_solver.cpp:200] weight diff/data:0.000364 0.000672 0.000937 0.001161 0.000320 
+I0110 21:05:56.153770 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:05:56.472618 24740 solver.cpp:224] Iteration 500 (174.633 iter/s, 0.57263s/100 iters), loss = 0.606575
+I0110 21:05:56.472618 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.627451
+I0110 21:05:56.473621 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.591939 (* 1 = 0.591939 loss)
+I0110 21:05:56.474624 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0292731 (* 0.5 = 0.0146365 loss)
+I0110 21:05:56.475627 24740 sgd_solver.cpp:137] Iteration 500, lr = 0.001
+I0110 21:05:56.477633 24740 sgd_solver.cpp:185] prelu slope:0.237147 0.245954 0.243316 
+I0110 21:05:56.478636 24740 sgd_solver.cpp:200] weight diff/data:0.000482 0.000670 0.001089 0.002200 0.000257 
+I0110 21:05:56.817535 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:05:57.087251 24740 solver.cpp:224] Iteration 600 (164.061 iter/s, 0.609531s/100 iters), loss = 0.418892
+I0110 21:05:57.087251 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.822222
+I0110 21:05:57.089257 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.409228 (* 1 = 0.409228 loss)
+I0110 21:05:57.091262 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0193276 (* 0.5 = 0.0096638 loss)
+I0110 21:05:57.092264 24740 sgd_solver.cpp:137] Iteration 600, lr = 0.001
+I0110 21:05:57.094271 24740 sgd_solver.cpp:185] prelu slope:0.236606 0.245766 0.242761 
+I0110 21:05:57.096276 24740 sgd_solver.cpp:200] weight diff/data:0.001302 0.000469 0.000865 0.000590 0.000320 
+I0110 21:05:57.509374 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:05:57.687849 24740 solver.cpp:224] Iteration 700 (168.466 iter/s, 0.593591s/100 iters), loss = 0.492593
+I0110 21:05:57.687849 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.75
+I0110 21:05:57.688853 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.482504 (* 1 = 0.482504 loss)
+I0110 21:05:57.690858 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0201776 (* 0.5 = 0.0100888 loss)
+I0110 21:05:57.691861 24740 sgd_solver.cpp:137] Iteration 700, lr = 0.001
+I0110 21:05:57.692863 24740 sgd_solver.cpp:185] prelu slope:0.236564 0.245657 0.242467 
+I0110 21:05:57.693866 24740 sgd_solver.cpp:200] weight diff/data:0.000551 0.000402 0.000488 0.000684 0.000213 
+I0110 21:05:58.175144 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:05:58.281451 24740 solver.cpp:224] Iteration 800 (169.98 iter/s, 0.588306s/100 iters), loss = 0.48811
+I0110 21:05:58.281451 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.716981
+I0110 21:05:58.285439 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.475172 (* 1 = 0.475172 loss)
+I0110 21:05:58.286440 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0258762 (* 0.5 = 0.0129381 loss)
+I0110 21:05:58.287443 24740 sgd_solver.cpp:137] Iteration 800, lr = 0.001
+I0110 21:05:58.288445 24740 sgd_solver.cpp:185] prelu slope:0.236742 0.245479 0.242394 
+I0110 21:05:58.289448 24740 sgd_solver.cpp:200] weight diff/data:0.000752 0.000500 0.000697 0.010820 0.000275 
+I0110 21:05:58.851943 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:05:58.879015 24740 solver.cpp:224] Iteration 900 (169.39 iter/s, 0.590354s/100 iters), loss = 0.519865
+I0110 21:05:58.879015 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.703704
+I0110 21:05:58.880018 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.509197 (* 1 = 0.509197 loss)
+I0110 21:05:58.882026 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0213367 (* 0.5 = 0.0106684 loss)
+I0110 21:05:58.884028 24740 sgd_solver.cpp:137] Iteration 900, lr = 0.001
+I0110 21:05:58.885031 24740 sgd_solver.cpp:185] prelu slope:0.237477 0.245439 0.242574 
+I0110 21:05:58.886034 24740 sgd_solver.cpp:200] weight diff/data:0.000903 0.000770 0.000568 0.000600 0.000275 
+I0110 21:05:59.464573 24740 solver.cpp:224] Iteration 1000 (172.323 iter/s, 0.580305s/100 iters), loss = 0.432414
+I0110 21:05:59.464573 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.807692
+I0110 21:05:59.467581 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.422199 (* 1 = 0.422199 loss)
+I0110 21:05:59.467581 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.020429 (* 0.5 = 0.0102145 loss)
+I0110 21:05:59.468585 24740 sgd_solver.cpp:137] Iteration 1000, lr = 0.001
+I0110 21:05:59.470589 24740 sgd_solver.cpp:185] prelu slope:0.238872 0.245439 0.242814 
+I0110 21:05:59.471592 24740 sgd_solver.cpp:200] weight diff/data:0.000959 0.000532 0.000633 0.000698 0.000407 
+I0110 21:05:59.516713 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:00.069180 24740 solver.cpp:224] Iteration 1100 (166.852 iter/s, 0.599332s/100 iters), loss = 0.352275
+I0110 21:06:00.069180 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.87234
+I0110 21:06:00.070184 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.333331 (* 1 = 0.333331 loss)
+I0110 21:06:00.072188 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0378889 (* 0.5 = 0.0189444 loss)
+I0110 21:06:00.073191 24740 sgd_solver.cpp:137] Iteration 1100, lr = 0.001
+I0110 21:06:00.074194 24740 sgd_solver.cpp:185] prelu slope:0.240758 0.245199 0.242991 
+I0110 21:06:00.075196 24740 sgd_solver.cpp:200] weight diff/data:0.001045 0.000902 0.001189 0.000788 0.000454 
+I0110 21:06:00.194514 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:00.682814 24740 solver.cpp:224] Iteration 1200 (164.139 iter/s, 0.609239s/100 iters), loss = 0.379202
+I0110 21:06:00.682814 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.826087
+I0110 21:06:00.684819 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.366716 (* 1 = 0.366716 loss)
+I0110 21:06:00.685822 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0249721 (* 0.5 = 0.012486 loss)
+I0110 21:06:00.686825 24740 sgd_solver.cpp:137] Iteration 1200, lr = 0.001
+I0110 21:06:00.688829 24740 sgd_solver.cpp:185] prelu slope:0.243192 0.244628 0.242735 
+I0110 21:06:00.690835 24740 sgd_solver.cpp:200] weight diff/data:0.000805 0.001062 0.000703 0.000959 0.000317 
+I0110 21:06:00.894387 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:01.318503 24740 solver.cpp:224] Iteration 1300 (158.76 iter/s, 0.629883s/100 iters), loss = 0.382269
+I0110 21:06:01.318503 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.767857
+I0110 21:06:01.320508 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.370138 (* 1 = 0.370138 loss)
+I0110 21:06:01.321511 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0242622 (* 0.5 = 0.0121311 loss)
+I0110 21:06:01.322513 24740 sgd_solver.cpp:137] Iteration 1300, lr = 0.001
+I0110 21:06:01.323515 24740 sgd_solver.cpp:185] prelu slope:0.245521 0.243774 0.242247 
+I0110 21:06:01.324518 24740 sgd_solver.cpp:200] weight diff/data:0.001129 0.000690 0.003421 0.003450 0.000377 
+I0110 21:06:01.600251 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:01.924113 24740 solver.cpp:224] Iteration 1400 (166.478 iter/s, 0.600681s/100 iters), loss = 0.430792
+I0110 21:06:01.924113 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.823529
+I0110 21:06:01.927122 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.416522 (* 1 = 0.416522 loss)
+I0110 21:06:01.929127 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0285407 (* 0.5 = 0.0142704 loss)
+I0110 21:06:01.931133 24740 sgd_solver.cpp:137] Iteration 1400, lr = 0.001
+I0110 21:06:01.932137 24740 sgd_solver.cpp:185] prelu slope:0.247371 0.242692 0.241468 
+I0110 21:06:01.933138 24740 sgd_solver.cpp:200] weight diff/data:0.002159 0.000639 0.000730 0.000815 0.000418 
+I0110 21:06:02.272037 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:02.521703 24740 solver.cpp:224] Iteration 1500 (169.504 iter/s, 0.589955s/100 iters), loss = 0.282991
+I0110 21:06:02.521703 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.888889
+I0110 21:06:02.523707 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.272921 (* 1 = 0.272921 loss)
+I0110 21:06:02.525712 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0201398 (* 0.5 = 0.0100699 loss)
+I0110 21:06:02.526716 24740 sgd_solver.cpp:137] Iteration 1500, lr = 0.001
+I0110 21:06:02.527717 24740 sgd_solver.cpp:185] prelu slope:0.249068 0.241536 0.240518 
+I0110 21:06:02.528720 24740 sgd_solver.cpp:200] weight diff/data:0.000861 0.000493 0.001493 0.000586 0.000590 
+I0110 21:06:02.931792 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:03.114279 24740 solver.cpp:224] Iteration 1600 (170.369 iter/s, 0.586962s/100 iters), loss = 0.303512
+I0110 21:06:03.114279 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.9375
+I0110 21:06:03.115281 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.293308 (* 1 = 0.293308 loss)
+I0110 21:06:03.117286 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0204084 (* 0.5 = 0.0102042 loss)
+I0110 21:06:03.118288 24740 sgd_solver.cpp:137] Iteration 1600, lr = 0.001
+I0110 21:06:03.119292 24740 sgd_solver.cpp:185] prelu slope:0.250529 0.240449 0.239592 
+I0110 21:06:03.120295 24740 sgd_solver.cpp:200] weight diff/data:0.002844 0.000700 0.000575 0.000619 0.000515 
+I0110 21:06:03.615612 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:03.718885 24740 solver.cpp:224] Iteration 1700 (166.736 iter/s, 0.599752s/100 iters), loss = 0.300323
+I0110 21:06:03.718885 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.90566
+I0110 21:06:03.719888 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.293738 (* 1 = 0.293738 loss)
+I0110 21:06:03.721894 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.013169 (* 0.5 = 0.00658449 loss)
+I0110 21:06:03.722895 24740 sgd_solver.cpp:137] Iteration 1700, lr = 0.001
+I0110 21:06:03.725903 24740 sgd_solver.cpp:185] prelu slope:0.251755 0.239329 0.238669 
+I0110 21:06:03.726907 24740 sgd_solver.cpp:200] weight diff/data:0.001217 0.000929 0.000372 0.000463 0.000502 
+I0110 21:06:04.277370 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:04.306447 24740 solver.cpp:224] Iteration 1800 (172.195 iter/s, 0.580736s/100 iters), loss = 0.271481
+I0110 21:06:04.306447 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.907407
+I0110 21:06:04.309456 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.265305 (* 1 = 0.265305 loss)
+I0110 21:06:04.309456 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.012352 (* 0.5 = 0.006176 loss)
+I0110 21:06:04.310458 24740 sgd_solver.cpp:137] Iteration 1800, lr = 0.001
+I0110 21:06:04.312464 24740 sgd_solver.cpp:185] prelu slope:0.253024 0.238285 0.237721 
+I0110 21:06:04.313467 24740 sgd_solver.cpp:200] weight diff/data:0.001549 0.002227 0.000906 0.000890 0.000632 
+I0110 21:06:04.874959 24740 solver.cpp:224] Iteration 1900 (177.546 iter/s, 0.563235s/100 iters), loss = 0.25663
+I0110 21:06:04.874959 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.865385
+I0110 21:06:04.878969 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.249868 (* 1 = 0.249868 loss)
+I0110 21:06:04.879972 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0135244 (* 0.5 = 0.00676218 loss)
+I0110 21:06:04.880975 24740 sgd_solver.cpp:137] Iteration 1900, lr = 0.001
+I0110 21:06:04.881981 24740 sgd_solver.cpp:185] prelu slope:0.254230 0.237374 0.236825 
+I0110 21:06:04.883983 24740 sgd_solver.cpp:200] weight diff/data:0.001474 0.000994 0.000448 0.001258 0.000648 
+I0110 21:06:04.931108 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:05.487588 24740 solver.cpp:224] Iteration 2000 (165.168 iter/s, 0.605443s/100 iters), loss = 0.225125
+I0110 21:06:05.487588 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.914894
+I0110 21:06:05.488591 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.216355 (* 1 = 0.216355 loss)
+I0110 21:06:05.491600 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0175395 (* 0.5 = 0.00876977 loss)
+I0110 21:06:05.491600 24740 sgd_solver.cpp:137] Iteration 2000, lr = 0.001
+I0110 21:06:05.493604 24740 sgd_solver.cpp:185] prelu slope:0.255257 0.236515 0.235917 
+I0110 21:06:05.494607 24740 sgd_solver.cpp:200] weight diff/data:0.001297 0.000795 0.000805 0.000948 0.001893 
+I0110 21:06:05.620944 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:06.107235 24740 solver.cpp:224] Iteration 2100 (162.689 iter/s, 0.61467s/100 iters), loss = 0.300053
+I0110 21:06:06.108245 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.847826
+I0110 21:06:06.110244 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.293306 (* 1 = 0.293306 loss)
+I0110 21:06:06.111246 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0134942 (* 0.5 = 0.00674712 loss)
+I0110 21:06:06.112249 24740 sgd_solver.cpp:137] Iteration 2100, lr = 0.001
+I0110 21:06:06.114254 24740 sgd_solver.cpp:185] prelu slope:0.256013 0.235625 0.235000 
+I0110 21:06:06.115257 24740 sgd_solver.cpp:200] weight diff/data:0.002528 0.000969 0.000476 0.000361 0.001720 
+I0110 21:06:06.310777 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:06.694799 24740 solver.cpp:224] Iteration 2200 (172.166 iter/s, 0.580834s/100 iters), loss = 0.294156
+I0110 21:06:06.694799 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.857143
+I0110 21:06:06.696805 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.289609 (* 1 = 0.289609 loss)
+I0110 21:06:06.697808 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00909394 (* 0.5 = 0.00454697 loss)
+I0110 21:06:06.698812 24740 sgd_solver.cpp:137] Iteration 2200, lr = 0.001
+I0110 21:06:06.699836 24740 sgd_solver.cpp:185] prelu slope:0.256525 0.234806 0.234125 
+I0110 21:06:06.701817 24740 sgd_solver.cpp:200] weight diff/data:0.001838 0.001047 0.003010 0.000272 0.000946 
+I0110 21:06:06.960505 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:07.284368 24740 solver.cpp:224] Iteration 2300 (171.214 iter/s, 0.584064s/100 iters), loss = 0.346672
+I0110 21:06:07.284368 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.862745
+I0110 21:06:07.285370 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.339837 (* 1 = 0.339837 loss)
+I0110 21:06:07.287376 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0136711 (* 0.5 = 0.00683554 loss)
+I0110 21:06:07.288378 24740 sgd_solver.cpp:137] Iteration 2300, lr = 0.001
+I0110 21:06:07.290385 24740 sgd_solver.cpp:185] prelu slope:0.256912 0.233989 0.233206 
+I0110 21:06:07.291388 24740 sgd_solver.cpp:200] weight diff/data:0.005074 0.001064 0.000373 0.000394 0.000400 
+I0110 21:06:07.641314 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:07.895992 24740 solver.cpp:224] Iteration 2400 (165.094 iter/s, 0.605715s/100 iters), loss = 0.250432
+I0110 21:06:07.895992 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.844444
+I0110 21:06:07.898015 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.244409 (* 1 = 0.244409 loss)
+I0110 21:06:07.899018 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0120459 (* 0.5 = 0.00602293 loss)
+I0110 21:06:07.900003 24740 sgd_solver.cpp:137] Iteration 2400, lr = 0.001
+I0110 21:06:07.902009 24740 sgd_solver.cpp:185] prelu slope:0.257285 0.233253 0.232245 
+I0110 21:06:07.904014 24740 sgd_solver.cpp:200] weight diff/data:0.001010 0.000451 0.000251 0.000306 0.000454 
+I0110 21:06:08.335161 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:08.515640 24740 solver.cpp:224] Iteration 2500 (163.107 iter/s, 0.613093s/100 iters), loss = 0.237593
+I0110 21:06:08.515640 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.916667
+I0110 21:06:08.518647 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.232284 (* 1 = 0.232284 loss)
+I0110 21:06:08.519650 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0106179 (* 0.5 = 0.00530897 loss)
+I0110 21:06:08.520653 24740 sgd_solver.cpp:137] Iteration 2500, lr = 0.001
+I0110 21:06:08.521656 24740 sgd_solver.cpp:185] prelu slope:0.257390 0.232531 0.231298 
+I0110 21:06:08.522660 24740 sgd_solver.cpp:200] weight diff/data:0.001904 0.001212 0.000433 0.000853 0.000709 
+I0110 21:06:09.003939 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:09.106211 24740 solver.cpp:224] Iteration 2600 (171.009 iter/s, 0.584765s/100 iters), loss = 0.219017
+I0110 21:06:09.106211 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.90566
+I0110 21:06:09.109220 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.214491 (* 1 = 0.214491 loss)
+I0110 21:06:09.110222 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00905298 (* 0.5 = 0.00452649 loss)
+I0110 21:06:09.111225 24740 sgd_solver.cpp:137] Iteration 2600, lr = 0.001
+I0110 21:06:09.113229 24740 sgd_solver.cpp:185] prelu slope:0.257402 0.231699 0.230323 
+I0110 21:06:09.116237 24740 sgd_solver.cpp:200] weight diff/data:0.003195 0.001146 0.002214 0.000930 0.000478 
+I0110 21:06:09.650660 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:09.678735 24740 solver.cpp:224] Iteration 2700 (176.88 iter/s, 0.565354s/100 iters), loss = 0.187571
+I0110 21:06:09.678735 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.944444
+I0110 21:06:09.680739 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.184512 (* 1 = 0.184512 loss)
+I0110 21:06:09.681742 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0061191 (* 0.5 = 0.00305955 loss)
+I0110 21:06:09.682745 24740 sgd_solver.cpp:137] Iteration 2700, lr = 0.001
+I0110 21:06:09.684751 24740 sgd_solver.cpp:185] prelu slope:0.257540 0.230826 0.229318 
+I0110 21:06:09.685753 24740 sgd_solver.cpp:200] weight diff/data:0.002452 0.002400 0.000674 0.004972 0.000389 
+I0110 21:06:10.268302 24740 solver.cpp:224] Iteration 2800 (171.127 iter/s, 0.58436s/100 iters), loss = 0.135005
+I0110 21:06:10.269304 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.961538
+I0110 21:06:10.269304 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.130719 (* 1 = 0.130719 loss)
+I0110 21:06:10.271311 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00857169 (* 0.5 = 0.00428584 loss)
+I0110 21:06:10.271311 24740 sgd_solver.cpp:137] Iteration 2800, lr = 0.001
+I0110 21:06:10.274315 24740 sgd_solver.cpp:185] prelu slope:0.257795 0.230018 0.228330 
+I0110 21:06:10.275321 24740 sgd_solver.cpp:200] weight diff/data:0.002021 0.002229 0.000429 0.000380 0.000571 
+I0110 21:06:10.321441 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:10.844833 24740 solver.cpp:224] Iteration 2900 (174.974 iter/s, 0.571513s/100 iters), loss = 0.194415
+I0110 21:06:10.844833 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.93617
+I0110 21:06:10.847842 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.189732 (* 1 = 0.189732 loss)
+I0110 21:06:10.848845 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00936442 (* 0.5 = 0.00468221 loss)
+I0110 21:06:10.849848 24740 sgd_solver.cpp:137] Iteration 2900, lr = 0.001
+I0110 21:06:10.850849 24740 sgd_solver.cpp:185] prelu slope:0.258028 0.229257 0.227329 
+I0110 21:06:10.851853 24740 sgd_solver.cpp:200] weight diff/data:0.001002 0.000882 0.000312 0.000924 0.000371 
+I0110 21:06:10.973176 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:11.432397 24740 solver.cpp:224] Iteration 3000 (171.787 iter/s, 0.582116s/100 iters), loss = 0.244397
+I0110 21:06:11.432397 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.869565
+I0110 21:06:11.433400 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.239976 (* 1 = 0.239976 loss)
+I0110 21:06:11.434403 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00884073 (* 0.5 = 0.00442036 loss)
+I0110 21:06:11.435405 24740 sgd_solver.cpp:137] Iteration 3000, lr = 0.001
+I0110 21:06:11.437410 24740 sgd_solver.cpp:185] prelu slope:0.258187 0.228287 0.226313 
+I0110 21:06:11.438413 24740 sgd_solver.cpp:200] weight diff/data:0.000946 0.001201 0.000772 0.001511 0.000444 
+I0110 21:06:11.628921 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:12.014945 24740 solver.cpp:224] Iteration 3100 (172.991 iter/s, 0.578065s/100 iters), loss = 0.232353
+I0110 21:06:12.014945 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.910714
+I0110 21:06:12.015949 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.229531 (* 1 = 0.229531 loss)
+I0110 21:06:12.018955 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0056443 (* 0.5 = 0.00282215 loss)
+I0110 21:06:12.019958 24740 sgd_solver.cpp:137] Iteration 3100, lr = 0.001
+I0110 21:06:12.020961 24740 sgd_solver.cpp:185] prelu slope:0.258154 0.227304 0.225311 
+I0110 21:06:12.022966 24740 sgd_solver.cpp:200] weight diff/data:0.000815 0.001254 0.000404 0.000389 0.001034 
+I0110 21:06:12.283659 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:12.600502 24740 solver.cpp:224] Iteration 3200 (172.549 iter/s, 0.579546s/100 iters), loss = 0.280925
+I0110 21:06:12.600502 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.882353
+I0110 21:06:12.602507 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.277454 (* 1 = 0.277454 loss)
+I0110 21:06:12.603509 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00694155 (* 0.5 = 0.00347077 loss)
+I0110 21:06:12.604512 24740 sgd_solver.cpp:137] Iteration 3200, lr = 0.001
+I0110 21:06:12.605515 24740 sgd_solver.cpp:185] prelu slope:0.258108 0.226238 0.224301 
+I0110 21:06:12.606518 24740 sgd_solver.cpp:200] weight diff/data:0.000612 0.000921 0.000245 0.000179 0.000566 
+I0110 21:06:12.936394 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:13.189069 24740 solver.cpp:224] Iteration 3300 (171.32 iter/s, 0.583703s/100 iters), loss = 0.26357
+I0110 21:06:13.189069 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.888889
+I0110 21:06:13.192077 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.260417 (* 1 = 0.260417 loss)
+I0110 21:06:13.193079 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00630727 (* 0.5 = 0.00315363 loss)
+I0110 21:06:13.193079 24740 sgd_solver.cpp:137] Iteration 3300, lr = 0.001
+I0110 21:06:13.195085 24740 sgd_solver.cpp:185] prelu slope:0.258080 0.225233 0.223280 
+I0110 21:06:13.196087 24740 sgd_solver.cpp:200] weight diff/data:0.000837 0.000713 0.000255 0.000366 0.000839 
+I0110 21:06:13.602165 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:13.779636 24740 solver.cpp:224] Iteration 3400 (170.958 iter/s, 0.584938s/100 iters), loss = 0.196271
+I0110 21:06:13.779636 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.916667
+I0110 21:06:13.781646 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.193124 (* 1 = 0.193124 loss)
+I0110 21:06:13.783649 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00629468 (* 0.5 = 0.00314734 loss)
+I0110 21:06:13.784651 24740 sgd_solver.cpp:137] Iteration 3400, lr = 0.001
+I0110 21:06:13.787659 24740 sgd_solver.cpp:185] prelu slope:0.258041 0.224202 0.222271 
+I0110 21:06:13.788661 24740 sgd_solver.cpp:200] weight diff/data:0.000667 0.002999 0.000279 0.000194 0.000527 
+I0110 21:06:14.259914 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:14.370206 24740 solver.cpp:224] Iteration 3500 (171.591 iter/s, 0.582781s/100 iters), loss = 0.179338
+I0110 21:06:14.370206 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.90566
+I0110 21:06:14.371222 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.176483 (* 1 = 0.176483 loss)
+I0110 21:06:14.372212 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00571074 (* 0.5 = 0.00285537 loss)
+I0110 21:06:14.374217 24740 sgd_solver.cpp:137] Iteration 3500, lr = 0.001
+I0110 21:06:14.376224 24740 sgd_solver.cpp:185] prelu slope:0.257771 0.223028 0.221274 
+I0110 21:06:14.377226 24740 sgd_solver.cpp:200] weight diff/data:0.002269 0.002585 0.000563 0.000242 0.001153 
+I0110 21:06:14.964788 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:14.998879 24740 solver.cpp:224] Iteration 3600 (160.396 iter/s, 0.623457s/100 iters), loss = 0.142805
+I0110 21:06:14.998879 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.944444
+I0110 21:06:15.005899 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.14076 (* 1 = 0.14076 loss)
+I0110 21:06:15.006917 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00408986 (* 0.5 = 0.00204493 loss)
+I0110 21:06:15.007920 24740 sgd_solver.cpp:137] Iteration 3600, lr = 0.001
+I0110 21:06:15.009909 24740 sgd_solver.cpp:185] prelu slope:0.257570 0.221881 0.220274 
+I0110 21:06:15.011915 24740 sgd_solver.cpp:200] weight diff/data:0.001299 0.003978 0.000575 0.000637 0.000570 
+I0110 21:06:15.600478 24740 solver.cpp:224] Iteration 3700 (169.161 iter/s, 0.591154s/100 iters), loss = 0.0970684
+I0110 21:06:15.601480 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.961538
+I0110 21:06:15.603487 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0946505 (* 1 = 0.0946505 loss)
+I0110 21:06:15.604490 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00483579 (* 0.5 = 0.0024179 loss)
+I0110 21:06:15.605491 24740 sgd_solver.cpp:137] Iteration 3700, lr = 0.001
+I0110 21:06:15.606494 24740 sgd_solver.cpp:185] prelu slope:0.257625 0.220840 0.219284 
+I0110 21:06:15.608500 24740 sgd_solver.cpp:200] weight diff/data:0.001415 0.001889 0.000986 0.000409 0.045908 
+I0110 21:06:15.654623 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:16.198070 24740 solver.cpp:224] Iteration 3800 (169.196 iter/s, 0.59103s/100 iters), loss = 0.182093
+I0110 21:06:16.198070 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.93617
+I0110 21:06:16.199072 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.179471 (* 1 = 0.179471 loss)
+I0110 21:06:16.201077 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00524416 (* 0.5 = 0.00262208 loss)
+I0110 21:06:16.202080 24740 sgd_solver.cpp:137] Iteration 3800, lr = 0.001
+I0110 21:06:16.204084 24740 sgd_solver.cpp:185] prelu slope:0.257629 0.219851 0.218282 
+I0110 21:06:16.206089 24740 sgd_solver.cpp:200] weight diff/data:0.000791 0.001081 0.000216 0.000217 0.000663 
+I0110 21:06:16.326411 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:16.798666 24740 solver.cpp:224] Iteration 3900 (168.18 iter/s, 0.594601s/100 iters), loss = 0.187234
+I0110 21:06:16.798666 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.869565
+I0110 21:06:16.800673 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.18425 (* 1 = 0.18425 loss)
+I0110 21:06:16.800673 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0059667 (* 0.5 = 0.00298335 loss)
+I0110 21:06:16.801674 24740 sgd_solver.cpp:137] Iteration 3900, lr = 0.001
+I0110 21:06:16.803680 24740 sgd_solver.cpp:185] prelu slope:0.257594 0.218698 0.217280 
+I0110 21:06:16.804683 24740 sgd_solver.cpp:200] weight diff/data:0.001468 0.001941 0.000512 0.000745 0.000694 
+I0110 21:06:17.002205 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:17.405279 24740 solver.cpp:224] Iteration 4000 (166.186 iter/s, 0.601736s/100 iters), loss = 0.20716
+I0110 21:06:17.405279 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.928571
+I0110 21:06:17.407284 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.205103 (* 1 = 0.205103 loss)
+I0110 21:06:17.408285 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00411373 (* 0.5 = 0.00205687 loss)
+I0110 21:06:17.409289 24740 sgd_solver.cpp:137] Iteration 4000, lr = 0.001
+I0110 21:06:17.411295 24740 sgd_solver.cpp:185] prelu slope:0.257370 0.217554 0.216295 
+I0110 21:06:17.413301 24740 sgd_solver.cpp:200] weight diff/data:0.000996 0.001335 0.000445 0.000182 0.001144 
+I0110 21:06:17.677001 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:18.009886 24740 solver.cpp:224] Iteration 4100 (167.099 iter/s, 0.598447s/100 iters), loss = 0.235317
+I0110 21:06:18.009886 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.882353
+I0110 21:06:18.011891 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.23289 (* 1 = 0.23289 loss)
+I0110 21:06:18.012894 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00485363 (* 0.5 = 0.00242681 loss)
+I0110 21:06:18.013897 24740 sgd_solver.cpp:137] Iteration 4100, lr = 0.001
+I0110 21:06:18.014899 24740 sgd_solver.cpp:185] prelu slope:0.257141 0.216352 0.215299 
+I0110 21:06:18.015902 24740 sgd_solver.cpp:200] weight diff/data:0.000532 0.001729 0.000627 0.000109 0.000542 
+I0110 21:06:18.362824 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:18.616499 24740 solver.cpp:224] Iteration 4200 (166.269 iter/s, 0.601436s/100 iters), loss = 0.233348
+I0110 21:06:18.616499 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.911111
+I0110 21:06:18.618505 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.231236 (* 1 = 0.231236 loss)
+I0110 21:06:18.620510 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00422492 (* 0.5 = 0.00211246 loss)
+I0110 21:06:18.621513 24740 sgd_solver.cpp:137] Iteration 4200, lr = 0.001
+I0110 21:06:18.622515 24740 sgd_solver.cpp:185] prelu slope:0.256959 0.215289 0.214294 
+I0110 21:06:18.623519 24740 sgd_solver.cpp:200] weight diff/data:0.000933 0.002726 0.000280 0.000318 0.000719 
+I0110 21:06:19.014557 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:19.188017 24740 solver.cpp:224] Iteration 4300 (176.662 iter/s, 0.566052s/100 iters), loss = 0.176069
+I0110 21:06:19.188017 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.9375
+I0110 21:06:19.190023 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.17376 (* 1 = 0.17376 loss)
+I0110 21:06:19.191026 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00461689 (* 0.5 = 0.00230845 loss)
+I0110 21:06:19.193032 24740 sgd_solver.cpp:137] Iteration 4300, lr = 0.001
+I0110 21:06:19.194034 24740 sgd_solver.cpp:185] prelu slope:0.256848 0.214243 0.213311 
+I0110 21:06:19.196039 24740 sgd_solver.cpp:200] weight diff/data:0.000749 0.000872 0.000206 0.000145 0.000454 
+I0110 21:06:19.676318 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:19.783603 24740 solver.cpp:224] Iteration 4400 (169.791 iter/s, 0.588961s/100 iters), loss = 0.158051
+I0110 21:06:19.783603 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.943396
+I0110 21:06:19.786612 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.155838 (* 1 = 0.155838 loss)
+I0110 21:06:19.788617 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0044258 (* 0.5 = 0.0022129 loss)
+I0110 21:06:19.789619 24740 sgd_solver.cpp:137] Iteration 4400, lr = 0.001
+I0110 21:06:19.791625 24740 sgd_solver.cpp:185] prelu slope:0.256423 0.213044 0.212342 
+I0110 21:06:19.792629 24740 sgd_solver.cpp:200] weight diff/data:0.002095 0.001604 0.000296 0.000324 0.000626 
+I0110 21:06:20.344092 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:20.376201 24740 solver.cpp:224] Iteration 4500 (171.097 iter/s, 0.584462s/100 iters), loss = 0.118733
+I0110 21:06:20.376201 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.944444
+I0110 21:06:20.377179 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.117236 (* 1 = 0.117236 loss)
+I0110 21:06:20.380187 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00299447 (* 0.5 = 0.00149724 loss)
+I0110 21:06:20.381191 24740 sgd_solver.cpp:137] Iteration 4500, lr = 0.001
+I0110 21:06:20.382194 24740 sgd_solver.cpp:185] prelu slope:0.256070 0.211893 0.211375 
+I0110 21:06:20.383198 24740 sgd_solver.cpp:200] weight diff/data:0.001588 0.002053 0.000473 0.000653 0.000367 
+I0110 21:06:20.975771 24740 solver.cpp:224] Iteration 4600 (168.421 iter/s, 0.593749s/100 iters), loss = 0.0784687
+I0110 21:06:20.975771 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.980769
+I0110 21:06:20.977777 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0769723 (* 1 = 0.0769723 loss)
+I0110 21:06:20.978780 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00299274 (* 0.5 = 0.00149637 loss)
+I0110 21:06:20.979782 24740 sgd_solver.cpp:137] Iteration 4600, lr = 0.001
+I0110 21:06:20.981787 24740 sgd_solver.cpp:185] prelu slope:0.256002 0.210882 0.210411 
+I0110 21:06:20.982790 24740 sgd_solver.cpp:200] weight diff/data:0.001958 0.003047 0.000385 0.000808 0.000564 
+I0110 21:06:21.026908 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:21.552305 24740 solver.cpp:224] Iteration 4700 (175.151 iter/s, 0.570935s/100 iters), loss = 0.160693
+I0110 21:06:21.552305 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.93617
+I0110 21:06:21.554311 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.158905 (* 1 = 0.158905 loss)
+I0110 21:06:21.555313 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00357526 (* 0.5 = 0.00178763 loss)
+I0110 21:06:21.556316 24740 sgd_solver.cpp:137] Iteration 4700, lr = 0.001
+I0110 21:06:21.558321 24740 sgd_solver.cpp:185] prelu slope:0.255831 0.209909 0.209443 
+I0110 21:06:21.559324 24740 sgd_solver.cpp:200] weight diff/data:0.001434 0.000917 0.000300 0.000544 0.000370 
+I0110 21:06:21.680646 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:22.141872 24740 solver.cpp:224] Iteration 4800 (171.374 iter/s, 0.583518s/100 iters), loss = 0.146921
+I0110 21:06:22.141872 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.934783
+I0110 21:06:22.143877 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.144659 (* 1 = 0.144659 loss)
+I0110 21:06:22.144881 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00452531 (* 0.5 = 0.00226266 loss)
+I0110 21:06:22.144881 24740 sgd_solver.cpp:137] Iteration 4800, lr = 0.001
+I0110 21:06:22.146886 24740 sgd_solver.cpp:185] prelu slope:0.255704 0.208825 0.208482 
+I0110 21:06:22.147888 24740 sgd_solver.cpp:200] weight diff/data:0.002703 0.002358 0.000737 0.003339 0.000431 
+I0110 21:06:22.338395 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:22.729436 24740 solver.cpp:224] Iteration 4900 (171.604 iter/s, 0.582737s/100 iters), loss = 0.193056
+I0110 21:06:22.729436 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.928571
+I0110 21:06:22.731442 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.191729 (* 1 = 0.191729 loss)
+I0110 21:06:22.732445 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00265408 (* 0.5 = 0.00132704 loss)
+I0110 21:06:22.733448 24740 sgd_solver.cpp:137] Iteration 4900, lr = 0.001
+I0110 21:06:22.734450 24740 sgd_solver.cpp:185] prelu slope:0.255408 0.207732 0.207541 
+I0110 21:06:22.736456 24740 sgd_solver.cpp:200] weight diff/data:0.002784 0.000889 0.000364 0.000238 0.003903 
+I0110 21:06:22.992133 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:23.309978 24740 solver.cpp:224] Iteration 5000 (173.746 iter/s, 0.575552s/100 iters), loss = 0.202735
+I0110 21:06:23.309978 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.921569
+I0110 21:06:23.312986 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.201044 (* 1 = 0.201044 loss)
+I0110 21:06:23.312986 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00338171 (* 0.5 = 0.00169085 loss)
+I0110 21:06:23.315994 24740 sgd_solver.cpp:137] Iteration 5000, lr = 0.001
+I0110 21:06:23.317999 24740 sgd_solver.cpp:185] prelu slope:0.255092 0.206598 0.206592 
+I0110 21:06:23.319002 24740 sgd_solver.cpp:200] weight diff/data:0.001418 0.000645 0.019772 0.000177 0.000527 
+I0110 21:06:23.648880 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:23.889521 24740 solver.cpp:224] Iteration 5100 (174.952 iter/s, 0.571585s/100 iters), loss = 0.198713
+I0110 21:06:23.889521 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.911111
+I0110 21:06:23.891526 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.197154 (* 1 = 0.197154 loss)
+I0110 21:06:23.894532 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00311836 (* 0.5 = 0.00155918 loss)
+I0110 21:06:23.895535 24740 sgd_solver.cpp:137] Iteration 5100, lr = 0.001
+I0110 21:06:23.896538 24740 sgd_solver.cpp:185] prelu slope:0.254836 0.205601 0.205639 
+I0110 21:06:23.897541 24740 sgd_solver.cpp:200] weight diff/data:0.001225 0.001536 0.000322 0.000320 0.000653 
+I0110 21:06:24.300613 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:24.495131 24740 solver.cpp:224] Iteration 5200 (167.091 iter/s, 0.598475s/100 iters), loss = 0.164447
+I0110 21:06:24.495131 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.9375
+I0110 21:06:24.497135 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.162713 (* 1 = 0.162713 loss)
+I0110 21:06:24.498138 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00346697 (* 0.5 = 0.00173349 loss)
+I0110 21:06:24.499140 24740 sgd_solver.cpp:137] Iteration 5200, lr = 0.001
+I0110 21:06:24.501147 24740 sgd_solver.cpp:185] prelu slope:0.254710 0.204634 0.204708 
+I0110 21:06:24.502148 24740 sgd_solver.cpp:200] weight diff/data:0.001163 0.002530 0.000408 0.000205 0.000415 
+I0110 21:06:24.984431 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:25.089710 24740 solver.cpp:224] Iteration 5300 (169.961 iter/s, 0.588372s/100 iters), loss = 0.143829
+I0110 21:06:25.089710 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.943396
+I0110 21:06:25.091715 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.142284 (* 1 = 0.142284 loss)
+I0110 21:06:25.091715 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00308973 (* 0.5 = 0.00154487 loss)
+I0110 21:06:25.092718 24740 sgd_solver.cpp:137] Iteration 5300, lr = 0.001
+I0110 21:06:25.094724 24740 sgd_solver.cpp:185] prelu slope:0.254204 0.203455 0.203788 
+I0110 21:06:25.095727 24740 sgd_solver.cpp:200] weight diff/data:0.002797 0.001238 0.000522 0.000386 0.000529 
+I0110 21:06:25.657222 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:25.687299 24740 solver.cpp:224] Iteration 5400 (168.634 iter/s, 0.593001s/100 iters), loss = 0.100915
+I0110 21:06:25.687299 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.981481
+I0110 21:06:25.689304 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0997629 (* 1 = 0.0997629 loss)
+I0110 21:06:25.690309 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00230417 (* 0.5 = 0.00115209 loss)
+I0110 21:06:25.690309 24740 sgd_solver.cpp:137] Iteration 5400, lr = 0.001
+I0110 21:06:25.692314 24740 sgd_solver.cpp:185] prelu slope:0.253689 0.202318 0.202874 
+I0110 21:06:25.693316 24740 sgd_solver.cpp:200] weight diff/data:0.003047 0.012523 0.000805 0.000881 0.000346 
+I0110 21:06:26.264834 24740 solver.cpp:224] Iteration 5500 (174.717 iter/s, 0.572356s/100 iters), loss = 0.0685965
+I0110 21:06:26.264834 24740 solver.cpp:243]     Train net output #0: cls_acc = 1
+I0110 21:06:26.266841 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.067614 (* 1 = 0.067614 loss)
+I0110 21:06:26.267843 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0019649 (* 0.5 = 0.000982451 loss)
+I0110 21:06:26.268846 24740 sgd_solver.cpp:137] Iteration 5500, lr = 0.001
+I0110 21:06:26.269848 24740 sgd_solver.cpp:185] prelu slope:0.253501 0.201352 0.201964 
+I0110 21:06:26.270851 24740 sgd_solver.cpp:200] weight diff/data:0.002651 0.000992 0.000451 0.000790 0.000452 
+I0110 21:06:26.314970 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:26.845381 24740 solver.cpp:224] Iteration 5600 (173.822 iter/s, 0.575303s/100 iters), loss = 0.142906
+I0110 21:06:26.845381 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.957447
+I0110 21:06:26.846385 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.141546 (* 1 = 0.141546 loss)
+I0110 21:06:26.848389 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00271989 (* 0.5 = 0.00135994 loss)
+I0110 21:06:26.849391 24740 sgd_solver.cpp:137] Iteration 5600, lr = 0.001
+I0110 21:06:26.851397 24740 sgd_solver.cpp:185] prelu slope:0.253161 0.200394 0.201051 
+I0110 21:06:26.852399 24740 sgd_solver.cpp:200] weight diff/data:0.001307 0.002538 0.000697 0.000674 0.000427 
+I0110 21:06:26.970713 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:27.433943 24740 solver.cpp:224] Iteration 5700 (171.456 iter/s, 0.583241s/100 iters), loss = 0.124215
+I0110 21:06:27.433943 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.978261
+I0110 21:06:27.435950 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.122548 (* 1 = 0.122548 loss)
+I0110 21:06:27.436952 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00333368 (* 0.5 = 0.00166684 loss)
+I0110 21:06:27.437954 24740 sgd_solver.cpp:137] Iteration 5700, lr = 0.001
+I0110 21:06:27.439960 24740 sgd_solver.cpp:185] prelu slope:0.252950 0.199343 0.200146 
+I0110 21:06:27.440963 24740 sgd_solver.cpp:200] weight diff/data:0.002287 0.002207 0.000906 0.001667 0.000369 
+I0110 21:06:27.630466 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:28.013486 24740 solver.cpp:224] Iteration 5800 (174.182 iter/s, 0.574114s/100 iters), loss = 0.185695
+I0110 21:06:28.013486 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.928571
+I0110 21:06:28.016494 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.184769 (* 1 = 0.184769 loss)
+I0110 21:06:28.017495 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00185203 (* 0.5 = 0.000926016 loss)
+I0110 21:06:28.017495 24740 sgd_solver.cpp:137] Iteration 5800, lr = 0.001
+I0110 21:06:28.019500 24740 sgd_solver.cpp:185] prelu slope:0.252571 0.198262 0.199257 
+I0110 21:06:28.020503 24740 sgd_solver.cpp:200] weight diff/data:0.003271 0.000928 0.000323 0.000502 0.000693 
+I0110 21:06:28.281198 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:28.589016 24740 solver.cpp:224] Iteration 5900 (175.588 iter/s, 0.569516s/100 iters), loss = 0.178182
+I0110 21:06:28.589016 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.921569
+I0110 21:06:28.591020 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.176943 (* 1 = 0.176943 loss)
+I0110 21:06:28.592025 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00247855 (* 0.5 = 0.00123927 loss)
+I0110 21:06:28.592025 24740 sgd_solver.cpp:137] Iteration 5900, lr = 0.001
+I0110 21:06:28.594029 24740 sgd_solver.cpp:185] prelu slope:0.252111 0.197114 0.198364 
+I0110 21:06:28.595033 24740 sgd_solver.cpp:200] weight diff/data:0.001233 0.000843 0.000335 0.000245 0.000423 
+I0110 21:06:28.929922 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:29.178584 24740 solver.cpp:224] Iteration 6000 (171.128 iter/s, 0.584359s/100 iters), loss = 0.167267
+I0110 21:06:29.178584 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.911111
+I0110 21:06:29.179587 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.166143 (* 1 = 0.166143 loss)
+I0110 21:06:29.180590 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00224778 (* 0.5 = 0.00112389 loss)
+I0110 21:06:29.181592 24740 sgd_solver.cpp:137] Iteration 6000, lr = 0.001
+I0110 21:06:29.183598 24740 sgd_solver.cpp:185] prelu slope:0.251767 0.196101 0.197464 
+I0110 21:06:29.184602 24740 sgd_solver.cpp:200] weight diff/data:0.001572 0.000860 0.005872 0.001366 0.000581 
+I0110 21:06:29.573633 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:29.750103 24740 solver.cpp:224] Iteration 6100 (176.474 iter/s, 0.566657s/100 iters), loss = 0.151153
+I0110 21:06:29.750103 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.9375
+I0110 21:06:29.752108 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.149908 (* 1 = 0.149908 loss)
+I0110 21:06:29.754114 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00248947 (* 0.5 = 0.00124474 loss)
+I0110 21:06:29.756119 24740 sgd_solver.cpp:137] Iteration 6100, lr = 0.001
+I0110 21:06:29.757122 24740 sgd_solver.cpp:185] prelu slope:0.251532 0.195136 0.196588 
+I0110 21:06:29.759127 24740 sgd_solver.cpp:200] weight diff/data:0.002320 0.001241 0.000321 0.000718 0.000419 
+I0110 21:06:30.235394 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:30.339670 24740 solver.cpp:224] Iteration 6200 (171.71 iter/s, 0.582377s/100 iters), loss = 0.131273
+I0110 21:06:30.339670 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.943396
+I0110 21:06:30.341676 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.130171 (* 1 = 0.130171 loss)
+I0110 21:06:30.341676 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00220327 (* 0.5 = 0.00110164 loss)
+I0110 21:06:30.342679 24740 sgd_solver.cpp:137] Iteration 6200, lr = 0.001
+I0110 21:06:30.343680 24740 sgd_solver.cpp:185] prelu slope:0.250863 0.193960 0.195723 
+I0110 21:06:30.344684 24740 sgd_solver.cpp:200] weight diff/data:0.008361 0.001306 0.000740 0.000730 0.000465 
+I0110 21:06:30.894145 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:30.922219 24740 solver.cpp:224] Iteration 6300 (172.96 iter/s, 0.57817s/100 iters), loss = 0.0855141
+I0110 21:06:30.922219 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.981481
+I0110 21:06:30.924226 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0846594 (* 1 = 0.0846594 loss)
+I0110 21:06:30.925228 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00170941 (* 0.5 = 0.000854705 loss)
+I0110 21:06:30.925228 24740 sgd_solver.cpp:137] Iteration 6300, lr = 0.001
+I0110 21:06:30.927233 24740 sgd_solver.cpp:185] prelu slope:0.250189 0.192784 0.194862 
+I0110 21:06:30.928236 24740 sgd_solver.cpp:200] weight diff/data:0.006371 0.001326 0.000532 0.001442 0.000419 
+I0110 21:06:31.516801 24740 solver.cpp:224] Iteration 6400 (169.378 iter/s, 0.590395s/100 iters), loss = 0.061912
+I0110 21:06:31.517803 24740 solver.cpp:243]     Train net output #0: cls_acc = 1
+I0110 21:06:31.518806 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0611531 (* 1 = 0.0611531 loss)
+I0110 21:06:31.519809 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00151777 (* 0.5 = 0.000758883 loss)
+I0110 21:06:31.520812 24740 sgd_solver.cpp:137] Iteration 6400, lr = 0.001
+I0110 21:06:31.521813 24740 sgd_solver.cpp:185] prelu slope:0.249949 0.191839 0.194005 
+I0110 21:06:31.522817 24740 sgd_solver.cpp:200] weight diff/data:0.002250 0.002072 0.001601 0.000956 0.000368 
+I0110 21:06:31.567936 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:32.105365 24740 solver.cpp:224] Iteration 6500 (171.405 iter/s, 0.583415s/100 iters), loss = 0.127248
+I0110 21:06:32.105365 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.957447
+I0110 21:06:32.107370 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.126226 (* 1 = 0.126226 loss)
+I0110 21:06:32.108373 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00204483 (* 0.5 = 0.00102241 loss)
+I0110 21:06:32.109376 24740 sgd_solver.cpp:137] Iteration 6500, lr = 0.001
+I0110 21:06:32.111382 24740 sgd_solver.cpp:185] prelu slope:0.249465 0.190865 0.193147 
+I0110 21:06:32.112385 24740 sgd_solver.cpp:200] weight diff/data:0.001767 0.006413 0.000569 0.001338 0.000884 
+I0110 21:06:32.223680 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:32.722005 24740 solver.cpp:224] Iteration 6600 (163.56 iter/s, 0.611396s/100 iters), loss = 0.108983
+I0110 21:06:32.722005 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.978261
+I0110 21:06:32.725013 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.107794 (* 1 = 0.107794 loss)
+I0110 21:06:32.726016 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00237828 (* 0.5 = 0.00118914 loss)
+I0110 21:06:32.727018 24740 sgd_solver.cpp:137] Iteration 6600, lr = 0.001
+I0110 21:06:32.727018 24740 sgd_solver.cpp:185] prelu slope:0.249128 0.189814 0.192295 
+I0110 21:06:32.729024 24740 sgd_solver.cpp:200] weight diff/data:0.001625 0.002113 0.000822 0.008295 0.000479 
+I0110 21:06:32.942572 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:33.379735 24740 solver.cpp:224] Iteration 6700 (153.251 iter/s, 0.652526s/100 iters), loss = 0.182052
+I0110 21:06:33.379735 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.928571
+I0110 21:06:33.383746 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.181333 (* 1 = 0.181333 loss)
+I0110 21:06:33.384748 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00143718 (* 0.5 = 0.000718588 loss)
+I0110 21:06:33.385751 24740 sgd_solver.cpp:137] Iteration 6700, lr = 0.001
+I0110 21:06:33.386754 24740 sgd_solver.cpp:185] prelu slope:0.248633 0.188705 0.191460 
+I0110 21:06:33.387756 24740 sgd_solver.cpp:200] weight diff/data:0.001584 0.000701 0.000367 0.000604 0.000909 
+I0110 21:06:33.665493 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:34.028460 24740 solver.cpp:224] Iteration 6800 (155.914 iter/s, 0.641377s/100 iters), loss = 0.162562
+I0110 21:06:34.028460 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.941176
+I0110 21:06:34.029464 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.161587 (* 1 = 0.161587 loss)
+I0110 21:06:34.031469 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00195021 (* 0.5 = 0.000975104 loss)
+I0110 21:06:34.032469 24740 sgd_solver.cpp:137] Iteration 6800, lr = 0.001
+I0110 21:06:34.032469 24740 sgd_solver.cpp:185] prelu slope:0.247987 0.188017 0.190617 
+I0110 21:06:34.035480 24740 sgd_solver.cpp:200] weight diff/data:0.001082 0.000386 0.000172 0.000157 0.000791 
+I0110 21:06:34.396437 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:34.676182 24740 solver.cpp:224] Iteration 6900 (155.402 iter/s, 0.643493s/100 iters), loss = 0.137797
+I0110 21:06:34.676182 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.933333
+I0110 21:06:34.680192 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.137009 (* 1 = 0.137009 loss)
+I0110 21:06:34.681195 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00157516 (* 0.5 = 0.000787581 loss)
+I0110 21:06:34.682199 24740 sgd_solver.cpp:137] Iteration 6900, lr = 0.001
+I0110 21:06:34.683199 24740 sgd_solver.cpp:185] prelu slope:0.247502 0.187439 0.189769 
+I0110 21:06:34.685206 24740 sgd_solver.cpp:200] weight diff/data:0.001073 0.002041 0.000327 0.000224 0.003193 
+I0110 21:06:35.139413 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:35.338943 24740 solver.cpp:224] Iteration 7000 (152.654 iter/s, 0.655074s/100 iters), loss = 0.142498
+I0110 21:06:35.338943 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.9375
+I0110 21:06:35.340950 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.141591 (* 1 = 0.141591 loss)
+I0110 21:06:35.341951 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00181304 (* 0.5 = 0.000906518 loss)
+I0110 21:06:35.342954 24740 sgd_solver.cpp:137] Iteration 7000, lr = 0.001
+I0110 21:06:35.344960 24740 sgd_solver.cpp:185] prelu slope:0.247136 0.186992 0.188944 
+I0110 21:06:35.345964 24740 sgd_solver.cpp:200] weight diff/data:0.001278 0.000888 0.002236 0.000420 0.000639 
+I0110 21:06:35.874367 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:35.985663 24740 solver.cpp:224] Iteration 7100 (156.075 iter/s, 0.640719s/100 iters), loss = 0.11952
+I0110 21:06:35.985663 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.962264
+I0110 21:06:35.988672 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.118706 (* 1 = 0.118706 loss)
+I0110 21:06:35.990677 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00162767 (* 0.5 = 0.000813837 loss)
+I0110 21:06:35.992682 24740 sgd_solver.cpp:137] Iteration 7100, lr = 0.001
+I0110 21:06:35.995690 24740 sgd_solver.cpp:185] prelu slope:0.246311 0.186338 0.188127 
+I0110 21:06:35.998700 24740 sgd_solver.cpp:200] weight diff/data:0.002545 0.001586 0.000805 0.000505 0.000564 
+I0110 21:06:36.582249 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:36.612330 24740 solver.cpp:224] Iteration 7200 (161.913 iter/s, 0.617615s/100 iters), loss = 0.0743795
+I0110 21:06:36.613333 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.981481
+I0110 21:06:36.616340 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0737157 (* 1 = 0.0737157 loss)
+I0110 21:06:36.617344 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00132733 (* 0.5 = 0.000663667 loss)
+I0110 21:06:36.618347 24740 sgd_solver.cpp:137] Iteration 7200, lr = 0.001
+I0110 21:06:36.620352 24740 sgd_solver.cpp:185] prelu slope:0.245497 0.185778 0.187316 
+I0110 21:06:36.621356 24740 sgd_solver.cpp:200] weight diff/data:0.001679 0.001958 0.000825 0.000808 0.000446 
+I0110 21:06:37.271081 24740 solver.cpp:224] Iteration 7300 (153.38 iter/s, 0.651975s/100 iters), loss = 0.0569845
+I0110 21:06:37.272084 24740 solver.cpp:243]     Train net output #0: cls_acc = 1
+I0110 21:06:37.276096 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0564045 (* 1 = 0.0564045 loss)
+I0110 21:06:37.277099 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00115983 (* 0.5 = 0.000579913 loss)
+I0110 21:06:37.278102 24740 sgd_solver.cpp:137] Iteration 7300, lr = 0.001
+I0110 21:06:37.279104 24740 sgd_solver.cpp:185] prelu slope:0.245162 0.185158 0.186506 
+I0110 21:06:37.280108 24740 sgd_solver.cpp:200] weight diff/data:0.002245 0.001667 0.000810 0.000560 0.000364 
+I0110 21:06:37.327230 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:37.909780 24740 solver.cpp:224] Iteration 7400 (158.618 iter/s, 0.630445s/100 iters), loss = 0.112783
+I0110 21:06:37.909780 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.957447
+I0110 21:06:37.911785 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.111994 (* 1 = 0.111994 loss)
+I0110 21:06:37.912788 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00157852 (* 0.5 = 0.000789261 loss)
+I0110 21:06:37.913791 24740 sgd_solver.cpp:137] Iteration 7400, lr = 0.001
+I0110 21:06:37.915798 24740 sgd_solver.cpp:185] prelu slope:0.244587 0.184516 0.185696 
+I0110 21:06:37.916801 24740 sgd_solver.cpp:200] weight diff/data:0.001132 0.000931 0.000557 0.000565 0.000652 
+I0110 21:06:38.034111 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:38.519400 24740 solver.cpp:224] Iteration 7500 (165.396 iter/s, 0.604609s/100 iters), loss = 0.0984343
+I0110 21:06:38.520404 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.978261
+I0110 21:06:38.521406 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.097527 (* 1 = 0.097527 loss)
+I0110 21:06:38.523422 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00181448 (* 0.5 = 0.000907241 loss)
+I0110 21:06:38.524417 24740 sgd_solver.cpp:137] Iteration 7500, lr = 0.001
+I0110 21:06:38.525418 24740 sgd_solver.cpp:185] prelu slope:0.244215 0.183900 0.184891 
+I0110 21:06:38.527422 24740 sgd_solver.cpp:200] weight diff/data:0.002685 0.001568 0.001096 0.000961 0.000494 
+I0110 21:06:38.742995 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:39.173140 24740 solver.cpp:224] Iteration 7600 (154.296 iter/s, 0.648107s/100 iters), loss = 0.178429
+I0110 21:06:39.173140 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.928571
+I0110 21:06:39.174160 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.17784 (* 1 = 0.17784 loss)
+I0110 21:06:39.176146 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00117621 (* 0.5 = 0.000588107 loss)
+I0110 21:06:39.178153 24740 sgd_solver.cpp:137] Iteration 7600, lr = 0.001
+I0110 21:06:39.178153 24740 sgd_solver.cpp:185] prelu slope:0.243649 0.183265 0.184099 
+I0110 21:06:39.180157 24740 sgd_solver.cpp:200] weight diff/data:0.001522 0.001036 0.000332 0.000233 0.000681 
+I0110 21:06:39.448873 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:39.810837 24740 solver.cpp:224] Iteration 7700 (158.036 iter/s, 0.632767s/100 iters), loss = 0.150731
+I0110 21:06:39.810837 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.960784
+I0110 21:06:39.811839 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.149952 (* 1 = 0.149952 loss)
+I0110 21:06:39.814846 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00155749 (* 0.5 = 0.000778747 loss)
+I0110 21:06:39.815847 24740 sgd_solver.cpp:137] Iteration 7700, lr = 0.001
+I0110 21:06:39.817853 24740 sgd_solver.cpp:185] prelu slope:0.242864 0.182637 0.183300 
+I0110 21:06:39.819859 24740 sgd_solver.cpp:200] weight diff/data:0.001135 0.000613 0.000168 0.000092 0.000319 
+I0110 21:06:40.191848 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:40.456552 24740 solver.cpp:224] Iteration 7800 (156.497 iter/s, 0.638988s/100 iters), loss = 0.112807
+I0110 21:06:40.456552 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.955556
+I0110 21:06:40.459559 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.112213 (* 1 = 0.112213 loss)
+I0110 21:06:40.460562 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0011872 (* 0.5 = 0.000593601 loss)
+I0110 21:06:40.462568 24740 sgd_solver.cpp:137] Iteration 7800, lr = 0.001
+I0110 21:06:40.463570 24740 sgd_solver.cpp:185] prelu slope:0.242364 0.182087 0.182500 
+I0110 21:06:40.464573 24740 sgd_solver.cpp:200] weight diff/data:0.001090 0.000790 0.000467 0.000077 0.000566 
+I0110 21:06:40.890707 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:41.081213 24740 solver.cpp:224] Iteration 7900 (161.973 iter/s, 0.617385s/100 iters), loss = 0.135938
+I0110 21:06:41.081213 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.958333
+I0110 21:06:41.082216 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.135216 (* 1 = 0.135216 loss)
+I0110 21:06:41.083218 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00144263 (* 0.5 = 0.000721316 loss)
+I0110 21:06:41.084220 24740 sgd_solver.cpp:137] Iteration 7900, lr = 0.001
+I0110 21:06:41.086226 24740 sgd_solver.cpp:185] prelu slope:0.241994 0.181614 0.181720 
+I0110 21:06:41.087230 24740 sgd_solver.cpp:200] weight diff/data:0.001598 0.001578 0.000315 0.000336 0.000607 
+I0110 21:06:41.584552 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:41.693841 24740 solver.cpp:224] Iteration 8000 (164.567 iter/s, 0.607654s/100 iters), loss = 0.108631
+I0110 21:06:41.693841 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.943396
+I0110 21:06:41.695847 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.107995 (* 1 = 0.107995 loss)
+I0110 21:06:41.697854 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00127062 (* 0.5 = 0.000635311 loss)
+I0110 21:06:41.698855 24740 sgd_solver.cpp:137] Iteration 8000, lr = 0.001
+I0110 21:06:41.699857 24740 sgd_solver.cpp:185] prelu slope:0.241088 0.180962 0.180942 
+I0110 21:06:41.700860 24740 sgd_solver.cpp:200] weight diff/data:0.003750 0.001531 0.000464 0.000440 0.000590 
+I0110 21:06:42.280418 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:42.313490 24740 solver.cpp:224] Iteration 8100 (163.017 iter/s, 0.613432s/100 iters), loss = 0.0660757
+I0110 21:06:42.313490 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.981481
+I0110 21:06:42.316498 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.065558 (* 1 = 0.065558 loss)
+I0110 21:06:42.317500 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00103548 (* 0.5 = 0.000517742 loss)
+I0110 21:06:42.318505 24740 sgd_solver.cpp:137] Iteration 8100, lr = 0.001
+I0110 21:06:42.320513 24740 sgd_solver.cpp:185] prelu slope:0.240242 0.180384 0.180171 
+I0110 21:06:42.322513 24740 sgd_solver.cpp:200] weight diff/data:0.002919 0.002042 0.001398 0.000597 0.000361 
+I0110 21:06:42.958204 24740 solver.cpp:224] Iteration 8200 (156.76 iter/s, 0.637919s/100 iters), loss = 0.0520497
+I0110 21:06:42.958204 24740 solver.cpp:243]     Train net output #0: cls_acc = 1
+I0110 21:06:42.962218 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0515831 (* 1 = 0.0515831 loss)
+I0110 21:06:42.963219 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000933134 (* 0.5 = 0.000466567 loss)
+I0110 21:06:42.964221 24740 sgd_solver.cpp:137] Iteration 8200, lr = 0.001
+I0110 21:06:42.966228 24740 sgd_solver.cpp:185] prelu slope:0.239860 0.179771 0.179402 
+I0110 21:06:42.967229 24740 sgd_solver.cpp:200] weight diff/data:0.047104 0.001638 0.000493 0.000467 0.000518 
+I0110 21:06:43.016360 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:43.568830 24740 solver.cpp:224] Iteration 8300 (165.759 iter/s, 0.603284s/100 iters), loss = 0.101754
+I0110 21:06:43.568830 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.957447
+I0110 21:06:43.570834 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.10112 (* 1 = 0.10112 loss)
+I0110 21:06:43.572839 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00126771 (* 0.5 = 0.000633855 loss)
+I0110 21:06:43.573843 24740 sgd_solver.cpp:137] Iteration 8300, lr = 0.001
+I0110 21:06:43.575848 24740 sgd_solver.cpp:185] prelu slope:0.239195 0.179080 0.178632 
+I0110 21:06:43.577853 24740 sgd_solver.cpp:200] weight diff/data:0.001054 0.001724 0.000376 0.000500 0.000800 
+I0110 21:06:43.702183 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:44.181457 24740 solver.cpp:224] Iteration 8400 (164.917 iter/s, 0.606365s/100 iters), loss = 0.0919313
+I0110 21:06:44.181457 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.978261
+I0110 21:06:44.182459 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0911703 (* 1 = 0.0911703 loss)
+I0110 21:06:44.184466 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00152202 (* 0.5 = 0.000761009 loss)
+I0110 21:06:44.185469 24740 sgd_solver.cpp:137] Iteration 8400, lr = 0.001
+I0110 21:06:44.187474 24740 sgd_solver.cpp:185] prelu slope:0.238759 0.178428 0.177864 
+I0110 21:06:44.188477 24740 sgd_solver.cpp:200] weight diff/data:0.001860 0.001928 0.000671 0.000798 0.000655 
+I0110 21:06:44.387002 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:44.773028 24740 solver.cpp:224] Iteration 8500 (170.693 iter/s, 0.585847s/100 iters), loss = 0.171696
+I0110 21:06:44.773028 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.928571
+I0110 21:06:44.775034 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.171218 (* 1 = 0.171218 loss)
+I0110 21:06:44.776037 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000956921 (* 0.5 = 0.00047846 loss)
+I0110 21:06:44.778043 24740 sgd_solver.cpp:137] Iteration 8500, lr = 0.001
+I0110 21:06:44.780057 24740 sgd_solver.cpp:185] prelu slope:0.238168 0.177775 0.177112 
+I0110 21:06:44.781064 24740 sgd_solver.cpp:200] weight diff/data:0.001352 0.001293 0.000252 0.000221 0.000900 
+I0110 21:06:45.046759 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:45.360594 24740 solver.cpp:224] Iteration 8600 (172.168 iter/s, 0.580828s/100 iters), loss = 0.139184
+I0110 21:06:45.360594 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.960784
+I0110 21:06:45.361594 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.138578 (* 1 = 0.138578 loss)
+I0110 21:06:45.363602 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00121218 (* 0.5 = 0.000606092 loss)
+I0110 21:06:45.363602 24740 sgd_solver.cpp:137] Iteration 8600, lr = 0.001
+I0110 21:06:45.365607 24740 sgd_solver.cpp:185] prelu slope:0.237379 0.177086 0.176352 
+I0110 21:06:45.366611 24740 sgd_solver.cpp:200] weight diff/data:0.000693 0.000577 0.000151 0.000097 0.000305 
+I0110 21:06:45.714534 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:45.976228 24740 solver.cpp:224] Iteration 8700 (163.658 iter/s, 0.61103s/100 iters), loss = 0.092076
+I0110 21:06:45.976228 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.955556
+I0110 21:06:45.978260 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.091616 (* 1 = 0.091616 loss)
+I0110 21:06:45.979238 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000920292 (* 0.5 = 0.000460146 loss)
+I0110 21:06:45.980240 24740 sgd_solver.cpp:137] Iteration 8700, lr = 0.001
+I0110 21:06:45.982245 24740 sgd_solver.cpp:185] prelu slope:0.236924 0.176548 0.175589 
+I0110 21:06:45.983248 24740 sgd_solver.cpp:200] weight diff/data:0.001002 0.000897 0.000228 0.000081 0.002504 
+I0110 21:06:46.397351 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:06:46.413393 24740 blocking_queue.cpp:49] Waiting for data
+I0110 21:07:05.475078 24740 solver.cpp:224] Iteration 8800 (5.13017 iter/s, 19.4925s/100 iters), loss = 0.129852
+I0110 21:07:05.475078 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.958333
+I0110 21:07:05.476081 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.129327 (* 1 = 0.129327 loss)
+I0110 21:07:05.477083 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00105179 (* 0.5 = 0.000525897 loss)
+I0110 21:07:05.478086 24740 sgd_solver.cpp:137] Iteration 8800, lr = 0.001
+I0110 21:07:05.480093 24740 sgd_solver.cpp:185] prelu slope:0.236510 0.176093 0.174847 
+I0110 21:07:05.482103 24740 sgd_solver.cpp:200] weight diff/data:0.001195 0.001233 0.000369 0.000347 0.000923 
+I0110 21:07:05.970394 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:06.077680 24740 solver.cpp:224] Iteration 8900 (167.38 iter/s, 0.597443s/100 iters), loss = 0.0985291
+I0110 21:07:06.077680 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.962264
+I0110 21:07:06.078685 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0980365 (* 1 = 0.0980365 loss)
+I0110 21:07:06.080688 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000985407 (* 0.5 = 0.000492704 loss)
+I0110 21:07:06.082695 24740 sgd_solver.cpp:137] Iteration 8900, lr = 0.001
+I0110 21:07:06.084699 24740 sgd_solver.cpp:185] prelu slope:0.235584 0.175448 0.174107 
+I0110 21:07:06.085702 24740 sgd_solver.cpp:200] weight diff/data:0.002186 0.001037 0.000503 0.000392 0.000821 
+I0110 21:07:06.651206 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:06.680280 24740 solver.cpp:224] Iteration 9000 (167.722 iter/s, 0.596225s/100 iters), loss = 0.0591704
+I0110 21:07:06.680280 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.981481
+I0110 21:07:06.684293 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0587788 (* 1 = 0.0587788 loss)
+I0110 21:07:06.685295 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000783546 (* 0.5 = 0.000391773 loss)
+I0110 21:07:06.685295 24740 sgd_solver.cpp:137] Iteration 9000, lr = 0.001
+I0110 21:07:06.687301 24740 sgd_solver.cpp:185] prelu slope:0.234776 0.174897 0.173374 
+I0110 21:07:06.689313 24740 sgd_solver.cpp:200] weight diff/data:0.001653 0.001264 0.000720 0.000479 0.000297 
+I0110 21:07:07.309955 24740 solver.cpp:224] Iteration 9100 (160.649 iter/s, 0.622473s/100 iters), loss = 0.0471228
+I0110 21:07:07.309955 24740 solver.cpp:243]     Train net output #0: cls_acc = 1
+I0110 21:07:07.311961 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0467372 (* 1 = 0.0467372 loss)
+I0110 21:07:07.312964 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000771463 (* 0.5 = 0.000385731 loss)
+I0110 21:07:07.313967 24740 sgd_solver.cpp:137] Iteration 9100, lr = 0.001
+I0110 21:07:07.314971 24740 sgd_solver.cpp:185] prelu slope:0.234372 0.174271 0.172640 
+I0110 21:07:07.316974 24740 sgd_solver.cpp:200] weight diff/data:0.001682 0.001136 0.000394 0.000363 0.000467 
+I0110 21:07:07.363099 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:07.904537 24740 solver.cpp:224] Iteration 9200 (169.518 iter/s, 0.589909s/100 iters), loss = 0.0915252
+I0110 21:07:07.904537 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.957447
+I0110 21:07:07.907546 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.091018 (* 1 = 0.091018 loss)
+I0110 21:07:07.908548 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.0010146 (* 0.5 = 0.000507299 loss)
+I0110 21:07:07.909550 24740 sgd_solver.cpp:137] Iteration 9200, lr = 0.001
+I0110 21:07:07.911556 24740 sgd_solver.cpp:185] prelu slope:0.233629 0.173567 0.171906 
+I0110 21:07:07.912559 24740 sgd_solver.cpp:200] weight diff/data:0.000888 0.000769 0.001316 0.000441 0.000559 
+I0110 21:07:08.023854 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:08.477061 24740 solver.cpp:224] Iteration 9300 (176.657 iter/s, 0.566069s/100 iters), loss = 0.0864606
+I0110 21:07:08.477061 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.978261
+I0110 21:07:08.479066 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0858282 (* 1 = 0.0858282 loss)
+I0110 21:07:08.480068 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00126505 (* 0.5 = 0.000632523 loss)
+I0110 21:07:08.481071 24740 sgd_solver.cpp:137] Iteration 9300, lr = 0.001
+I0110 21:07:08.481071 24740 sgd_solver.cpp:185] prelu slope:0.233189 0.172937 0.171173 
+I0110 21:07:08.483078 24740 sgd_solver.cpp:200] weight diff/data:0.001309 0.001701 0.001104 0.000658 0.000538 
+I0110 21:07:08.676589 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:09.076654 24740 solver.cpp:224] Iteration 9400 (167.854 iter/s, 0.595756s/100 iters), loss = 0.165881
+I0110 21:07:09.077656 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.928571
+I0110 21:07:09.079661 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.165459 (* 1 = 0.165459 loss)
+I0110 21:07:09.081668 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000843846 (* 0.5 = 0.000421923 loss)
+I0110 21:07:09.083674 24740 sgd_solver.cpp:137] Iteration 9400, lr = 0.001
+I0110 21:07:09.084676 24740 sgd_solver.cpp:185] prelu slope:0.232579 0.172255 0.170454 
+I0110 21:07:09.087685 24740 sgd_solver.cpp:200] weight diff/data:0.001255 0.000783 0.000457 0.000203 0.000544 
+I0110 21:07:09.340354 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:09.667225 24740 solver.cpp:224] Iteration 9500 (171.496 iter/s, 0.583103s/100 iters), loss = 0.127412
+I0110 21:07:09.667225 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.960784
+I0110 21:07:09.670233 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.12693 (* 1 = 0.12693 loss)
+I0110 21:07:09.671236 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.00096434 (* 0.5 = 0.00048217 loss)
+I0110 21:07:09.672238 24740 sgd_solver.cpp:137] Iteration 9500, lr = 0.001
+I0110 21:07:09.675246 24740 sgd_solver.cpp:185] prelu slope:0.231757 0.171547 0.169730 
+I0110 21:07:09.676249 24740 sgd_solver.cpp:200] weight diff/data:0.000688 0.000430 0.000201 0.000085 0.000251 
+I0110 21:07:10.006125 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:10.249774 24740 solver.cpp:224] Iteration 9600 (173.74 iter/s, 0.575573s/100 iters), loss = 0.0758967
+I0110 21:07:10.250790 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.955556
+I0110 21:07:10.252792 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0755336 (* 1 = 0.0755336 loss)
+I0110 21:07:10.253784 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000726296 (* 0.5 = 0.000363148 loss)
+I0110 21:07:10.254787 24740 sgd_solver.cpp:137] Iteration 9600, lr = 0.001
+I0110 21:07:10.256793 24740 sgd_solver.cpp:185] prelu slope:0.231271 0.170970 0.169002 
+I0110 21:07:10.257793 24740 sgd_solver.cpp:200] weight diff/data:0.001105 0.000750 0.000603 0.000106 0.000451 
+I0110 21:07:10.677911 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:10.854380 24740 solver.cpp:224] Iteration 9700 (167.195 iter/s, 0.598104s/100 iters), loss = 0.125074
+I0110 21:07:10.854380 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.958333
+I0110 21:07:10.857388 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.124661 (* 1 = 0.124661 loss)
+I0110 21:07:10.858392 24740 solver.cpp:243]     Train net output #2: roi_loss = 0.000826183 (* 0.5 = 0.000413092 loss)
+I0110 21:07:10.859393 24740 sgd_solver.cpp:137] Iteration 9700, lr = 0.001
+I0110 21:07:10.861399 24740 sgd_solver.cpp:185] prelu slope:0.230876 0.170466 0.168294 
+I0110 21:07:10.862402 24740 sgd_solver.cpp:200] weight diff/data:0.001319 0.001131 0.000526 0.000350 0.000444 
+I0110 21:07:11.348695 16536 mtcnn_data_layer.cpp:84] Restarting data prefetching from start.
+I0110 21:07:11.455979 24740 solver.cpp:224] Iteration 9800 (168.065 iter/s, 0.595007s/100 iters), loss = 0.088671
+I0110 21:07:11.455979 24740 solver.cpp:243]     Train net output #0: cls_acc = 0.962264
+I0110 21:07:11.458987 24740 solver.cpp:243]     Train net output #1: cls_loss = 0.0883008 (* 1 

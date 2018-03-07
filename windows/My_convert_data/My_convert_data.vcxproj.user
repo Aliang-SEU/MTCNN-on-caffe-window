@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerEnvironment>PATH=E:\DeepLearning\caffe-windows\windows\thirdparty\debug_bins;%PATH%</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>--backend=lmdb E:\DeepLearning\caffe-windows\examples\cifar10\cifar-10-binary\cifar-10-batches-bin E:\DeepLearning\caffe-windows\examples\cifar10</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>--backend=lmdb E:\DeepLearning\caffe-windows\examples\cifar10\cifar-10-binary\cifar-10-batches-bin E:\DeepLearning\caffe-windows\examples\cifar10</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerEnvironment>PATH=E:\DeepLearning\caffe-windows\windows\thirdparty\bins;%PATH% $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+  </PropertyGroup>
+</Project>

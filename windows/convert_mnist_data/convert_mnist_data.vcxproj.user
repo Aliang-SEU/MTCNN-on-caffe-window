@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerEnvironment>PATH=E:\DeepLearning\caffe-windows\windows\thirdparty\debug_bins;%PATH% $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>E:\DeepLearning\caffe-windows\examples\mnist\mnist_data\train-images-idx3-ubyte  E:\DeepLearning\caffe-windows\examples\mnist\mnist_data\train-labels-idx1-ubyte  E:\DeepLearning\caffe-windows\examples\mnist\mnist_train_lmdb --backend="lmdb"</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+</Project>

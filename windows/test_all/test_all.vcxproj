@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{00BBA8C0-707D-42A7-82FF-D5211185ED7F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <RootNamespace>test_all</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets" Condition="Exists('$(SolutionDir)\CommonSettings.props')">
+    <Import Project="..\CommonSettings.props" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionSettings" Condition="'$(CpuOnlyBuild)'=='false'">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA $(CudaVersion).props" />
+  </ImportGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>libcaffe.lib;$(CudaDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ClCompile>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>$(CudaArchitecture)</CodeGeneration>
+      <GenerateLineInfo>true</GenerateLineInfo>
+      <AdditionalOptions>-Xcudafe "--diag_suppress=exception_spec_override_incompat --diag_suppress=useless_using_declaration --diag_suppress=field_without_dll_interface --diag_suppress=boolean_controlling_expr_is_constant" -D_SCL_SECURE_NO_WARNINGS -DGFLAGS_DLL_DECL= </AdditionalOptions>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>libcaffe.lib;$(CudaDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ClCompile>
+      <DisableSpecificWarnings>4005;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>$(CudaArchitecture)</CodeGeneration>
+      <AdditionalOptions>-Xcudafe "--diag_suppress=exception_spec_override_incompat --diag_suppress=useless_using_declaration --diag_suppress=field_without_dll_interface --diag_suppress=boolean_controlling_expr_is_constant" -D_SCL_SECURE_NO_WARNINGS -DGFLAGS_DLL_DECL= </AdditionalOptions>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\caffe\test\test_accuracy_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_argmax_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_batch_norm_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_batch_reindex_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_benchmark.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_bias_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_blob.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_caffe_main.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_common.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_concat_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_contrastive_loss_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_convolution_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_crop_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_data_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_data_transformer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_db.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_deconvolution_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_dummy_data_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_eltwise_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_embed_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_euclidean_loss_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_filler.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_filter_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_flatten_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_gradient_based_solver.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_hdf5data_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_hdf5_output_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_hinge_loss_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_im2col_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_image_data_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_infogain_loss_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_inner_product_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_internal_thread.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_io.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_layer_factory.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_lrn_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_math_functions.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_maxpool_dropout_layers.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_memory_data_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_multinomial_logistic_loss_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_mvn_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_net.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_neuron_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_platform.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_pooling_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_power_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_protobuf.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_random_number_generator.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_reduction_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_reshape_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_scale_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_sigmoid_cross_entropy_loss_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_slice_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_softmax_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_softmax_with_loss_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_solver.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_solver_factory.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_split_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_spp_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_stochastic_pooling.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_syncedmem.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_tanh_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_threshold_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_tile_layer.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_upgrade_proto.cpp" />
+    <ClCompile Include="..\..\src\caffe\test\test_util_blas.cpp" />
+    <ClCompile Include="..\..\src\gtest\gtest-all.cpp" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(CpuOnlyBuild)'=='false'">
+    <CudaCompile Include="..\..\src\caffe\test\test_im2col_kernel.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\caffe\test\test_caffe_main.hpp" />
+    <ClInclude Include="..\..\include\caffe\test\test_gradient_check_util.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libcaffe\libcaffe.vcxproj">
+      <Project>{a9acef83-7b63-4574-a554-89ce869ea141}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(SolutionDir)\CommonSettings.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Condition="'$(CpuOnlyBuild)'=='false'" Project="$(VCTargetsPath)\BuildCustomizations\CUDA $(CudaVersion).targets" />
+  </ImportGroup>
+</Project>

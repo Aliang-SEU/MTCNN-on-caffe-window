@@ -1,0 +1,25 @@
+Log file created at: 2018/01/13 10:11:06
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0113 10:11:06.327893 18952 caffe.cpp:219] Using GPUs 0
+I0113 10:11:08.057879 18952 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0113 10:11:12.352524 18952 solver.cpp:44] Initializing solver from parameters: 
+base_lr: 0.001
+display: 100
+max_iter: 500000
+lr_policy: "step"
+gamma: 0.8
+momentum: 0.9
+weight_decay: 0.004
+stepsize: 30000
+snapshot: 10000
+snapshot_prefix: "./models-12/"
+solver_mode: GPU
+device_id: 0
+debug_info: true
+net: "det1-train.ptototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+F0113 10:11:12.353025 18952 solver.cpp:437] Cannot write to snapshot prefix './models-12/'.  Make sure that the directory exists and is writeable.

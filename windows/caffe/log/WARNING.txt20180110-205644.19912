@@ -1,0 +1,4 @@
+Log file created at: 2018/01/10 20:56:44
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0110 20:56:44.092088 58848 solver.cpp:437] Cannot write to snapshot prefix './models-12/'.  Make sure that the directory exists and is writeable.

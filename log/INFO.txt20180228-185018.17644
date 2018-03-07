@@ -1,0 +1,27 @@
+Log file created at: 2018/02/28 18:50:18
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0228 18:50:18.981104 11612 caffe.cpp:219] Using GPUs 0
+I0228 18:50:19.200690 11612 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0228 18:50:19.569645 11612 solver.cpp:44] Initializing solver from parameters: 
+test_iter: 1000
+test_interval: 1000
+base_lr: 0.01
+display: 20
+max_iter: 450000
+lr_policy: "step"
+gamma: 0.1
+momentum: 0.9
+weight_decay: 0.0005
+stepsize: 100000
+snapshot: 10000
+snapshot_prefix: "examples/mydata/caffenet_train"
+solver_mode: GPU
+device_id: 0
+net: "E:/DeepLearning/caffe-windows/examples/mydata/lenet_train_test.prototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0228 18:50:19.570648 11612 solver.cpp:87] Creating training net from net file: E:/DeepLearning/caffe-windows/examples/mydata/lenet_train_test.prototxt
+F0228 18:50:19.570648 11612 io.cpp:41] Check failed: fd != -1 (-1 vs. -1) File not found: E:/DeepLearning/caffe-windows/examples/mydata/lenet_train_test.prototxt

@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{38B6CE09-4B1A-4E72-A547-8A3299D8DA60}</ProjectGuid>
+    <RootNamespace>pycaffe</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <PlatformToolset>v140</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="Exists('$(SolutionDir)\CommonSettings.props')">
+    <Import Project="..\CommonSettings.props" />
+  </ImportGroup>
+  <PropertyGroup>
+    <TargetExt>.pyd</TargetExt>
+    <TargetName>_caffe</TargetName>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludePath>$(PythonDir)\Lib\site-packages\numpy\core\include\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>libcaffe.lib;$(CudaDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>libcaffe.lib;$(CudaDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DisableSpecificWarnings>4003</DisableSpecificWarnings>
+    </ClCompile>
+    <PreBuildEvent>
+      <Command>"$(ScriptsDir)\PythonPreBuild.cmd" "$(SolutionDir)" "$(ProtocDir)" "$(OutDir)"</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>"$(ScriptsDir)\PythonPostBuild.cmd" "$(SolutionDir)" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\python\caffe\_caffe.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libcaffe\libcaffe.vcxproj">
+      <Project>{a9acef83-7b63-4574-a554-89ce869ea141}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(SolutionDir)\CommonSettings.targets" />
+  <!-- Build this project only if Python support is enabled in CommonSettings.props -->
+  <PropertyGroup>
+    <OriginalBuildTargets>$(BuildDependsOn)</OriginalBuildTargets>
+    <BuildDependsOn>OriginalBuild;SkipBuild</BuildDependsOn>
+  </PropertyGroup>
+  <Target Name="OriginalBuild" Condition="'$(PythonSupport)'=='true'" DependsOnTargets="$(OriginalBuildTargets)" />
+  <Target Name="SkipBuild" Condition="'$(PythonSupport)'!='true'">
+    <Message Text="Skipping project $(ProjectName), Python support is not enabled in CommonSettings.props." Importance="High" />
+  </Target>
+</Project>

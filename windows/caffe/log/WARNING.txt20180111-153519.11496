@@ -1,0 +1,11 @@
+Log file created at: 2018/01/11 15:35:19
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0111 15:35:19.604094  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (551.878, 2642.55); L2 norm = (8.19844, 60.2648)
+E0111 15:35:25.269160  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (546.771, 69.3426); L2 norm = (8.26261, 1.85823)
+E0111 15:35:31.015923  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (537.42, 111.242); L2 norm = (8.26952, 2.97195)
+E0111 15:35:36.649907  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (527.376, 128.053); L2 norm = (8.24733, 3.12532)
+E0111 15:35:42.332018  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (516.855, 60.8648); L2 norm = (8.21112, 1.4642)
+E0111 15:35:48.022151  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (506.886, 89.0076); L2 norm = (8.16996, 2.08959)
+E0111 15:35:53.733227  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (497.884, 108.912); L2 norm = (8.13317, 2.48691)
+E0111 15:35:59.420074  9144 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (489.061, 83.8837); L2 norm = (8.09349, 1.88565)

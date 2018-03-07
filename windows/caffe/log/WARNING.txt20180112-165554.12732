@@ -1,0 +1,4 @@
+Log file created at: 2018/01/12 16:55:54
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0112 16:55:54.001871  3828 blob.cpp:36] Check failed: shape[i] >= 0 (-1 vs. 0) 

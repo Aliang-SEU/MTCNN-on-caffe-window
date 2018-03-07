@@ -1,0 +1,1305 @@
+Log file created at: 2018/02/28 21:16:47
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0228 21:16:47.230304 16704 caffe.cpp:219] Using GPUs 0
+I0228 21:16:47.453490 16704 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0228 21:16:47.821983 16704 solver.cpp:44] Initializing solver from parameters: 
+test_iter: 1000
+test_interval: 1000
+base_lr: 0.0001
+display: 20
+max_iter: 450000
+lr_policy: "step"
+gamma: 0.1
+momentum: 0.9
+weight_decay: 0.0005
+stepsize: 100000
+snapshot: 2000
+snapshot_prefix: "E:/DeepLearning/caffe-windows/examples/mydata/caffenet_train/"
+solver_mode: GPU
+device_id: 0
+net: "E:/DeepLearning/caffe-windows/examples/mydata/lenet.prototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0228 21:16:47.822988 16704 solver.cpp:87] Creating training net from net file: E:/DeepLearning/caffe-windows/examples/mydata/lenet.prototxt
+I0228 21:16:47.823990 16704 net.cpp:294] The NetState phase (0) differed from the phase (1) specified by a rule in layer mnist
+I0228 21:16:47.823990 16704 net.cpp:294] The NetState phase (0) differed from the phase (1) specified by a rule in layer accuracy
+I0228 21:16:47.824993 16704 net.cpp:51] Initializing net from parameters: 
+name: "LeNet"
+state {
+  phase: TRAIN
+  level: 0
+  stage: ""
+}
+debug_info: true
+layer {
+  name: "mnist"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    scale: 0.00390625
+  }
+  data_param {
+    source: "examples/mydata/train"
+    batch_size: 32
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool2"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip2"
+  bottom: "label"
+  top: "loss"
+}
+I0228 21:16:47.825996 16704 layer_factory.hpp:77] Creating layer mnist
+I0228 21:16:48.006330 16704 db_lmdb.cpp:40] Opened lmdb examples/mydata/train
+I0228 21:16:48.022426 16704 net.cpp:84] Creating Layer mnist
+I0228 21:16:48.022426 16704 net.cpp:380] mnist -> data
+I0228 21:16:48.023432 16704 net.cpp:380] mnist -> label
+I0228 21:16:48.024435 16704 data_layer.cpp:45] output data size: 32,3,35,35
+I0228 21:16:48.026439 16704 net.cpp:122] Setting up mnist
+I0228 21:16:48.026439 16704 net.cpp:129] Top shape: 32 3 35 35 (117600)
+I0228 21:16:48.026439 16704 net.cpp:129] Top shape: 32 (32)
+I0228 21:16:48.027441 16704 net.cpp:137] Memory required for data: 470528
+I0228 21:16:48.027441 16704 layer_factory.hpp:77] Creating layer conv1
+I0228 21:16:48.027441 16704 net.cpp:84] Creating Layer conv1
+I0228 21:16:48.028446 16704 net.cpp:406] conv1 <- data
+I0228 21:16:48.028446 16704 net.cpp:380] conv1 -> conv1
+I0228 21:16:48.637491 16704 net.cpp:122] Setting up conv1
+I0228 21:16:48.637491 16704 net.cpp:129] Top shape: 32 20 31 31 (615040)
+I0228 21:16:48.638494 16704 net.cpp:137] Memory required for data: 2930688
+I0228 21:16:48.639495 16704 layer_factory.hpp:77] Creating layer pool1
+I0228 21:16:48.643506 16704 net.cpp:84] Creating Layer pool1
+I0228 21:16:48.643506 16704 net.cpp:406] pool1 <- conv1
+I0228 21:16:48.644510 16704 net.cpp:380] pool1 -> pool1
+I0228 21:16:48.644510 16704 net.cpp:122] Setting up pool1
+I0228 21:16:48.644510 16704 net.cpp:129] Top shape: 32 20 16 16 (163840)
+I0228 21:16:48.644510 16704 net.cpp:137] Memory required for data: 3586048
+I0228 21:16:48.644510 16704 layer_factory.hpp:77] Creating layer conv2
+I0228 21:16:48.645512 16704 net.cpp:84] Creating Layer conv2
+I0228 21:16:48.645512 16704 net.cpp:406] conv2 <- pool1
+I0228 21:16:48.645512 16704 net.cpp:380] conv2 -> conv2
+I0228 21:16:48.648520 16704 net.cpp:122] Setting up conv2
+I0228 21:16:48.648520 16704 net.cpp:129] Top shape: 32 50 12 12 (230400)
+I0228 21:16:48.648520 16704 net.cpp:137] Memory required for data: 4507648
+I0228 21:16:48.649523 16704 layer_factory.hpp:77] Creating layer pool2
+I0228 21:16:48.649523 16704 net.cpp:84] Creating Layer pool2
+I0228 21:16:48.649523 16704 net.cpp:406] pool2 <- conv2
+I0228 21:16:48.649523 16704 net.cpp:380] pool2 -> pool2
+I0228 21:16:48.650526 16704 net.cpp:122] Setting up pool2
+I0228 21:16:48.650526 16704 net.cpp:129] Top shape: 32 50 6 6 (57600)
+I0228 21:16:48.650526 16704 net.cpp:137] Memory required for data: 4738048
+I0228 21:16:48.650526 16704 layer_factory.hpp:77] Creating layer ip1
+I0228 21:16:48.650526 16704 net.cpp:84] Creating Layer ip1
+I0228 21:16:48.650526 16704 net.cpp:406] ip1 <- pool2
+I0228 21:16:48.651528 16704 net.cpp:380] ip1 -> ip1
+I0228 21:16:48.657543 16704 net.cpp:122] Setting up ip1
+I0228 21:16:48.658547 16704 net.cpp:129] Top shape: 32 500 (16000)
+I0228 21:16:48.658547 16704 net.cpp:137] Memory required for data: 4802048
+I0228 21:16:48.659549 16704 layer_factory.hpp:77] Creating layer relu1
+I0228 21:16:48.659549 16704 net.cpp:84] Creating Layer relu1
+I0228 21:16:48.659549 16704 net.cpp:406] relu1 <- ip1
+I0228 21:16:48.659549 16704 net.cpp:367] relu1 -> ip1 (in-place)
+I0228 21:16:48.660557 16704 net.cpp:122] Setting up relu1
+I0228 21:16:48.660557 16704 net.cpp:129] Top shape: 32 500 (16000)
+I0228 21:16:48.660557 16704 net.cpp:137] Memory required for data: 4866048
+I0228 21:16:48.660557 16704 layer_factory.hpp:77] Creating layer ip2
+I0228 21:16:48.660557 16704 net.cpp:84] Creating Layer ip2
+I0228 21:16:48.661556 16704 net.cpp:406] ip2 <- ip1
+I0228 21:16:48.661556 16704 net.cpp:380] ip2 -> ip2
+I0228 21:16:48.661556 16704 net.cpp:122] Setting up ip2
+I0228 21:16:48.661556 16704 net.cpp:129] Top shape: 32 2 (64)
+I0228 21:16:48.662557 16704 net.cpp:137] Memory required for data: 4866304
+I0228 21:16:48.662557 16704 layer_factory.hpp:77] Creating layer loss
+I0228 21:16:48.662557 16704 net.cpp:84] Creating Layer loss
+I0228 21:16:48.662557 16704 net.cpp:406] loss <- ip2
+I0228 21:16:48.663576 16704 net.cpp:406] loss <- label
+I0228 21:16:48.663576 16704 net.cpp:380] loss -> loss
+I0228 21:16:48.663576 16704 layer_factory.hpp:77] Creating layer loss
+I0228 21:16:48.665565 16704 net.cpp:122] Setting up loss
+I0228 21:16:48.665565 16704 net.cpp:129] Top shape: (1)
+I0228 21:16:48.665565 16704 net.cpp:132]     with loss weight 1
+I0228 21:16:48.665565 16704 net.cpp:137] Memory required for data: 4866308
+I0228 21:16:48.665565 16704 net.cpp:198] loss needs backward computation.
+I0228 21:16:48.666568 16704 net.cpp:198] ip2 needs backward computation.
+I0228 21:16:48.666568 16704 net.cpp:198] relu1 needs backward computation.
+I0228 21:16:48.666568 16704 net.cpp:198] ip1 needs backward computation.
+I0228 21:16:48.666568 16704 net.cpp:198] pool2 needs backward computation.
+I0228 21:16:48.666568 16704 net.cpp:198] conv2 needs backward computation.
+I0228 21:16:48.669575 16704 net.cpp:198] pool1 needs backward computation.
+I0228 21:16:48.669575 16704 net.cpp:198] conv1 needs backward computation.
+I0228 21:16:48.670578 16704 net.cpp:200] mnist does not need backward computation.
+I0228 21:16:48.670578 16704 net.cpp:242] This network produces output loss
+I0228 21:16:48.670578 16704 net.cpp:255] Network initialization done.
+I0228 21:16:48.671582 16704 solver.cpp:172] Creating test net (#0) specified by net file: E:/DeepLearning/caffe-windows/examples/mydata/lenet.prototxt
+I0228 21:16:48.671582 16704 net.cpp:294] The NetState phase (1) differed from the phase (0) specified by a rule in layer mnist
+I0228 21:16:48.671582 16704 net.cpp:51] Initializing net from parameters: 
+name: "LeNet"
+state {
+  phase: TEST
+}
+debug_info: true
+layer {
+  name: "mnist"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    scale: 0.00390625
+  }
+  data_param {
+    source: "examples/mydata/val"
+    batch_size: 100
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool2"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip2"
+  bottom: "label"
+  top: "loss"
+}
+I0228 21:16:48.672592 16704 layer_factory.hpp:77] Creating layer mnist
+I0228 21:16:48.726573 16704 db_lmdb.cpp:40] Opened lmdb examples/mydata/val
+I0228 21:16:48.739150 16704 net.cpp:84] Creating Layer mnist
+I0228 21:16:48.739150 16704 net.cpp:380] mnist -> data
+I0228 21:16:48.740151 16704 net.cpp:380] mnist -> label
+I0228 21:16:48.740151 16704 data_layer.cpp:45] output data size: 100,3,35,35
+I0228 21:16:48.745164 16704 net.cpp:122] Setting up mnist
+I0228 21:16:48.745164 16704 net.cpp:129] Top shape: 100 3 35 35 (367500)
+I0228 21:16:48.746167 16704 net.cpp:129] Top shape: 100 (100)
+I0228 21:16:48.747181 16704 net.cpp:137] Memory required for data: 1470400
+I0228 21:16:48.747181 16704 layer_factory.hpp:77] Creating layer label_mnist_1_split
+I0228 21:16:48.747181 16704 net.cpp:84] Creating Layer label_mnist_1_split
+I0228 21:16:48.747181 16704 net.cpp:406] label_mnist_1_split <- label
+I0228 21:16:48.748173 16704 net.cpp:380] label_mnist_1_split -> label_mnist_1_split_0
+I0228 21:16:48.748173 16704 net.cpp:380] label_mnist_1_split -> label_mnist_1_split_1
+I0228 21:16:48.748173 16704 net.cpp:122] Setting up label_mnist_1_split
+I0228 21:16:48.748173 16704 net.cpp:129] Top shape: 100 (100)
+I0228 21:16:48.749174 16704 net.cpp:129] Top shape: 100 (100)
+I0228 21:16:48.749174 16704 net.cpp:137] Memory required for data: 1471200
+I0228 21:16:48.749174 16704 layer_factory.hpp:77] Creating layer conv1
+I0228 21:16:48.749174 16704 net.cpp:84] Creating Layer conv1
+I0228 21:16:48.749174 16704 net.cpp:406] conv1 <- data
+I0228 21:16:48.749174 16704 net.cpp:380] conv1 -> conv1
+I0228 21:16:48.751181 16704 net.cpp:122] Setting up conv1
+I0228 21:16:48.751181 16704 net.cpp:129] Top shape: 100 20 31 31 (1922000)
+I0228 21:16:48.751181 16704 net.cpp:137] Memory required for data: 9159200
+I0228 21:16:48.752183 16704 layer_factory.hpp:77] Creating layer pool1
+I0228 21:16:48.752183 16704 net.cpp:84] Creating Layer pool1
+I0228 21:16:48.752183 16704 net.cpp:406] pool1 <- conv1
+I0228 21:16:48.752183 16704 net.cpp:380] pool1 -> pool1
+I0228 21:16:48.752183 16704 net.cpp:122] Setting up pool1
+I0228 21:16:48.752183 16704 net.cpp:129] Top shape: 100 20 16 16 (512000)
+I0228 21:16:48.753185 16704 net.cpp:137] Memory required for data: 11207200
+I0228 21:16:48.753185 16704 layer_factory.hpp:77] Creating layer conv2
+I0228 21:16:48.754189 16704 net.cpp:84] Creating Layer conv2
+I0228 21:16:48.756194 16704 net.cpp:406] conv2 <- pool1
+I0228 21:16:48.756194 16704 net.cpp:380] conv2 -> conv2
+I0228 21:16:48.759202 16704 net.cpp:122] Setting up conv2
+I0228 21:16:48.759202 16704 net.cpp:129] Top shape: 100 50 12 12 (720000)
+I0228 21:16:48.759202 16704 net.cpp:137] Memory required for data: 14087200
+I0228 21:16:48.759202 16704 layer_factory.hpp:77] Creating layer pool2
+I0228 21:16:48.759202 16704 net.cpp:84] Creating Layer pool2
+I0228 21:16:48.759202 16704 net.cpp:406] pool2 <- conv2
+I0228 21:16:48.760212 16704 net.cpp:380] pool2 -> pool2
+I0228 21:16:48.760212 16704 net.cpp:122] Setting up pool2
+I0228 21:16:48.760212 16704 net.cpp:129] Top shape: 100 50 6 6 (180000)
+I0228 21:16:48.760212 16704 net.cpp:137] Memory required for data: 14807200
+I0228 21:16:48.761207 16704 layer_factory.hpp:77] Creating layer ip1
+I0228 21:16:48.761207 16704 net.cpp:84] Creating Layer ip1
+I0228 21:16:48.761207 16704 net.cpp:406] ip1 <- pool2
+I0228 21:16:48.761207 16704 net.cpp:380] ip1 -> ip1
+I0228 21:16:48.764216 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.766222 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.768227 16704 net.cpp:122] Setting up ip1
+I0228 21:16:48.768227 16704 net.cpp:129] Top shape: 100 500 (50000)
+I0228 21:16:48.768227 16704 net.cpp:137] Memory required for data: 15007200
+I0228 21:16:48.769228 16704 layer_factory.hpp:77] Creating layer relu1
+I0228 21:16:48.769228 16704 net.cpp:84] Creating Layer relu1
+I0228 21:16:48.769228 16704 net.cpp:406] relu1 <- ip1
+I0228 21:16:48.770231 16704 net.cpp:367] relu1 -> ip1 (in-place)
+I0228 21:16:48.773241 16704 net.cpp:122] Setting up relu1
+I0228 21:16:48.773241 16704 net.cpp:129] Top shape: 100 500 (50000)
+I0228 21:16:48.773241 16704 net.cpp:137] Memory required for data: 15207200
+I0228 21:16:48.773241 16704 layer_factory.hpp:77] Creating layer ip2
+I0228 21:16:48.773241 16704 net.cpp:84] Creating Layer ip2
+I0228 21:16:48.774241 16704 net.cpp:406] ip2 <- ip1
+I0228 21:16:48.774241 16704 net.cpp:380] ip2 -> ip2
+I0228 21:16:48.774241 16704 net.cpp:122] Setting up ip2
+I0228 21:16:48.774241 16704 net.cpp:129] Top shape: 100 2 (200)
+I0228 21:16:48.774241 16704 net.cpp:137] Memory required for data: 15208000
+I0228 21:16:48.775244 16704 layer_factory.hpp:77] Creating layer ip2_ip2_0_split
+I0228 21:16:48.776248 16704 net.cpp:84] Creating Layer ip2_ip2_0_split
+I0228 21:16:48.776248 16704 net.cpp:406] ip2_ip2_0_split <- ip2
+I0228 21:16:48.777249 16704 net.cpp:380] ip2_ip2_0_split -> ip2_ip2_0_split_0
+I0228 21:16:48.777249 16704 net.cpp:380] ip2_ip2_0_split -> ip2_ip2_0_split_1
+I0228 21:16:48.777249 16704 net.cpp:122] Setting up ip2_ip2_0_split
+I0228 21:16:48.777249 16704 net.cpp:129] Top shape: 100 2 (200)
+I0228 21:16:48.777249 16704 net.cpp:129] Top shape: 100 2 (200)
+I0228 21:16:48.778252 16704 net.cpp:137] Memory required for data: 15209600
+I0228 21:16:48.778252 16704 layer_factory.hpp:77] Creating layer accuracy
+I0228 21:16:48.778252 16704 net.cpp:84] Creating Layer accuracy
+I0228 21:16:48.778252 16704 net.cpp:406] accuracy <- ip2_ip2_0_split_0
+I0228 21:16:48.778252 16704 net.cpp:406] accuracy <- label_mnist_1_split_0
+I0228 21:16:48.779256 16704 net.cpp:380] accuracy -> accuracy
+I0228 21:16:48.779256 16704 net.cpp:122] Setting up accuracy
+I0228 21:16:48.779256 16704 net.cpp:129] Top shape: (1)
+I0228 21:16:48.779256 16704 net.cpp:137] Memory required for data: 15209604
+I0228 21:16:48.779256 16704 layer_factory.hpp:77] Creating layer loss
+I0228 21:16:48.779256 16704 net.cpp:84] Creating Layer loss
+I0228 21:16:48.780257 16704 net.cpp:406] loss <- ip2_ip2_0_split_1
+I0228 21:16:48.780257 16704 net.cpp:406] loss <- label_mnist_1_split_1
+I0228 21:16:48.780257 16704 net.cpp:380] loss -> loss
+I0228 21:16:48.780257 16704 layer_factory.hpp:77] Creating layer loss
+I0228 21:16:48.781260 16704 net.cpp:122] Setting up loss
+I0228 21:16:48.781260 16704 net.cpp:129] Top shape: (1)
+I0228 21:16:48.781260 16704 net.cpp:132]     with loss weight 1
+I0228 21:16:48.781260 16704 net.cpp:137] Memory required for data: 15209608
+I0228 21:16:48.782263 16704 net.cpp:198] loss needs backward computation.
+I0228 21:16:48.782263 16704 net.cpp:200] accuracy does not need backward computation.
+I0228 21:16:48.782263 16704 net.cpp:198] ip2_ip2_0_split needs backward computation.
+I0228 21:16:48.782263 16704 net.cpp:198] ip2 needs backward computation.
+I0228 21:16:48.782263 16704 net.cpp:198] relu1 needs backward computation.
+I0228 21:16:48.782263 16704 net.cpp:198] ip1 needs backward computation.
+I0228 21:16:48.783265 16704 net.cpp:198] pool2 needs backward computation.
+I0228 21:16:48.783265 16704 net.cpp:198] conv2 needs backward computation.
+I0228 21:16:48.783265 16704 net.cpp:198] pool1 needs backward computation.
+I0228 21:16:48.783265 16704 net.cpp:198] conv1 needs backward computation.
+I0228 21:16:48.783265 16704 net.cpp:200] label_mnist_1_split does not need backward computation.
+I0228 21:16:48.784270 16704 net.cpp:200] mnist does not need backward computation.
+I0228 21:16:48.784270 16704 net.cpp:242] This network produces output accuracy
+I0228 21:16:48.784270 16704 net.cpp:242] This network produces output loss
+I0228 21:16:48.784270 16704 net.cpp:255] Network initialization done.
+I0228 21:16:48.784270 16704 solver.cpp:56] Solver scaffolding done.
+I0228 21:16:48.785270 16704 caffe.cpp:249] Starting Optimization
+I0228 21:16:48.787278 16704 solver.cpp:278] Solving LeNet
+I0228 21:16:48.788281 16704 solver.cpp:279] Learning Rate Policy: step
+I0228 21:16:48.790285 16704 solver.cpp:336] Iteration 0, Testing net (#0)
+I0228 21:16:48.797240 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.800253 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.803256 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.808269 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.811290 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.814285 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.818296 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.822306 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.824311 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.828322 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.831331 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.834341 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.838349 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.841374 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.844365 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.848381 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.850381 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.854394 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.857400 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.860412 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.864419 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.868434 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.870435 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.875447 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.877454 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.880461 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.885475 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.888483 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.891515 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.895501 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.897506 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.900514 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.905529 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.909539 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.912546 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.916556 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.919566 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.923575 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.926584 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.929592 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.933603 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.936610 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.938616 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.942626 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.945652 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.948642 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.951650 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.955662 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.957666 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.961678 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.964685 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.967692 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.971704 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.973726 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.976717 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.979724 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.982733 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.984738 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.988750 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.991757 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.995767 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:48.998776 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.001783 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.004792 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.006796 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.009805 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.012812 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.014818 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.017827 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.020835 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.023844 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.026850 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.030861 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.032866 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.035874 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.039886 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.042893 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.045900 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.048910 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.050915 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.054925 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.056929 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.059938 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.062947 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.065954 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.067960 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.072973 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.074978 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.077986 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.080996 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.083000 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.086009 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.089015 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.091020 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.094029 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.097036 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.099043 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.101047 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.105058 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.108067 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.111075 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.113080 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.116087 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.120098 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.122103 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.125113 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.128119 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.131129 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.133133 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.136142 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.139149 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.142175 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.145165 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.148172 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.150179 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.154189 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.157197 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.159204 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.163213 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.166239 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.169229 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.172237 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.174242 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.177250 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.180258 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.183266 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.183266 16704 blocking_queue.cpp:49] Waiting for data
+I0228 21:16:49.185271 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.188280 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.191305 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.194314 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.197305 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.199311 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.202317 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.205335 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.208334 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.211343 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.214349 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.216354 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.221369 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.223398 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.226380 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.229388 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.232398 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.235404 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.238414 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.240418 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.244444 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.246434 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.249442 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.252450 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.255458 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.258491 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.261473 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.264497 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.266489 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.270498 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.273507 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.275512 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.278520 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.281528 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.284536 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.286541 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.289549 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.292557 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.295564 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.297570 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.301580 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.304589 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.307600 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.310606 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.313612 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.316622 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.320632 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.323639 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.325645 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.328652 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.331662 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.334671 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.337677 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.340685 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.344696 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.346702 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.349726 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.353719 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.356756 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.358757 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.361742 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.364769 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.367776 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.370765 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.373773 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.375778 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.378788 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.381794 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.384802 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.387810 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.390818 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.393851 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.396834 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.399842 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.402850 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.404856 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.407863 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.410871 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.413882 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.416888 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.419898 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.422905 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.424909 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.427917 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.430924 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.432931 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.435938 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.438961 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.441954 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.444975 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.446967 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.449976 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.453986 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.456995 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.460002 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.463011 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.466018 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.470028 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.473037 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.476044 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.479053 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.482060 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.485069 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.489080 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.491084 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.493090 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.496098 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.499106 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.501129 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.505122 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.508131 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.511138 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.514145 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.517154 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.521165 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.524173 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.526183 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.530189 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.532193 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.535202 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.539213 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.542222 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.544225 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.548238 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.550242 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.553251 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.556259 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.559265 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.562301 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.565284 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.568290 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.571300 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.574306 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.576311 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.580322 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.582327 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.586338 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.589347 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.591352 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.594379 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.597368 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.600375 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.603384 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.606393 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.609400 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.612407 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.615416 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.618424 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.621433 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.625442 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.627449 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.630455 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.634466 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.637496 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.640481 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.643489 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.646498 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.650509 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.653518 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.655522 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.659533 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.662540 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.665549 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.668557 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.671566 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.674572 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.677582 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.680589 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.683596 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.687608 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.690615 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.694627 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.697634 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.700642 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.703650 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.706658 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.709666 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.713676 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.716684 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.719692 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.722700 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.725708 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.728716 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.731724 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.734733 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.737740 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.740748 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.743757 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.746764 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.749773 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.752781 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.755789 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.758796 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.761804 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.764813 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.767820 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.770829 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.773836 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.775842 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.778851 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.781858 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.784867 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.787874 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.790881 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.793890 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.795895 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.799906 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.802914 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.805922 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.809932 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.812940 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.815948 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.818956 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.822968 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.825975 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.828984 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.831991 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.835000 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.838007 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.840013 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.844023 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.847031 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.850039 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.853047 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.856055 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.859063 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.863073 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.865079 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.868088 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.872098 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.874104 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.877111 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.881122 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.884130 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.887137 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.889144 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.892151 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.896162 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.898169 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.901175 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.904183 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.906188 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.910199 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.913208 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.916215 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.919224 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.922231 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.925240 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.928247 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.932257 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.935266 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.938274 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.941282 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.944290 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.947298 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.950306 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.953313 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.956321 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.958328 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.961335 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.964344 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.967351 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.970360 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.973368 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.976375 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.978380 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.981389 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.984396 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.987404 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.990412 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.993420 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.995425 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:49.999436 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.003448 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.007458 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.010466 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.012471 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.016481 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.019490 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.022498 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.026509 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.029516 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.032524 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.035532 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.038542 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.041548 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.044556 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.046561 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.049569 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.052577 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.055585 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.057591 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.060600 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.064610 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.067617 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.071630 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.073634 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.076642 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.079650 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.081655 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.084663 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.087671 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.090679 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.093688 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.096695 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.099704 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.102711 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.105720 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.108727 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.111735 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.114743 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.117751 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.120759 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.123767 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.127777 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.130786 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.133795 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.136802 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.139809 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.141815 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.145825 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.147831 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.150840 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.153847 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.156855 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.158861 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.161870 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.164876 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.166882 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.170892 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.173900 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.176908 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.179916 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.182924 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.185932 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.188941 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.191948 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.194957 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.198967 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.201975 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.204983 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.207991 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.210999 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.214007 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.217015 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.220023 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.223031 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.226039 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.229048 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.233057 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.236065 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.239073 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.242082 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.244087 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.247095 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.250103 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.253111 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.256119 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.259127 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.262135 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.265143 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.268151 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.271160 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.274168 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.277175 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.280184 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.283191 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.286200 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.289208 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.292215 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.295223 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.298231 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.301239 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.304247 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.308257 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.311265 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.314275 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.318284 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.321292 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.324301 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.328312 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.331320 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.334328 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.338337 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.341346 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.344353 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.347362 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.350370 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.353379 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.357388 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.360396 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.362402 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.365409 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.368418 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.371425 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.373431 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.376440 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.379446 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.382455 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.384460 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.388471 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.390476 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.394487 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.397495 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.399500 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.402508 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.405516 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.408524 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.410529 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.413537 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.417548 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.420557 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.423564 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.426573 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.430583 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.432590 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.435596 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.438604 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.441612 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.444620 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.448632 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.451639 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.454648 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.458657 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.460664 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.463671 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.466680 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.469687 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.472695 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.476706 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.479713 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.481719 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.485729 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.488739 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.492748 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.495756 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.498764 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.501772 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.504781 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.507788 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.511799 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.513804 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.516813 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.520823 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.523831 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.525837 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.529847 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.532855 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.535863 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.538871 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.540875 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.543884 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.546892 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.548897 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.551905 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.554914 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.557921 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.561933 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.563937 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.566946 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.570956 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.572962 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.575969 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.578977 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.581986 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.583992 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.587000 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.590008 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.593014 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.597025 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.600033 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.603041 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.606050 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.609057 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.613068 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.616076 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.618082 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.622092 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.625100 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.628108 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.631116 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.634124 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.637132 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.640141 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.643148 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.645153 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.648162 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.651170 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.654178 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.657186 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.660193 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.663202 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.666209 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.669217 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.672225 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.675233 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.678241 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.681249 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.683254 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.686264 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.689270 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.692279 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.695287 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.698295 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.701303 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.704311 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.707319 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.710327 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.713335 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.716343 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.719350 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.722359 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.725368 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.728375 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.731382 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.734392 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.737399 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.740407 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.742413 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.745420 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.748427 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.751436 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.754446 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.757452 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.760460 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.763468 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.766476 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.768481 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.771490 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.775501 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.778508 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.781517 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.784523 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.787533 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.790540 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.792546 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.796555 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.799564 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.801569 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.804579 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.808588 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.810593 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.813601 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.817612 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.820621 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.823628 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.826637 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.829644 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.831650 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.834658 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.837666 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.840673 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.843681 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.846689 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.849697 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.852705 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.855713 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.858721 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.860726 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.863734 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.866742 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.869751 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.872759 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.875767 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.878775 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.881783 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.884790 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.887799 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.889804 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.892812 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.895820 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.897825 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.901836 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.903842 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.907853 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.910882 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.912865 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.916877 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.920886 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.923895 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.926903 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.929911 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.932919 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.935927 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.937933 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.940940 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.943948 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.946956 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.948961 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.951969 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.954978 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.957986 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.961997 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.964030 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.967010 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.970018 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.973026 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.976033 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.979041 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.982050 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.985057 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.988065 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.991073 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.994081 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:50.997090 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.000098 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.003108 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.006140 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.009122 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.013133 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.016140 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.019148 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.022157 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.024161 16704 solver.cpp:403]     Test net output #0: accuracy = 0.4815
+I0228 21:16:51.024161 16704 solver.cpp:403]     Test net output #1: loss = 0.695941 (* 1 = 0.695941 loss)
+I0228 21:16:51.025166 15152 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.030179 16704 solver.cpp:224] Iteration 0 (-2.02476e-38 iter/s, 2.24088s/20 iters), loss = 0.712377
+I0228 21:16:51.030179 16704 solver.cpp:243]     Train net output #0: loss = 0.712377 (* 1 = 0.712377 loss)
+I0228 21:16:51.031181 16704 sgd_solver.cpp:137] Iteration 0, lr = 0.0001
+I0228 21:16:51.038200 16704 sgd_solver.cpp:200] weight diff/data:0.000129 0.000373 0.000107 0.000661 
+I0228 21:16:51.101850 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.112875 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.132928 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.151980 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.153986 16704 solver.cpp:224] Iteration 20 (162.98 iter/s, 0.122714s/20 iters), loss = 0.394352
+I0228 21:16:51.153986 16704 solver.cpp:243]     Train net output #0: loss = 0.394352 (* 1 = 0.394352 loss)
+I0228 21:16:51.154989 16704 sgd_solver.cpp:137] Iteration 20, lr = 0.0001
+I0228 21:16:51.159013 16704 sgd_solver.cpp:200] weight diff/data:0.000296 0.000691 0.000282 0.001940 
+I0228 21:16:51.177047 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.196097 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.216150 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.225201 16704 solver.cpp:224] Iteration 40 (286.188 iter/s, 0.0698843s/20 iters), loss = 0.523683
+I0228 21:16:51.225201 16704 solver.cpp:243]     Train net output #0: loss = 0.523683 (* 1 = 0.523683 loss)
+I0228 21:16:51.225201 16704 sgd_solver.cpp:137] Iteration 40, lr = 0.0001
+I0228 21:16:51.231190 16704 sgd_solver.cpp:200] weight diff/data:0.000104 0.000462 0.000108 0.000448 
+I0228 21:16:51.239210 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.259265 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.278316 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.297394 16704 solver.cpp:224] Iteration 60 (287.88 iter/s, 0.0694734s/20 iters), loss = 0.53066
+I0228 21:16:51.297394 16704 solver.cpp:243]     Train net output #0: loss = 0.53066 (* 1 = 0.53066 loss)
+I0228 21:16:51.298370 16704 sgd_solver.cpp:137] Iteration 60, lr = 0.0001
+I0228 21:16:51.303382 16704 sgd_solver.cpp:200] weight diff/data:0.000106 0.000306 0.000071 0.000730 
+I0228 21:16:51.304384 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.324439 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.343488 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.363541 20196 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 21:16:51.369559 16704 solve

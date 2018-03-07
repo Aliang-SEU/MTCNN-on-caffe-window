@@ -1,0 +1,4 @@
+Log file created at: 2018/02/28 18:52:55
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0228 18:52:55.211848 17344 io.cpp:63] Check failed: fd != -1 (-1 vs. -1) File not found: data/mydata/mydata_mean.binaryproto

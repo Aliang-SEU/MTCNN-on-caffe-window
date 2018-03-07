@@ -1,0 +1,4 @@
+Log file created at: 2017/09/12 21:53:37
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W0912 21:53:37.183135   512 benchmark.cpp:84] Timer has never been run before reading time.

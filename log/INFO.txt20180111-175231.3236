@@ -1,0 +1,1599 @@
+Log file created at: 2018/01/11 17:52:31
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0111 17:52:31.616610  5016 caffe.cpp:219] Using GPUs 0
+I0111 17:52:31.819762  5016 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0111 17:52:32.228956  5016 solver.cpp:44] Initializing solver from parameters: 
+base_lr: 0.001
+display: 100
+max_iter: 500000
+lr_policy: "step"
+gamma: 0.8
+momentum: 0.9
+weight_decay: 0.004
+stepsize: 30000
+snapshot: 10000
+snapshot_prefix: "E:/DeepLearning/mtcnn_train/models-12/"
+solver_mode: GPU
+device_id: 0
+debug_info: true
+net: "E:/DeepLearning/mtcnn_train/det1_train.ptototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0111 17:52:32.228956  5016 solver.cpp:87] Creating training net from net file: E:/DeepLearning/mtcnn_train/det1_train.ptototxt
+I0111 17:52:32.244581  5016 net.cpp:51] Initializing net from parameters: 
+name: "PNet"
+state {
+  phase: TRAIN
+  level: 0
+  stage: ""
+}
+layer {
+  name: "data"
+  type: "MTCNNData"
+  top: "data"
+  top: "label"
+  top: "roi"
+  transform_param {
+    scale: 0.0078125
+    mirror: false
+    mean_value: 127.5
+  }
+  data_param {
+    source: "E:/DeepLearning/mtcnn_train/mtcnn_train_lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 10
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU1"
+  type: "PReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU2"
+  type: "PReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 32
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "PReLU3"
+  type: "PReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4-1"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4-1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 2
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "cls_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "conv4-1"
+  bottom: "label"
+  top: "cls_loss"
+  loss_weight: 1
+  propagate_down: true
+  propagate_down: false
+  loss_param {
+    ignore_label: -1
+  }
+}
+layer {
+  name: "cls_Acc"
+  type: "Accuracy"
+  bottom: "conv4-1"
+  bottom: "label"
+  top: "cls_acc"
+  include {
+    phase: TRAIN
+  }
+  accuracy_param {
+    ignore_label: -1
+  }
+}
+layer {
+  name: "conv4-2"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4-2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 4
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "roi_loss"
+  type: "MTCNNEuclideanLoss"
+  bottom: "conv4-2"
+  bottom: "roi"
+  bottom: "label"
+  top: "roi_loss"
+  loss_weight: 0.5
+  loss_param {
+    ignore_label: 0
+  }
+}
+I0111 17:52:32.244581  5016 layer_factory.hpp:77] Creating layer data
+I0111 17:52:32.260182  5016 db_lmdb.cpp:40] Opened lmdb E:/DeepLearning/mtcnn_train/mtcnn_train_lmdb
+I0111 17:52:32.260182  5016 net.cpp:84] Creating Layer data
+I0111 17:52:32.260182  5016 net.cpp:380] data -> data
+I0111 17:52:32.260182  5016 net.cpp:380] data -> label
+I0111 17:52:32.385313  5016 net.cpp:380] data -> roi
+I0111 17:52:32.385313  5016 mtcnn_data_layer.cpp:45] output data size: 64,3,12,12
+I0111 17:52:32.385313  5016 base_data_layer.cpp:96] Initializing prefetch
+I0111 17:52:32.385313  5016 base_data_layer.cpp:99] Prefetch initialized.
+I0111 17:52:32.385313  5016 net.cpp:122] Setting up data
+I0111 17:52:32.385313  5016 net.cpp:129] Top shape: 64 3 12 12 (27648)
+I0111 17:52:32.385313  5016 net.cpp:129] Top shape: 64 (64)
+I0111 17:52:32.385313  5016 net.cpp:129] Top shape: 64 4 (256)
+I0111 17:52:32.385313  5016 net.cpp:137] Memory required for data: 111872
+I0111 17:52:32.400820  5016 layer_factory.hpp:77] Creating layer label_data_1_split
+I0111 17:52:32.400820  5016 net.cpp:84] Creating Layer label_data_1_split
+I0111 17:52:32.400820  5016 net.cpp:406] label_data_1_split <- label
+I0111 17:52:32.400820  5016 net.cpp:380] label_data_1_split -> label_data_1_split_0
+I0111 17:52:32.400820  5016 net.cpp:380] label_data_1_split -> label_data_1_split_1
+I0111 17:52:32.400820  5016 net.cpp:380] label_data_1_split -> label_data_1_split_2
+I0111 17:52:32.400820  5016 net.cpp:122] Setting up label_data_1_split
+I0111 17:52:32.400820  5016 net.cpp:129] Top shape: 64 (64)
+I0111 17:52:32.400820  5016 net.cpp:129] Top shape: 64 (64)
+I0111 17:52:32.400820  5016 net.cpp:129] Top shape: 64 (64)
+I0111 17:52:32.400820  5016 net.cpp:137] Memory required for data: 112640
+I0111 17:52:32.400820  5016 layer_factory.hpp:77] Creating layer conv1
+I0111 17:52:32.400820  5016 net.cpp:84] Creating Layer conv1
+I0111 17:52:32.400820  5016 net.cpp:406] conv1 <- data
+I0111 17:52:32.400820  5016 net.cpp:380] conv1 -> conv1
+I0111 17:52:32.979056  5016 cudnn_conv_layer.cpp:194] Reallocating workspace storage: 98304
+I0111 17:52:32.979056  5016 net.cpp:122] Setting up conv1
+I0111 17:52:32.979056  5016 net.cpp:129] Top shape: 64 10 10 10 (64000)
+I0111 17:52:32.979056  5016 net.cpp:137] Memory required for data: 368640
+I0111 17:52:32.979056  5016 layer_factory.hpp:77] Creating layer PReLU1
+I0111 17:52:32.979056  5016 net.cpp:84] Creating Layer PReLU1
+I0111 17:52:32.979056  5016 net.cpp:406] PReLU1 <- conv1
+I0111 17:52:32.979056  5016 net.cpp:367] PReLU1 -> conv1 (in-place)
+I0111 17:52:32.979056  5016 net.cpp:122] Setting up PReLU1
+I0111 17:52:32.979056  5016 net.cpp:129] Top shape: 64 10 10 10 (64000)
+I0111 17:52:32.979056  5016 net.cpp:137] Memory required for data: 624640
+I0111 17:52:32.979056  5016 layer_factory.hpp:77] Creating layer pool1
+I0111 17:52:32.979056  5016 net.cpp:84] Creating Layer pool1
+I0111 17:52:32.979056  5016 net.cpp:406] pool1 <- conv1
+I0111 17:52:32.994634  5016 net.cpp:380] pool1 -> pool1
+I0111 17:52:32.994634  5016 net.cpp:122] Setting up pool1
+I0111 17:52:32.994634  5016 net.cpp:129] Top shape: 64 10 5 5 (16000)
+I0111 17:52:32.994634  5016 net.cpp:137] Memory required for data: 688640
+I0111 17:52:32.994634  5016 layer_factory.hpp:77] Creating layer conv2
+I0111 17:52:32.994634  5016 net.cpp:84] Creating Layer conv2
+I0111 17:52:32.994634  5016 net.cpp:406] conv2 <- pool1
+I0111 17:52:32.994634  5016 net.cpp:380] conv2 -> conv2
+I0111 17:52:32.994634  5016 cudnn_conv_layer.cpp:194] Reallocating workspace storage: 98304
+I0111 17:52:32.994634  5016 net.cpp:122] Setting up conv2
+I0111 17:52:32.994634  5016 net.cpp:129] Top shape: 64 16 3 3 (9216)
+I0111 17:52:32.994634  5016 net.cpp:137] Memory required for data: 725504
+I0111 17:52:32.994634  5016 layer_factory.hpp:77] Creating layer PReLU2
+I0111 17:52:32.994634  5016 net.cpp:84] Creating Layer PReLU2
+I0111 17:52:32.994634  5016 net.cpp:406] PReLU2 <- conv2
+I0111 17:52:32.994634  5016 net.cpp:367] PReLU2 -> conv2 (in-place)
+I0111 17:52:32.994634  5016 net.cpp:122] Setting up PReLU2
+I0111 17:52:32.994634  5016 net.cpp:129] Top shape: 64 16 3 3 (9216)
+I0111 17:52:32.994634  5016 net.cpp:137] Memory required for data: 762368
+I0111 17:52:32.994634  5016 layer_factory.hpp:77] Creating layer conv3
+I0111 17:52:32.994634  5016 net.cpp:84] Creating Layer conv3
+I0111 17:52:32.994634  5016 net.cpp:406] conv3 <- conv2
+I0111 17:52:32.994634  5016 net.cpp:380] conv3 -> conv3
+I0111 17:52:32.994634  5016 cudnn_conv_layer.cpp:194] Reallocating workspace storage: 196608
+I0111 17:52:32.994634  5016 net.cpp:122] Setting up conv3
+I0111 17:52:33.010262  5016 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0111 17:52:33.010262  5016 net.cpp:137] Memory required for data: 770560
+I0111 17:52:33.010262  5016 layer_factory.hpp:77] Creating layer PReLU3
+I0111 17:52:33.010262  5016 net.cpp:84] Creating Layer PReLU3
+I0111 17:52:33.010262  5016 net.cpp:406] PReLU3 <- conv3
+I0111 17:52:33.010262  5016 net.cpp:367] PReLU3 -> conv3 (in-place)
+I0111 17:52:33.010262  5016 net.cpp:122] Setting up PReLU3
+I0111 17:52:33.010262  5016 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0111 17:52:33.010262  5016 net.cpp:137] Memory required for data: 778752
+I0111 17:52:33.010262  5016 layer_factory.hpp:77] Creating layer conv3_PReLU3_0_split
+I0111 17:52:33.010262  5016 net.cpp:84] Creating Layer conv3_PReLU3_0_split
+I0111 17:52:33.010262  5016 net.cpp:406] conv3_PReLU3_0_split <- conv3
+I0111 17:52:33.010262  5016 net.cpp:380] conv3_PReLU3_0_split -> conv3_PReLU3_0_split_0
+I0111 17:52:33.010262  5016 net.cpp:380] conv3_PReLU3_0_split -> conv3_PReLU3_0_split_1
+I0111 17:52:33.010262  5016 net.cpp:122] Setting up conv3_PReLU3_0_split
+I0111 17:52:33.010262  5016 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0111 17:52:33.010262  5016 net.cpp:129] Top shape: 64 32 1 1 (2048)
+I0111 17:52:33.010262  5016 net.cpp:137] Memory required for data: 795136
+I0111 17:52:33.010262  5016 layer_factory.hpp:77] Creating layer conv4-1
+I0111 17:52:33.010262  5016 net.cpp:84] Creating Layer conv4-1
+I0111 17:52:33.010262  5016 net.cpp:406] conv4-1 <- conv3_PReLU3_0_split_0
+I0111 17:52:33.010262  5016 net.cpp:380] conv4-1 -> conv4-1
+I0111 17:52:33.010262  5016 cudnn_conv_layer.cpp:194] Reallocating workspace storage: 6564
+I0111 17:52:33.010262  5016 net.cpp:122] Setting up conv4-1
+I0111 17:52:33.010262  5016 net.cpp:129] Top shape: 64 2 1 1 (128)
+I0111 17:52:33.010262  5016 net.cpp:137] Memory required for data: 795648
+I0111 17:52:33.010262  5016 layer_factory.hpp:77] Creating layer conv4-1_conv4-1_0_split
+I0111 17:52:33.010262  5016 net.cpp:84] Creating Layer conv4-1_conv4-1_0_split
+I0111 17:52:33.010262  5016 net.cpp:406] conv4-1_conv4-1_0_split <- conv4-1
+I0111 17:52:33.010262  5016 net.cpp:380] conv4-1_conv4-1_0_split -> conv4-1_conv4-1_0_split_0
+I0111 17:52:33.010262  5016 net.cpp:380] conv4-1_conv4-1_0_split -> conv4-1_conv4-1_0_split_1
+I0111 17:52:33.010262  5016 net.cpp:122] Setting up conv4-1_conv4-1_0_split
+I0111 17:52:33.010262  5016 net.cpp:129] Top shape: 64 2 1 1 (128)
+I0111 17:52:33.010262  5016 net.cpp:129] Top shape: 64 2 1 1 (128)
+I0111 17:52:33.010262  5016 net.cpp:137] Memory required for data: 796672
+I0111 17:52:33.010262  5016 layer_factory.hpp:77] Creating layer cls_loss
+I0111 17:52:33.010262  5016 net.cpp:84] Creating Layer cls_loss
+I0111 17:52:33.010262  5016 net.cpp:406] cls_loss <- conv4-1_conv4-1_0_split_0
+I0111 17:52:33.025887  5016 net.cpp:406] cls_loss <- label_data_1_split_0
+I0111 17:52:33.025887  5016 net.cpp:380] cls_loss -> cls_loss
+I0111 17:52:33.025887  5016 layer_factory.hpp:77] Creating layer cls_loss
+I0111 17:52:33.025887  5016 net.cpp:122] Setting up cls_loss
+I0111 17:52:33.025887  5016 net.cpp:129] Top shape: (1)
+I0111 17:52:33.025887  5016 net.cpp:132]     with loss weight 1
+I0111 17:52:33.025887  5016 net.cpp:137] Memory required for data: 796676
+I0111 17:52:33.025887  5016 layer_factory.hpp:77] Creating layer cls_Acc
+I0111 17:52:33.025887  5016 net.cpp:84] Creating Layer cls_Acc
+I0111 17:52:33.025887  5016 net.cpp:406] cls_Acc <- conv4-1_conv4-1_0_split_1
+I0111 17:52:33.025887  5016 net.cpp:406] cls_Acc <- label_data_1_split_1
+I0111 17:52:33.025887  5016 net.cpp:380] cls_Acc -> cls_acc
+I0111 17:52:33.025887  5016 net.cpp:122] Setting up cls_Acc
+I0111 17:52:33.025887  5016 net.cpp:129] Top shape: (1)
+I0111 17:52:33.025887  5016 net.cpp:137] Memory required for data: 796680
+I0111 17:52:33.025887  5016 layer_factory.hpp:77] Creating layer conv4-2
+I0111 17:52:33.025887  5016 net.cpp:84] Creating Layer conv4-2
+I0111 17:52:33.025887  5016 net.cpp:406] conv4-2 <- conv3_PReLU3_0_split_1
+I0111 17:52:33.025887  5016 net.cpp:380] conv4-2 -> conv4-2
+I0111 17:52:33.025887  5016 cudnn_conv_layer.cpp:194] Reallocating workspace storage: 6564
+I0111 17:52:33.025887  5016 net.cpp:122] Setting up conv4-2
+I0111 17:52:33.025887  5016 net.cpp:129] Top shape: 64 4 1 1 (256)
+I0111 17:52:33.025887  5016 net.cpp:137] Memory required for data: 797704
+I0111 17:52:33.025887  5016 layer_factory.hpp:77] Creating layer roi_loss
+I0111 17:52:33.025887  5016 net.cpp:84] Creating Layer roi_loss
+I0111 17:52:33.025887  5016 net.cpp:406] roi_loss <- conv4-2
+I0111 17:52:33.025887  5016 net.cpp:406] roi_loss <- roi
+I0111 17:52:33.025887  5016 net.cpp:406] roi_loss <- label_data_1_split_2
+I0111 17:52:33.025887  5016 net.cpp:380] roi_loss -> roi_loss
+I0111 17:52:33.025887  5016 net.cpp:122] Setting up roi_loss
+I0111 17:52:33.025887  5016 net.cpp:129] Top shape: (1)
+I0111 17:52:33.025887  5016 net.cpp:132]     with loss weight 0.5
+I0111 17:52:33.025887  5016 net.cpp:137] Memory required for data: 797708
+I0111 17:52:33.025887  5016 net.cpp:198] roi_loss needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] conv4-2 needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:200] cls_Acc does not need backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] cls_loss needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] conv4-1_conv4-1_0_split needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] conv4-1 needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] conv3_PReLU3_0_split needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] PReLU3 needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] conv3 needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] PReLU2 needs backward computation.
+I0111 17:52:33.025887  5016 net.cpp:198] conv2 needs backward computation.
+I0111 17:52:33.041515  5016 net.cpp:198] pool1 needs backward computation.
+I0111 17:52:33.041515  5016 net.cpp:198] PReLU1 needs backward computation.
+I0111 17:52:33.041515  5016 net.cpp:198] conv1 needs backward computation.
+I0111 17:52:33.041515  5016 net.cpp:200] label_data_1_split does not need backward computation.
+I0111 17:52:33.041515  5016 net.cpp:200] data does not need backward computation.
+I0111 17:52:33.041515  5016 net.cpp:242] This network produces output cls_acc
+I0111 17:52:33.041515  5016 net.cpp:242] This network produces output cls_loss
+I0111 17:52:33.041515  5016 net.cpp:242] This network produces output roi_loss
+I0111 17:52:33.041515  5016 net.cpp:255] Network initialization done.
+I0111 17:52:33.041515  5016 solver.cpp:56] Solver scaffolding done.
+I0111 17:52:33.041515  5016 caffe.cpp:249] Starting Optimization
+I0111 17:52:33.041515  5016 solver.cpp:278] Solving PNet
+I0111 17:52:33.041515  5016 solver.cpp:279] Learning Rate Policy: step
+I0111 17:52:33.041515  5016 base_data_layer.cu:23] -0.027439 0.003049 1.42378 0.942073
+I0111 17:52:33.041515  5016 base_data_layer.cu:30] -0.027439 0.003049 1.42378 0.942073
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer data, top blob data data: 0.422276
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer data, top blob label data: 0.453125
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.808517
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.453125
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.453125
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_2 data: 0.453125
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.324938
+I0111 17:52:33.041515  5016 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.187709
+I0111 17:52:33.041515  5016 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.213117
+I0111 17:52:33.041515  5016 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.25
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.266832
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.294923
+I0111 17:52:33.041515  5016 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0927655
+I0111 17:52:33.041515  5016 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0
+I0111 17:52:33.041515  5016 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.154077
+I0111 17:52:33.041515  5016 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.25
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.171639
+I0111 17:52:33.057150  5016 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0725712
+I0111 17:52:33.057150  5016 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.115672
+I0111 17:52:33.057150  5016 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.25
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.115672
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.115672
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 0.156336
+I0111 17:52:33.057150  5016 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.161005
+I0111 17:52:33.057150  5016 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer conv4-1_conv4-1_0_split, top blob conv4-1_conv4-1_0_split_0 data: 0.156336
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer conv4-1_conv4-1_0_split, top blob conv4-1_conv4-1_0_split_1 data: 0.156336
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.718073
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer cls_Acc, top blob cls_acc data: 0.388889
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.177692
+I0111 17:52:33.057150  5016 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.152002
+I0111 17:52:33.057150  5016 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0
+I0111 17:52:33.057150  5016 mtcnn_euclidean_loss_layer.cu:43] -0.027439 0.003049 1.42378 0.942073
+I0111 17:52:33.057150  5016 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 1.55295
+I0111 17:52:33.057150  5016 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.15923
+I0111 17:52:33.057150  5016 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.0547795
+I0111 17:52:33.057150  5016 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.88498
+I0111 17:52:33.057150  5016 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 9.89599
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1_conv4-1_0_split_0 diff: 0.00794634
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer conv4-1_conv4-1_0_split, bottom blob conv4-1 diff: 0.00794634
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.00129407
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.022051
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.198919
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.0554721
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.0394918
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.167894
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.0243356
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.268677
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 2.47345
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.0142879
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.541577
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.0126161
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.676661
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 3.13735
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.00315404
+I0111 17:52:33.072767  5016 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.00238608
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.393685
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.778214
+I0111 17:52:33.072767  5016 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 3.75928
+E0111 17:52:33.072767  5016 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (562.933, 2762.16); L2 norm = (8.3853, 74.7419)
+I0111 17:52:33.088393  5016 solver.cpp:224] Iteration 0 (1.06221e+10 iter/s, 0.0406324s/100 iters), loss = 1.49455
+I0111 17:52:33.088393  5016 solver.cpp:243]     Train net output #0: cls_acc = 0.388889
+I0111 17:52:33.088393  5016 solver.cpp:243]     Train net output #1: cls_loss = 0.718073 (* 1 = 0.718073 loss)
+I0111 17:52:33.088393  5016 solver.cpp:243]     Train net output #2: roi_loss = 1.55295 (* 0.5 = 0.776474 loss)
+I0111 17:52:33.088393  5016 sgd_solver.cpp:137] Iteration 0, lr = 0.001
+I0111 17:52:33.088393  5016 sgd_solver.cpp:185] prelu slope:0.250000 0.250000 0.250000 
+I0111 17:52:33.088393  5016 sgd_solver.cpp:200] weight diff/data:0.042591 0.026507 0.020586 0.000216 0.011477 
+I0111 17:52:33.088393  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.088393  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.088393  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.104020  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.104020  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.104020  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.104020  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.104020  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.119670  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.119670  5016 base_data_layer.cu:23] -0.258974 0.076923 1.11539 0.984615
+I0111 17:52:33.119670  5016 base_data_layer.cu:30] -0.258974 0.076923 1.11539 0.984615
+I0111 17:52:33.119670  5016 mtcnn_euclidean_loss_layer.cu:43] -0.258974 0.076923 1.11539 0.984615
+I0111 17:52:33.135273  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.135273  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.135273  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.135273  5016 base_data_layer.cu:23] -0.304 0.06 1.208 0.924
+I0111 17:52:33.150899  5016 base_data_layer.cu:30] -0.304 0.06 1.208 0.924
+I0111 17:52:33.150899  5016 mtcnn_euclidean_loss_layer.cu:43] -0.304 0.06 1.208 0.924
+I0111 17:52:33.150899  5016 base_data_layer.cu:23] 0.036638 0.142241 1.11422 1
+I0111 17:52:33.150899  5016 base_data_layer.cu:30] 0.036638 0.142241 1.11422 1
+I0111 17:52:33.150899  5016 mtcnn_euclidean_loss_layer.cu:43] 0.036638 0.142241 1.11422 1
+I0111 17:52:33.166563  5016 base_data_layer.cu:23] 0.129944 -0.008475 1.11864 0.884181
+I0111 17:52:33.166563  5016 base_data_layer.cu:30] 0.129944 -0.008475 1.11864 0.884181
+I0111 17:52:33.166563  5016 mtcnn_euclidean_loss_layer.cu:43] 0.129944 -0.008475 1.11864 0.884181
+I0111 17:52:33.182176  5016 base_data_layer.cu:23] -0.055901 -0.28882 0.819876 0.878882
+I0111 17:52:33.182176  5016 base_data_layer.cu:30] -0.055901 -0.28882 0.819876 0.878882
+I0111 17:52:33.182176  5016 mtcnn_euclidean_loss_layer.cu:43] -0.055901 -0.28882 0.819876 0.878882
+I0111 17:52:33.182176  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.182176  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.197779  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.197779  5016 blocking_queue.cpp:49] Waiting for data
+I0111 17:52:33.197779  5016 base_data_layer.cu:23] 0.20303 0.060606 0.942424 1
+I0111 17:52:33.197779  5016 base_data_layer.cu:30] 0.20303 0.060606 0.942424 1
+I0111 17:52:33.197779  5016 mtcnn_euclidean_loss_layer.cu:43] 0.20303 0.060606 0.942424 1
+I0111 17:52:33.213431  5016 base_data_layer.cu:23] -0.128289 0.075658 1.46382 1.07566
+I0111 17:52:33.213431  5016 base_data_layer.cu:30] -0.128289 0.075658 1.46382 1.07566
+I0111 17:52:33.213431  5016 mtcnn_euclidean_loss_layer.cu:43] -0.128289 0.075658 1.46382 1.07566
+I0111 17:52:33.229058  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.229058  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.229058  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.229058  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.229058  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.244660  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.244660  5016 base_data_layer.cu:23] -0.454167 0.104167 0.945833 1.20417
+I0111 17:52:33.244660  5016 base_data_layer.cu:30] -0.454167 0.104167 0.945833 1.20417
+I0111 17:52:33.260323  5016 mtcnn_euclidean_loss_layer.cu:43] -0.454167 0.104167 0.945833 1.20417
+I0111 17:52:33.260323  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.260323  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.260323  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.275938  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.275938  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.275938  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.291539  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.291539  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.291539  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.307190  5016 base_data_layer.cu:23] -0.21547 0.099448 1.04972 1.20994
+I0111 17:52:33.307190  5016 base_data_layer.cu:30] -0.21547 0.099448 1.04972 1.20994
+I0111 17:52:33.307190  5016 mtcnn_euclidean_loss_layer.cu:43] -0.21547 0.099448 1.04972 1.20994
+I0111 17:52:33.307190  5016 base_data_layer.cu:23] -0.193662 0.098592 1.53873 1.0493
+I0111 17:52:33.307190  5016 base_data_layer.cu:30] -0.193662 0.098592 1.53873 1.0493
+I0111 17:52:33.322794  5016 mtcnn_euclidean_loss_layer.cu:43] -0.193662 0.098592 1.53873 1.0493
+I0111 17:52:33.322794  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.322794  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.338443  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.338443  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.338443  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.338443  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.354045  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.354045  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.354045  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.369673  5016 base_data_layer.cu:23] 0 -0.060976 0.865854 1.04878
+I0111 17:52:33.369673  5016 base_data_layer.cu:30] 0 -0.060976 0.865854 1.04878
+I0111 17:52:33.369673  5016 mtcnn_euclidean_loss_layer.cu:43] 0 -0.060976 0.865854 1.04878
+I0111 17:52:33.385299  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.385299  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.385299  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.385299  5016 base_data_layer.cu:23] -0.451613 0.129032 1.43548 0.887097
+I0111 17:52:33.385299  5016 base_data_layer.cu:30] -0.451613 0.129032 1.43548 0.887097
+I0111 17:52:33.400925  5016 mtcnn_euclidean_loss_layer.cu:43] -0.451613 0.129032 1.43548 0.887097
+I0111 17:52:33.400925  5016 base_data_layer.cu:23] -0.058065 0.077419 0.929032 0.935484
+I0111 17:52:33.400925  5016 base_data_layer.cu:30] -0.058065 0.077419 0.929032 0.935484
+I0111 17:52:33.400925  5016 mtcnn_euclidean_loss_layer.cu:43] -0.058065 0.077419 0.929032 0.935484
+I0111 17:52:33.416554  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.416554  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.416554  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.432179  5016 base_data_layer.cu:23] -0.044554 0.079208 0.846535 0.80198
+I0111 17:52:33.432179  5016 base_data_layer.cu:30] -0.044554 0.079208 0.846535 0.80198
+I0111 17:52:33.432179  5016 mtcnn_euclidean_loss_layer.cu:43] -0.044554 0.079208 0.846535 0.80198
+I0111 17:52:33.447808  5016 base_data_layer.cu:23] -0.168712 0 1.18098 1.01227
+I0111 17:52:33.447808  5016 base_data_layer.cu:30] -0.168712 0 1.18098 1.01227
+I0111 17:52:33.447808  5016 mtcnn_euclidean_loss_layer.cu:43] -0.168712 0 1.18098 1.01227
+I0111 17:52:33.447808  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.463464  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.463464  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.463464  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.463464  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.479060  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.479060  5016 base_data_layer.cu:23] 0.122449 0.145408 0.964286 0.920918
+I0111 17:52:33.479060  5016 base_data_layer.cu:30] 0.122449 0.145408 0.964286 0.920918
+I0111 17:52:33.479060  5016 mtcnn_euclidean_loss_layer.cu:43] 0.122449 0.145408 0.964286 0.920918
+I0111 17:52:33.494714  5016 base_data_layer.cu:23] -0.095238 0.035714 0.97619 1.00397
+I0111 17:52:33.494714  5016 base_data_layer.cu:30] -0.095238 0.035714 0.97619 1.00397
+I0111 17:52:33.494714  5016 mtcnn_euclidean_loss_layer.cu:43] -0.095238 0.035714 0.97619 1.00397
+I0111 17:52:33.510349  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.510349  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.510349  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.525938  5016 base_data_layer.cu:23] 0.013636 0.215909 0.818182 1.04318
+I0111 17:52:33.525938  5016 base_data_layer.cu:30] 0.013636 0.215909 0.818182 1.04318
+I0111 17:52:33.525938  5016 mtcnn_euclidean_loss_layer.cu:43] 0.013636 0.215909 0.818182 1.04318
+I0111 17:52:33.541566  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.541566  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.541566  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.541566  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.541566  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.557193  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.557193  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.557193  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.557193  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.572856  5016 base_data_layer.cu:23] -0.268362 0.237288 0.861582 1.0226
+I0111 17:52:33.572856  5016 base_data_layer.cu:30] -0.268362 0.237288 0.861582 1.0226
+I0111 17:52:33.572856  5016 mtcnn_euclidean_loss_layer.cu:43] -0.268362 0.237288 0.861582 1.0226
+I0111 17:52:33.588482  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.588482  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.588482  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.604104  5016 base_data_layer.cu:23] -0.141129 0.165323 1.53629 1.19758
+I0111 17:52:33.604104  5016 base_data_layer.cu:30] -0.141129 0.165323 1.53629 1.19758
+I0111 17:52:33.604104  5016 mtcnn_euclidean_loss_layer.cu:43] -0.141129 0.165323 1.53629 1.19758
+I0111 17:52:33.604104  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.604104  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.619714  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.619714  5016 base_data_layer.cu:23] -0.044811 0.073113 1.0967 0.903302
+I0111 17:52:33.619714  5016 base_data_layer.cu:30] -0.044811 0.073113 1.0967 0.903302
+I0111 17:52:33.619714  5016 mtcnn_euclidean_loss_layer.cu:43] -0.044811 0.073113 1.0967 0.903302
+I0111 17:52:33.635326  5016 base_data_layer.cu:23] 0.01269 0.208122 0.906091 1.15736
+I0111 17:52:33.635326  5016 base_data_layer.cu:30] 0.01269 0.208122 0.906091 1.15736
+I0111 17:52:33.635326  5016 mtcnn_euclidean_loss_layer.cu:43] 0.01269 0.208122 0.906091 1.15736
+I0111 17:52:33.650952  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.650952  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.650952  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.666604  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.666604  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.666604  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.682209  5016 base_data_layer.cu:23] 0.104027 0.154362 0.922819 1.19463
+I0111 17:52:33.682209  5016 base_data_layer.cu:30] 0.104027 0.154362 0.922819 1.19463
+I0111 17:52:33.682209  5016 mtcnn_euclidean_loss_layer.cu:43] 0.104027 0.154362 0.922819 1.19463
+I0111 17:52:33.697844  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.697844  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.697844  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.713459  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.713459  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.713459  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.729085  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.729085  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.729085  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.744714  5016 base_data_layer.cu:23] -0.11658 0.194301 0.992228 0.888601
+I0111 17:52:33.744714  5016 base_data_layer.cu:30] -0.11658 0.194301 0.992228 0.888601
+I0111 17:52:33.744714  5016 mtcnn_euclidean_loss_layer.cu:43] -0.11658 0.194301 0.992228 0.888601
+I0111 17:52:33.760341  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.760341  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.760341  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.760341  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.760341  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.775981  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.775981  5016 base_data_layer.cu:23] -0.106061 0.083333 1.15909 1.25758
+I0111 17:52:33.775981  5016 base_data_layer.cu:30] -0.106061 0.083333 1.15909 1.25758
+I0111 17:52:33.791592  5016 mtcnn_euclidean_loss_layer.cu:43] -0.106061 0.083333 1.15909 1.25758
+I0111 17:52:33.791592  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.791592  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.807219  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.807219  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.807219  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.822846  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.822846  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.822846  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.822846  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.838472  5016 base_data_layer.cu:23] 0.142857 -0.02795 1.10559 1.12733
+I0111 17:52:33.838472  5016 base_data_layer.cu:30] 0.142857 -0.02795 1.10559 1.12733
+I0111 17:52:33.838472  5016 mtcnn_euclidean_loss_layer.cu:43] 0.142857 -0.02795 1.10559 1.12733
+I0111 17:52:33.854099  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.854099  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.854099  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.854099  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.854099  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.872993  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.882016  5016 base_data_layer.cu:23] 0 0.07672 1.02116 0.92328
+I0111 17:52:33.882016  5016 base_data_layer.cu:30] 0 0.07672 1.02116 0.92328
+I0111 17:52:33.887029  5016 mtcnn_euclidean_loss_layer.cu:43] 0 0.07672 1.02116 0.92328
+I0111 17:52:33.893101  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.893101  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.893101  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.908728  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.908728  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.908728  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.924357  5016 base_data_layer.cu:23] 0 0.188192 1.0738 0.874539
+I0111 17:52:33.924357  5016 base_data_layer.cu:30] 0 0.188192 1.0738 0.874539
+I0111 17:52:33.924357  5016 mtcnn_euclidean_loss_layer.cu:43] 0 0.188192 1.0738 0.874539
+I0111 17:52:33.924357  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.924357  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.939981  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.939981  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.939981  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.939981  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.955610  5016 base_data_layer.cu:23] 0.103125 0.140625 1.29062 1.10312
+I0111 17:52:33.955610  5016 base_data_layer.cu:30] 0.103125 0.140625 1.29062 1.10312
+I0111 17:52:33.955610  5016 mtcnn_euclidean_loss_layer.cu:43] 0.103125 0.140625 1.29062 1.10312
+I0111 17:52:33.971235  5016 base_data_layer.cu:23] -0.47973 0.087838 1.2027 1.27027
+I0111 17:52:33.971235  5016 base_data_layer.cu:30] -0.47973 0.087838 1.2027 1.27027
+I0111 17:52:33.971235  5016 mtcnn_euclidean_loss_layer.cu:43] -0.47973 0.087838 1.2027 1.27027
+I0111 17:52:33.988735  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.988735  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.992745  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:33.993798  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:33.993798  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:33.993798  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.009426  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.009426  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.009426  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.025054  5016 base_data_layer.cu:23] 0.079755 -0.076687 1.0184 0.819018
+I0111 17:52:34.025054  5016 base_data_layer.cu:30] 0.079755 -0.076687 1.0184 0.819018
+I0111 17:52:34.025054  5016 mtcnn_euclidean_loss_layer.cu:43] 0.079755 -0.076687 1.0184 0.819018
+I0111 17:52:34.040714  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.040714  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.040714  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.040714  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.040714  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.056339  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.056339  5016 base_data_layer.cu:23] -0.137821 0.035256 1.13141 0.945513
+I0111 17:52:34.056339  5016 base_data_layer.cu:30] -0.137821 0.035256 1.13141 0.945513
+I0111 17:52:34.071964  5016 mtcnn_euclidean_loss_layer.cu:43] -0.137821 0.035256 1.13141 0.945513
+I0111 17:52:34.071964  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.071964  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.071964  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.087561  5016 base_data_layer.cu:23] -0.128743 0.01497 1.05689 1.22455
+I0111 17:52:34.087561  5016 base_data_layer.cu:30] -0.128743 0.01497 1.05689 1.22455
+I0111 17:52:34.087561  5016 mtcnn_euclidean_loss_layer.cu:43] -0.128743 0.01497 1.05689 1.22455
+I0111 17:52:34.103196  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.103196  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.103196  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.118836  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.118836  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.118836  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.118836  5016 base_data_layer.cu:23] 0.153409 0.056818 1.10227 0.9375
+I0111 17:52:34.118836  5016 base_data_layer.cu:30] 0.153409 0.056818 1.10227 0.9375
+I0111 17:52:34.134464  5016 mtcnn_euclidean_loss_layer.cu:43] 0.153409 0.056818 1.10227 0.9375
+I0111 17:52:34.134464  5016 base_data_layer.cu:23] 0.049505 0.163366 1.01485 1.11881
+I0111 17:52:34.134464  5016 base_data_layer.cu:30] 0.049505 0.163366 1.01485 1.11881
+I0111 17:52:34.134464  5016 mtcnn_euclidean_loss_layer.cu:43] 0.049505 0.163366 1.01485 1.11881
+I0111 17:52:34.150068  5016 base_data_layer.cu:23] 0.126543 0.061728 1.00309 0.907407
+I0111 17:52:34.150068  5016 base_data_layer.cu:30] 0.126543 0.061728 1.00309 0.907407
+I0111 17:52:34.150068  5016 mtcnn_euclidean_loss_layer.cu:43] 0.126543 0.061728 1.00309 0.907407
+I0111 17:52:34.165694  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.165694  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.165694  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.181319  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.181319  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.181319  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.181319  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.196946  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.196946  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.196946  5016 base_data_layer.cu:23] -0.072254 0.16474 1.03757 0.962428
+I0111 17:52:34.196946  5016 base_data_layer.cu:30] -0.072254 0.16474 1.03757 0.962428
+I0111 17:52:34.212572  5016 mtcnn_euclidean_loss_layer.cu:43] -0.072254 0.16474 1.03757 0.962428
+I0111 17:52:34.212572  5016 base_data_layer.cu:23] -0.20625 -0.04375 1.55 1.175
+I0111 17:52:34.212572  5016 base_data_layer.cu:30] -0.20625 -0.04375 1.55 1.175
+I0111 17:52:34.212572  5016 mtcnn_euclidean_loss_layer.cu:43] -0.20625 -0.04375 1.55 1.175
+I0111 17:52:34.228199  5016 base_data_layer.cu:23] -0.422535 0.183099 0.964789 1.19014
+I0111 17:52:34.228199  5016 base_data_layer.cu:30] -0.422535 0.183099 0.964789 1.19014
+I0111 17:52:34.228199  5016 mtcnn_euclidean_loss_layer.cu:43] -0.422535 0.183099 0.964789 1.19014
+I0111 17:52:34.243850  5016 base_data_layer.cu:23] 0.054545 0.172727 0.7 1
+I0111 17:52:34.243850  5016 base_data_layer.cu:30] 0.054545 0.172727 0.7 1
+I0111 17:52:34.243850  5016 mtcnn_euclidean_loss_layer.cu:43] 0.054545 0.172727 0.7 1
+I0111 17:52:34.259454  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.259454  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.259454  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.259454  5016 base_data_layer.cu:23] 0.02027 0.202703 1.10811 1.10135
+I0111 17:52:34.259454  5016 base_data_layer.cu:30] 0.02027 0.202703 1.10811 1.10135
+I0111 17:52:34.275080  5016 mtcnn_euclidean_loss_layer.cu:43] 0.02027 0.202703 1.10811 1.10135
+I0111 17:52:34.275080  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.275080  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.275080  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.290750  5016 base_data_layer.cu:23] -0.219858 0.14539 1.20567 1.28014
+I0111 17:52:34.290750  5016 base_data_layer.cu:30] -0.219858 0.14539 1.20567 1.28014
+I0111 17:52:34.290750  5016 mtcnn_euclidean_loss_layer.cu:43] -0.219858 0.14539 1.20567 1.28014
+I0111 17:52:34.306334  5016 base_data_layer.cu:23] -0.002762 0.209945 0.859116 0.966851
+I0111 17:52:34.306334  5016 base_data_layer.cu:30] -0.002762 0.209945 0.859116 0.966851
+I0111 17:52:34.306334  5016 mtcnn_euclidean_loss_layer.cu:43] -0.002762 0.209945 0.859116 0.966851
+I0111 17:52:34.321960  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.321960  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.321960  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.337612  5016 base_data_layer.cu:23] -0.076613 -0.16129 1.00403 1.12097
+I0111 17:52:34.337612  5016 base_data_layer.cu:30] -0.076613 -0.16129 1.00403 1.12097
+I0111 17:52:34.337612  5016 mtcnn_euclidean_loss_layer.cu:43] -0.076613 -0.16129 1.00403 1.12097
+I0111 17:52:34.337612  5016 base_data_layer.cu:23] -0.279851 -0.007463 0.929104 1.01493
+I0111 17:52:34.337612  5016 base_data_layer.cu:30] -0.279851 -0.007463 0.929104 1.01493
+I0111 17:52:34.353245  5016 mtcnn_euclidean_loss_layer.cu:43] -0.279851 -0.007463 0.929104 1.01493
+I0111 17:52:34.353245  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.353245  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.353245  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.368865  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.368865  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer data, top blob data data: 0.470201
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer data, top blob label data: 0.40625
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.824612
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.40625
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.40625
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_2 data: 0.40625
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.324935
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.181514
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.181821
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.135604
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.25649
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.154713
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.282696
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0930243
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.114773
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.0967883
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.237076
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.143365
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0721127
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.135107
+I0111 17:52:34.368865  5016 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.0663414
+I0111 17:52:34.368865  5016 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.241989
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.0663414
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.0663414
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 0.340111
+I0111 17:52:34.384466  5016 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.16142
+I0111 17:52:34.384466  5016 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.205111
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer conv4-1_conv4-1_0_split, top blob conv4-1_conv4-1_0_split_0 data: 0.340111
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer conv4-1_conv4-1_0_split, top blob conv4-1_conv4-1_0_split_1 data: 0.340111
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.590838
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer cls_Acc, top blob cls_acc data: 0.730769
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.55066
+I0111 17:52:34.384466  5016 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.135333
+I0111 17:52:34.384466  5016 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.490265
+I0111 17:52:34.384466  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.384466  5016 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.0377619
+I0111 17:52:34.384466  5016 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0228611
+I0111 17:52:34.384466  5016 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00668331
+I0111 17:52:34.384466  5016 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0277007
+I0111 17:52:34.384466  5016 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.465863
+I0111 17:52:34.384466  5016 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1_conv4-1_0_split_0 diff: 0.00660733
+I0111 17:52:34.384466  5016 net.cpp:619]     [Backward] Layer conv4-1_conv4-1_0_split, bottom blob conv4-1 diff: 0.00660733
+I0111 17:52:34.384466  5016 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.00110694
+I0111 17:52:34.384466  5016 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.00558805
+I0111 17:52:34.384466  5016 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.0653327
+I0111 17:52:34.384466  5016 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.00738176
+I0111 17:52:34.400094  5016 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.00399557
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.0140409
+I0111 17:52:34.400094  5016 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00236099
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.00678285
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.0744059
+I0111 17:52:34.400094  5016 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.0010143
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0443905
+I0111 17:52:34.400094  5016 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.000892017
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.00949123
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.0664547
+I0111 17:52:34.400094  5016 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.000223004
+I0111 17:52:34.400094  5016 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.000121192
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0195232
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0210615
+I0111 17:52:34.400094  5016 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.0474015
+E0111 17:52:34.400094  5016 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (567.364, 61.7799); L2 norm = (8.52042, 1.69867)
+I0111 17:52:34.400094  5016 solver.cpp:224] Iteration 100 (75.7266 iter/s, 1.32054s/100 iters), loss = 0.609719
+I0111 17:52:34.400094  5016 solver.cpp:243]     Train net output #0: cls_acc = 0.730769
+I0111 17:52:34.400094  5016 solver.cpp:243]     Train net output #1: cls_loss = 0.590838 (* 1 = 0.590838 loss)
+I0111 17:52:34.400094  5016 solver.cpp:243]     Train net output #2: roi_loss = 0.0377619 (* 0.5 = 0.018881 loss)
+I0111 17:52:34.400094  5016 sgd_solver.cpp:137] Iteration 100, lr = 0.001
+I0111 17:52:34.400094  5016 sgd_solver.cpp:185] prelu slope:0.256490 0.237076 0.241989 
+I0111 17:52:34.415719  5016 sgd_solver.cpp:200] weight diff/data:0.000997 0.003228 0.004201 0.002712 0.002384 
+I0111 17:52:34.415719  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.415719  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.415719  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.415719  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.415719  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.415719  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.431346  5016 base_data_layer.cu:23] -0.22 -0.12 1.028 0.976
+I0111 17:52:34.431346  5016 base_data_layer.cu:30] -0.22 -0.12 1.028 0.976
+I0111 17:52:34.431346  5016 mtcnn_euclidean_loss_layer.cu:43] -0.22 -0.12 1.028 0.976
+I0111 17:52:34.446972  5016 base_data_layer.cu:23] -0.417197 -0.159236 0.984076 0.89172
+I0111 17:52:34.446972  5016 base_data_layer.cu:30] -0.417197 -0.159236 0.984076 0.89172
+I0111 17:52:34.446972  5016 mtcnn_euclidean_loss_layer.cu:43] -0.417197 -0.159236 0.984076 0.89172
+I0111 17:52:34.446972  5016 base_data_layer.cu:23] -0.018116 -0.405797 1.01087 0.978261
+I0111 17:52:34.462625  5016 base_data_layer.cu:30] -0.018116 -0.405797 1.01087 0.978261
+I0111 17:52:34.462625  5016 mtcnn_euclidean_loss_layer.cu:43] -0.018116 -0.405797 1.01087 0.978261
+I0111 17:52:34.462625  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.462625  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.462625  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.478236  5016 base_data_layer.cu:23] 0 -0.057143 0.954286 0.828571
+I0111 17:52:34.478236  5016 base_data_layer.cu:30] 0 -0.057143 0.954286 0.828571
+I0111 17:52:34.478236  5016 mtcnn_euclidean_loss_layer.cu:43] 0 -0.057143 0.954286 0.828571
+I0111 17:52:34.478236  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.478236  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.493852  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.493852  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.493852  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.493852  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.509479  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.509479  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.509479  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.525106  5016 base_data_layer.cu:23] -0.329412 0.217647 1.02941 1.09412
+I0111 17:52:34.525106  5016 base_data_layer.cu:30] -0.329412 0.217647 1.02941 1.09412
+I0111 17:52:34.525106  5016 mtcnn_euclidean_loss_layer.cu:43] -0.329412 0.217647 1.02941 1.09412
+I0111 17:52:34.525106  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.525106  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.540732  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.540732  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.540732  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.540732  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.556360  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.556360  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.556360  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.571986  5016 base_data_layer.cu:23] 0.008772 -0.030702 1.01754 0.811404
+I0111 17:52:34.571986  5016 base_data_layer.cu:30] 0.008772 -0.030702 1.01754 0.811404
+I0111 17:52:34.571986  5016 mtcnn_euclidean_loss_layer.cu:43] 0.008772 -0.030702 1.01754 0.811404
+I0111 17:52:34.587613  5016 base_data_layer.cu:23] -0.005051 0.106061 1 0.757576
+I0111 17:52:34.587613  5016 base_data_layer.cu:30] -0.005051 0.106061 1 0.757576
+I0111 17:52:34.587613  5016 mtcnn_euclidean_loss_layer.cu:43] -0.005051 0.106061 1 0.757576
+I0111 17:52:34.587613  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.587613  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.603240  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.603240  5016 base_data_layer.cu:23] 0.002155 0.153017 0.959052 0.928879
+I0111 17:52:34.603240  5016 base_data_layer.cu:30] 0.002155 0.153017 0.959052 0.928879
+I0111 17:52:34.603240  5016 mtcnn_euclidean_loss_layer.cu:43] 0.002155 0.153017 0.959052 0.928879
+I0111 17:52:34.618866  5016 base_data_layer.cu:23] 0.15625 0.15625 1.06971 1.0024
+I0111 17:52:34.618866  5016 base_data_layer.cu:30] 0.15625 0.15625 1.06971 1.0024
+I0111 17:52:34.618866  5016 mtcnn_euclidean_loss_layer.cu:43] 0.15625 0.15625 1.06971 1.0024
+I0111 17:52:34.634493  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.634493  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.634493  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.650120  5016 base_data_layer.cu:23] 0.009375 0.1375 1.17188 1.09375
+I0111 17:52:34.650120  5016 base_data_layer.cu:30] 0.009375 0.1375 1.17188 1.09375
+I0111 17:52:34.650120  5016 mtcnn_euclidean_loss_layer.cu:43] 0.009375 0.1375 1.17188 1.09375
+I0111 17:52:34.650120  5016 base_data_layer.cu:23] -0.134615 0.175824 0.964286 0.93956
+I0111 17:52:34.665746  5016 base_data_layer.cu:30] -0.134615 0.175824 0.964286 0.93956
+I0111 17:52:34.665746  5016 mtcnn_euclidean_loss_layer.cu:43] -0.134615 0.175824 0.964286 0.93956
+I0111 17:52:34.665746  5016 base_data_layer.cu:23] 0.263158 0.070175 0.885965 0.868421
+I0111 17:52:34.665746  5016 base_data_layer.cu:30] 0.263158 0.070175 0.885965 0.868421
+I0111 17:52:34.681373  5016 mtcnn_euclidean_loss_layer.cu:43] 0.263158 0.070175 0.885965 0.868421
+I0111 17:52:34.681373  5016 base_data_layer.cu:23] 0.252427 0.254854 1.0534 0.992718
+I0111 17:52:34.681373  5016 base_data_layer.cu:30] 0.252427 0.254854 1.0534 0.992718
+I0111 17:52:34.681373  5016 mtcnn_euclidean_loss_layer.cu:43] 0.252427 0.254854 1.0534 0.992718
+I0111 17:52:34.697031  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.697031  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.697031  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.712627  5016 base_data_layer.cu:23] -0.068182 0.099432 1.08523 0.860795
+I0111 17:52:34.712627  5016 base_data_layer.cu:30] -0.068182 0.099432 1.08523 0.860795
+I0111 17:52:34.712627  5016 mtcnn_euclidean_loss_layer.cu:43] -0.068182 0.099432 1.08523 0.860795
+I0111 17:52:34.728252  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.728252  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.728252  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.743880  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.743880  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.743880  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.743880  5016 base_data_layer.cu:23] 0.002959 -0.032544 1.47041 0.985207
+I0111 17:52:34.743880  5016 base_data_layer.cu:30] 0.002959 -0.032544 1.47041 0.985207
+I0111 17:52:34.759537  5016 mtcnn_euclidean_loss_layer.cu:43] 0.002959 -0.032544 1.47041 0.985207
+I0111 17:52:34.759537  5016 base_data_layer.cu:23] -0.022222 -0.240741 1.27407 0.92963
+I0111 17:52:34.759537  5016 base_data_layer.cu:30] -0.022222 -0.240741 1.27407 0.92963
+I0111 17:52:34.775182  5016 mtcnn_euclidean_loss_layer.cu:43] -0.022222 -0.240741 1.27407 0.92963
+I0111 17:52:34.775182  5016 base_data_layer.cu:23] -0.012953 0.023316 1.01295 1.06995
+I0111 17:52:34.775182  5016 base_data_layer.cu:30] -0.012953 0.023316 1.01295 1.06995
+I0111 17:52:34.775182  5016 mtcnn_euclidean_loss_layer.cu:43] -0.012953 0.023316 1.01295 1.06995
+I0111 17:52:34.790798  5016 base_data_layer.cu:23] -0.557692 -0.038462 1.0641 0.980769
+I0111 17:52:34.790798  5016 base_data_layer.cu:30] -0.557692 -0.038462 1.0641 0.980769
+I0111 17:52:34.790798  5016 mtcnn_euclidean_loss_layer.cu:43] -0.557692 -0.038462 1.0641 0.980769
+I0111 17:52:34.806386  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.806386  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.806386  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.822012  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.822012  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.822012  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.837638  5016 base_data_layer.cu:23] -0.204698 0.04698 1.28524 1.28859
+I0111 17:52:34.837638  5016 base_data_layer.cu:30] -0.204698 0.04698 1.28524 1.28859
+I0111 17:52:34.837638  5016 mtcnn_euclidean_loss_layer.cu:43] -0.204698 0.04698 1.28524 1.28859
+I0111 17:52:34.837638  5016 base_data_layer.cu:23] -0.151685 0.146067 0.859551 0.966292
+I0111 17:52:34.837638  5016 base_data_layer.cu:30] -0.151685 0.146067 0.859551 0.966292
+I0111 17:52:34.853267  5016 mtcnn_euclidean_loss_layer.cu:43] -0.151685 0.146067 0.859551 0.966292
+I0111 17:52:34.853267  5016 base_data_layer.cu:23] -0.097059 -0.091176 1.11471 0.944118
+I0111 17:52:34.853267  5016 base_data_layer.cu:30] -0.097059 -0.091176 1.11471 0.944118
+I0111 17:52:34.853267  5016 mtcnn_euclidean_loss_layer.cu:43] -0.097059 -0.091176 1.11471 0.944118
+I0111 17:52:34.868947  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.868947  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.868947  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.884519  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.884519  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.884519  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.900171  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.900171  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.900171  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.915772  5016 base_data_layer.cu:23] 0.209677 -0.053763 1.06989 1.01075
+I0111 17:52:34.915772  5016 base_data_layer.cu:30] 0.209677 -0.053763 1.06989 1.01075
+I0111 17:52:34.915772  5016 mtcnn_euclidean_loss_layer.cu:43] 0.209677 -0.053763 1.06989 1.01075
+I0111 17:52:34.915772  5016 base_data_layer.cu:23] 0.009346 0.233645 1.09813 0.771028
+I0111 17:52:34.915772  5016 base_data_layer.cu:30] 0.009346 0.233645 1.09813 0.771028
+I0111 17:52:34.931399  5016 mtcnn_euclidean_loss_layer.cu:43] 0.009346 0.233645 1.09813 0.771028
+I0111 17:52:34.931399  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.931399  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.931399  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.947028  5016 base_data_layer.cu:23] 0.115646 -0.003401 1.30612 1.07143
+I0111 17:52:34.947028  5016 base_data_layer.cu:30] 0.115646 -0.003401 1.30612 1.07143
+I0111 17:52:34.947028  5016 mtcnn_euclidean_loss_layer.cu:43] 0.115646 -0.003401 1.30612 1.07143
+I0111 17:52:34.962653  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.962653  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.962653  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.978281  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.978281  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:34.978281  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:34.978281  5016 base_data_layer.cu:23] -0.16129 0.142473 0.822581 0.776882
+I0111 17:52:34.978281  5016 base_data_layer.cu:30] -0.16129 0.142473 0.822581 0.776882
+I0111 17:52:34.993907  5016 mtcnn_euclidean_loss_layer.cu:43] -0.16129 0.142473 0.822581 0.776882
+I0111 17:52:34.993907  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:34.993907  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.009563  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.009563  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.009563  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.009563  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.025183  5016 base_data_layer.cu:23] 0.089686 0.26009 1.03587 1.03587
+I0111 17:52:35.025183  5016 base_data_layer.cu:30] 0.089686 0.26009 1.03587 1.03587
+I0111 17:52:35.025183  5016 mtcnn_euclidean_loss_layer.cu:43] 0.089686 0.26009 1.03587 1.03587
+I0111 17:52:35.040796  5016 base_data_layer.cu:23] -0.039474 0.134211 0.960526 0.944737
+I0111 17:52:35.040796  5016 base_data_layer.cu:30] -0.039474 0.134211 0.960526 0.944737
+I0111 17:52:35.040796  5016 mtcnn_euclidean_loss_layer.cu:43] -0.039474 0.134211 0.960526 0.944737
+I0111 17:52:35.056413  5016 base_data_layer.cu:23] 0.019337 -0.01105 1.23481 0.900552
+I0111 17:52:35.056413  5016 base_data_layer.cu:30] 0.019337 -0.01105 1.23481 0.900552
+I0111 17:52:35.056413  5016 mtcnn_euclidean_loss_layer.cu:43] 0.019337 -0.01105 1.23481 0.900552
+I0111 17:52:35.056413  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.056413  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.072051  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.072051  5016 base_data_layer.cu:23] -0.163102 0.016043 0.938503 0.930481
+I0111 17:52:35.072051  5016 base_data_layer.cu:30] -0.163102 0.016043 0.938503 0.930481
+I0111 17:52:35.087682  5016 mtcnn_euclidean_loss_layer.cu:43] -0.163102 0.016043 0.938503 0.930481
+I0111 17:52:35.087682  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.087682  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.087682  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.103323  5016 base_data_layer.cu:23] -0.040373 0.099379 1.20186 1.21118
+I0111 17:52:35.103323  5016 base_data_layer.cu:30] -0.040373 0.099379 1.20186 1.21118
+I0111 17:52:35.103323  5016 mtcnn_euclidean_loss_layer.cu:43] -0.040373 0.099379 1.20186 1.21118
+I0111 17:52:35.118919  5016 base_data_layer.cu:23] 0.09116 0.063536 0.91989 0.870166
+I0111 17:52:35.118919  5016 base_data_layer.cu:30] 0.09116 0.063536 0.91989 0.870166
+I0111 17:52:35.118919  5016 mtcnn_euclidean_loss_layer.cu:43] 0.09116 0.063536 0.91989 0.870166
+I0111 17:52:35.134548  5016 base_data_layer.cu:23] -0.053097 -0.066372 1.14159 1.01327
+I0111 17:52:35.134548  5016 base_data_layer.cu:30] -0.053097 -0.066372 1.14159 1.01327
+I0111 17:52:35.134548  5016 mtcnn_euclidean_loss_layer.cu:43] -0.053097 -0.066372 1.14159 1.01327
+I0111 17:52:35.134548  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.134548  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.150173  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.150173  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.150173  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.150173  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.165801  5016 base_data_layer.cu:23] 0.052632 0.251012 1.19028 1.04049
+I0111 17:52:35.165801  5016 base_data_layer.cu:30] 0.052632 0.251012 1.19028 1.04049
+I0111 17:52:35.165801  5016 mtcnn_euclidean_loss_layer.cu:43] 0.052632 0.251012 1.19028 1.04049
+I0111 17:52:35.181427  5016 base_data_layer.cu:23] -0.34589 0.085616 1.01027 1.05822
+I0111 17:52:35.181427  5016 base_data_layer.cu:30] -0.34589 0.085616 1.01027 1.05822
+I0111 17:52:35.181427  5016 mtcnn_euclidean_loss_layer.cu:43] -0.34589 0.085616 1.01027 1.05822
+I0111 17:52:35.197054  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.197054  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.197054  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.212679  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.212679  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.212679  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.212679  5016 base_data_layer.cu:23] -0.094828 -0.048851 0.985632 0.847701
+I0111 17:52:35.212679  5016 base_data_layer.cu:30] -0.094828 -0.048851 0.985632 0.847701
+I0111 17:52:35.228307  5016 mtcnn_euclidean_loss_layer.cu:43] -0.094828 -0.048851 0.985632 0.847701
+I0111 17:52:35.228307  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.228307  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.243934  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.243934  5016 base_data_layer.cu:23] -0.021898 0.242701 0.952555 0.95073
+I0111 17:52:35.243934  5016 base_data_layer.cu:30] -0.021898 0.242701 0.952555 0.95073
+I0111 17:52:35.243934  5016 mtcnn_euclidean_loss_layer.cu:43] -0.021898 0.242701 0.952555 0.95073
+I0111 17:52:35.259560  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.259560  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.259560  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.275221  5016 base_data_layer.cu:23] -0.334615 -0.023077 1.11154 0.923077
+I0111 17:52:35.275221  5016 base_data_layer.cu:30] -0.334615 -0.023077 1.11154 0.923077
+I0111 17:52:35.275221  5016 mtcnn_euclidean_loss_layer.cu:43] -0.334615 -0.023077 1.11154 0.923077
+I0111 17:52:35.290812  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.290812  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.290812  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.306440  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.306440  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.306440  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.306440  5016 base_data_layer.cu:23] -0.215753 -0.003425 1.44178 1.03767
+I0111 17:52:35.306440  5016 base_data_layer.cu:30] -0.215753 -0.003425 1.44178 1.03767
+I0111 17:52:35.322067  5016 mtcnn_euclidean_loss_layer.cu:43] -0.215753 -0.003425 1.44178 1.03767
+I0111 17:52:35.322067  5016 base_data_layer.cu:23] 0.162362 0.217712 0.9631 0.885609
+I0111 17:52:35.322067  5016 base_data_layer.cu:30] 0.162362 0.217712 0.9631 0.885609
+I0111 17:52:35.322067  5016 mtcnn_euclidean_loss_layer.cu:43] 0.162362 0.217712 0.9631 0.885609
+I0111 17:52:35.337700  5016 base_data_layer.cu:23] 0.119369 0.227477 0.975225 0.921171
+I0111 17:52:35.337700  5016 base_data_layer.cu:30] 0.119369 0.227477 0.975225 0.921171
+I0111 17:52:35.337700  5016 mtcnn_euclidean_loss_layer.cu:43] 0.119369 0.227477 0.975225 0.921171
+I0111 17:52:35.353349  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.353349  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.353349  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.368947  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.368947  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.368947  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.368947  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.384572  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.384572  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.384572  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.384572  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.400234  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.400234  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.400234  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.400234  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.415825  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.415825  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.415825  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.431452  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.431452  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.431452  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.447079  5016 base_data_layer.cu:23] 0.075301 0.174699 0.870482 0.86747
+I0111 17:52:35.447079  5016 base_data_layer.cu:30] 0.075301 0.174699 0.870482 0.86747
+I0111 17:52:35.447079  5016 mtcnn_euclidean_loss_layer.cu:43] 0.075301 0.174699 0.870482 0.86747
+I0111 17:52:35.447079  5016 base_data_layer.cu:23] 0.027523 0.222477 0.912844 0.919725
+I0111 17:52:35.447079  5016 base_data_layer.cu:30] 0.027523 0.222477 0.912844 0.919725
+I0111 17:52:35.462705  5016 mtcnn_euclidean_loss_layer.cu:43] 0.027523 0.222477 0.912844 0.919725
+I0111 17:52:35.462705  5016 base_data_layer.cu:23] 0.166667 0.060606 0.974747 1.06061
+I0111 17:52:35.462705  5016 base_data_layer.cu:30] 0.166667 0.060606 0.974747 1.06061
+I0111 17:52:35.478333  5016 mtcnn_euclidean_loss_layer.cu:43] 0.166667 0.060606 0.974747 1.06061
+I0111 17:52:35.478333  5016 base_data_layer.cu:23] -0.416667 -0.032258 1.0672 0.897849
+I0111 17:52:35.478333  5016 base_data_layer.cu:30] -0.416667 -0.032258 1.0672 0.897849
+I0111 17:52:35.478333  5016 mtcnn_euclidean_loss_layer.cu:43] -0.416667 -0.032258 1.0672 0.897849
+I0111 17:52:35.493959  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.493959  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.493959  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.509603  5016 base_data_layer.cu:23] -0.058252 0.092233 1.7767 1.14078
+I0111 17:52:35.509603  5016 base_data_layer.cu:30] -0.058252 0.092233 1.7767 1.14078
+I0111 17:52:35.509603  5016 mtcnn_euclidean_loss_layer.cu:43] -0.058252 0.092233 1.7767 1.14078
+I0111 17:52:35.525213  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.525213  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.525213  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.540840  5016 base_data_layer.cu:23] -0.07622 0.231707 0.789634 1.06707
+I0111 17:52:35.540840  5016 base_data_layer.cu:30] -0.07622 0.231707 0.789634 1.06707
+I0111 17:52:35.540840  5016 mtcnn_euclidean_loss_layer.cu:43] -0.07622 0.231707 0.789634 1.06707
+I0111 17:52:35.540840  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.540840  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.556465  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.556465  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.556465  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.556465  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.572093  5016 base_data_layer.cu:23] -0.014045 -0.022472 1.10955 0.960674
+I0111 17:52:35.572093  5016 base_data_layer.cu:30] -0.014045 -0.022472 1.10955 0.960674
+I0111 17:52:35.572093  5016 mtcnn_euclidean_loss_layer.cu:43] -0.014045 -0.022472 1.10955 0.960674
+I0111 17:52:35.589468  5016 base_data_layer.cu:23] 0.064171 0.066845 1.09626 0.879679
+I0111 17:52:35.589468  5016 base_data_layer.cu:30] 0.064171 0.066845 1.09626 0.879679
+I0111 17:52:35.589468  5016 mtcnn_euclidean_loss_layer.cu:43] 0.064171 0.066845 1.09626 0.879679
+I0111 17:52:35.605096  5016 base_data_layer.cu:23] -0.158451 0.059859 0.897887 1.08803
+I0111 17:52:35.605096  5016 base_data_layer.cu:30] -0.158451 0.059859 0.897887 1.08803
+I0111 17:52:35.605096  5016 mtcnn_euclidean_loss_layer.cu:43] -0.158451 0.059859 0.897887 1.08803
+I0111 17:52:35.605096  5016 base_data_layer.cu:23] 0.108434 0.208835 0.911647 0.767068
+I0111 17:52:35.620723  5016 base_data_layer.cu:30] 0.108434 0.208835 0.911647 0.767068
+I0111 17:52:35.620723  5016 mtcnn_euclidean_loss_layer.cu:43] 0.108434 0.208835 0.911647 0.767068
+I0111 17:52:35.620723  5016 base_data_layer.cu:23] -0.020325 -0.170732 1.24797 0.943089
+I0111 17:52:35.620723  5016 base_data_layer.cu:30] -0.020325 -0.170732 1.24797 0.943089
+I0111 17:52:35.636348  5016 mtcnn_euclidean_loss_layer.cu:43] -0.020325 -0.170732 1.24797 0.943089
+I0111 17:52:35.636348  5016 base_data_layer.cu:23] -0.438406 0.003623 1.03986 0.931159
+I0111 17:52:35.636348  5016 base_data_layer.cu:30] -0.438406 0.003623 1.03986 0.931159
+I0111 17:52:35.636348  5016 mtcnn_euclidean_loss_layer.cu:43] -0.438406 0.003623 1.03986 0.931159
+I0111 17:52:35.651976  5016 base_data_layer.cu:23] 0.183824 -0.047794 0.970588 0.996324
+I0111 17:52:35.651976  5016 base_data_layer.cu:30] 0.183824 -0.047794 0.970588 0.996324
+I0111 17:52:35.651976  5016 mtcnn_euclidean_loss_layer.cu:43] 0.183824 -0.047794 0.970588 0.996324
+I0111 17:52:35.667603  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.667603  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.667603  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.683228  5016 base_data_layer.cu:23] -0.003704 0.174074 1.5963 1.21111
+I0111 17:52:35.683228  5016 base_data_layer.cu:30] -0.003704 0.174074 1.5963 1.21111
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer data, top blob data data: 0.424756
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer data, top blob label data: 0.453125
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.815799
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.453125
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.453125
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_2 data: 0.453125
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.337091
+I0111 17:52:35.683228  5016 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.181498
+I0111 17:52:35.683228  5016 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.18632
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.142937
+I0111 17:52:35.683228  5016 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.263738
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.161841
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.309484
+I0111 17:52:35.683228  5016 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0928476
+I0111 17:52:35.683228  5016 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.121618
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.118144
+I0111 17:52:35.683228  5016 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.241251
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.162889
+I0111 17:52:35.683228  5016 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0718885
+I0111 17:52:35.683228  5016 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.137853
+I0111 17:52:35.683228  5016 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.0803237
+I0111 17:52:35.698858  5016 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.241405
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.0803237
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.0803237
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 0.425494
+I0111 17:52:35.698858  5016 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.161903
+I0111 17:52:35.698858  5016 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.275431
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer conv4-1_conv4-1_0_split, top blob conv4-1_conv4-1_0_split_0 data: 0.425494
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer conv4-1_conv4-1_0_split, top blob conv4-1_conv4-1_0_split_1 data: 0.425494
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.54598
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer cls_Acc, top blob cls_acc data: 0.744681
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.549136
+I0111 17:52:35.698858  5016 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.136203
+I0111 17:52:35.698858  5016 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.48692
+I0111 17:52:35.698858  5016 mtcnn_euclidean_loss_layer.cu:43] -0.003704 0.174074 1.5963 1.21111
+I0111 17:52:35.698858  5016 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.0464818
+I0111 17:52:35.698858  5016 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0250333
+I0111 17:52:35.698858  5016 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00790206
+I0111 17:52:35.698858  5016 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0446063
+I0111 17:52:35.698858  5016 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.613523
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1_conv4-1_0_split_0 diff: 0.00607431
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer conv4-1_conv4-1_0_split, bottom blob conv4-1 diff: 0.00607431
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.00105296
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.00750871
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.0410735
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.00855013
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.00461749
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.0205192
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00266391
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.00772751
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.0735514
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.0011999
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0476579
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.00108896
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.0115813
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.085109
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.00027224
+I0111 17:52:35.714481  5016 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.000150681
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0334021
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0321051
+I0111 17:52:35.714481  5016 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.111338
+E0111 17:52:35.730109  5016 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (566.705, 76.2621); L2 norm = (8.52478, 2.35189)
+I0111 17:52:35.730109  5016 solver.cpp:224] Iteration 200 (75.8538 iter/s, 1.31833s/100 iters), loss = 0.569221
+I0111 17:52:35.730109  5016 solver.cpp:243]     Train net output #0: cls_acc = 0.744681
+I0111 17:52:35.730109  5016 solver.cpp:243]     Train net output #1: cls_loss = 0.54598 (* 1 = 0.54598 loss)
+I0111 17:52:35.730109  5016 solver.cpp:243]     Train net output #2: roi_loss = 0.0464818 (* 0.5 = 0.0232409 loss)
+I0111 17:52:35.730109  5016 sgd_solver.cpp:137] Iteration 200, lr = 0.001
+I0111 17:52:35.730109  5016 sgd_solver.cpp:185] prelu slope:0.263738 0.241251 0.241405 
+I0111 17:52:35.730109  5016 sgd_solver.cpp:200] weight diff/data:0.000854 0.001862 0.000954 0.001971 0.003152 
+I0111 17:52:35.730109  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.730109  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.730109  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.745734  5016 base_data_layer.cu:23] 0.050633 -0.196203 0.905063 0.860759
+I0111 17:52:35.745734  5016 base_data_layer.cu:30] 0.050633 -0.196203 0.905063 0.860759
+I0111 17:52:35.745734  5016 mtcnn_euclidean_loss_layer.cu:43] 0.050633 -0.196203 0.905063 0.860759
+I0111 17:52:35.745734  5016 base_data_layer.cu:23] 0.135359 0.179558 1.15193 1.09669
+I0111 17:52:35.745734  5016 base_data_layer.cu:30] 0.135359 0.179558 1.15193 1.09669
+I0111 17:52:35.761361  5016 mtcnn_euclidean_loss_layer.cu:43] 0.135359 0.179558 1.15193 1.09669
+I0111 17:52:35.761361  5016 base_data_layer.cu:23] -0.073077 -0.146154 1.81923 0.938462
+I0111 17:52:35.761361  5016 base_data_layer.cu:30] -0.073077 -0.146154 1.81923 0.938462
+I0111 17:52:35.761361  5016 mtcnn_euclidean_loss_layer.cu:43] -0.073077 -0.146154 1.81923 0.938462
+I0111 17:52:35.776988  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.776988  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.776988  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.792616  5016 base_data_layer.cu:23] -0.114108 0.122407 1.02282 1.03527
+I0111 17:52:35.792616  5016 base_data_layer.cu:30] -0.114108 0.122407 1.02282 1.03527
+I0111 17:52:35.792616  5016 mtcnn_euclidean_loss_layer.cu:43] -0.114108 0.122407 1.02282 1.03527
+I0111 17:52:35.792616  5016 base_data_layer.cu:23] -0.142424 0.006061 1.0697 1.18788
+I0111 17:52:35.792616  5016 base_data_layer.cu:30] -0.142424 0.006061 1.0697 1.18788
+I0111 17:52:35.792616  5016 mtcnn_euclidean_loss_layer.cu:43] -0.142424 0.006061 1.0697 1.18788
+I0111 17:52:35.808241  5016 base_data_layer.cu:23] -0.238095 -0.154762 0.922619 0.994048
+I0111 17:52:35.808241  5016 base_data_layer.cu:30] -0.238095 -0.154762 0.922619 0.994048
+I0111 17:52:35.808241  5016 mtcnn_euclidean_loss_layer.cu:43] -0.238095 -0.154762 0.922619 0.994048
+I0111 17:52:35.823868  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.823868  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.823868  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.823868  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.823868  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.839494  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.839494  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.839494  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.839494  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.859331  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.860334  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.863459  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.863459  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.863459  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.863459  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.879087  5016 base_data_layer.cu:23] -0.029148 0.20852 0.795964 0.809417
+I0111 17:52:35.879087  5016 base_data_layer.cu:30] -0.029148 0.20852 0.795964 0.809417
+I0111 17:52:35.879087  5016 mtcnn_euclidean_loss_layer.cu:43] -0.029148 0.20852 0.795964 0.809417
+I0111 17:52:35.894714  5016 base_data_layer.cu:23] -0.289062 0.003906 1.21875 1.19141
+I0111 17:52:35.894714  5016 base_data_layer.cu:30] -0.289062 0.003906 1.21875 1.19141
+I0111 17:52:35.894714  5016 mtcnn_euclidean_loss_layer.cu:43] -0.289062 0.003906 1.21875 1.19141
+I0111 17:52:35.894714  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.910341  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.910341  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.910341  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.910341  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.925966  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.925966  5016 base_data_layer.cu:23] 0.049751 0.19403 0.920398 0.945274
+I0111 17:52:35.925966  5016 base_data_layer.cu:30] 0.049751 0.19403 0.920398 0.945274
+I0111 17:52:35.925966  5016 mtcnn_euclidean_loss_layer.cu:43] 0.049751 0.19403 0.920398 0.945274
+I0111 17:52:35.941593  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.941593  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.941593  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.960494  5016 base_data_layer.cu:23] 0.017647 -0.061765 1.05882 1.00882
+I0111 17:52:35.961501  5016 base_data_layer.cu:30] 0.017647 -0.061765 1.05882 1.00882
+I0111 17:52:35.964540  5016 mtcnn_euclidean_loss_layer.cu:43] 0.017647 -0.061765 1.05882 1.00882
+I0111 17:52:35.973562  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:35.973562  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:35.976539  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:35.986577  5016 base_data_layer.cu:23] -0.070707 0.103535 0.883838 0.992424
+I0111 17:52:35.986577  5016 base_data_layer.cu:30] -0.070707 0.103535 0.883838 0.992424
+I0111 17:52:35.989573  5016 mtcnn_euclidean_loss_layer.cu:43] -0.070707 0.103535 0.883838 0.992424
+I0111 17:52:36.001477  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.001477  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.001477  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.001477  5016 base_data_layer.cu:23] -0.022599 -0.073446 0.920904 0.80226
+I0111 17:52:36.001477  5016 base_data_layer.cu:30] -0.022599 -0.073446 0.920904 0.80226
+I0111 17:52:36.017103  5016 mtcnn_euclidean_loss_layer.cu:43] -0.022599 -0.073446 0.920904 0.80226
+I0111 17:52:36.017103  5016 base_data_layer.cu:23] -0.027439 0.003049 1.42378 0.942073
+I0111 17:52:36.017103  5016 base_data_layer.cu:30] -0.027439 0.003049 1.42378 0.942073
+I0111 17:52:36.017103  5016 mtcnn_euclidean_loss_layer.cu:43] -0.027439 0.003049 1.42378 0.942073
+I0111 17:52:36.040074  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.041070  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.044078  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.054116  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.054116  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.058125  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.067116  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.067116  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.071151  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.081176  5016 base_data_layer.cu:23] -0.258974 0.076923 1.11539 0.984615
+I0111 17:52:36.081176  5016 base_data_layer.cu:30] -0.258974 0.076923 1.11539 0.984615
+I0111 17:52:36.085189  5016 mtcnn_euclidean_loss_layer.cu:43] -0.258974 0.076923 1.11539 0.984615
+I0111 17:52:36.094213  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.094213  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.098224  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.107249  5016 base_data_layer.cu:23] -0.304 0.06 1.208 0.924
+I0111 17:52:36.107249  5016 base_data_layer.cu:30] -0.304 0.06 1.208 0.924
+I0111 17:52:36.111263  5016 mtcnn_euclidean_loss_layer.cu:43] -0.304 0.06 1.208 0.924
+I0111 17:52:36.121259  5016 base_data_layer.cu:23] 0.036638 0.142241 1.11422 1
+I0111 17:52:36.121259  5016 base_data_layer.cu:30] 0.036638 0.142241 1.11422 1
+I0111 17:52:36.124300  5016 mtcnn_euclidean_loss_layer.cu:43] 0.036638 0.142241 1.11422 1
+I0111 17:52:36.134306  5016 base_data_layer.cu:23] 0.129944 -0.008475 1.11864 0.884181
+I0111 17:52:36.134306  5016 base_data_layer.cu:30] 0.129944 -0.008475 1.11864 0.884181
+I0111 17:52:36.137327  5016 mtcnn_euclidean_loss_layer.cu:43] 0.129944 -0.008475 1.11864 0.884181
+I0111 17:52:36.147328  5016 base_data_layer.cu:23] -0.055901 -0.28882 0.819876 0.878882
+I0111 17:52:36.147328  5016 base_data_layer.cu:30] -0.055901 -0.28882 0.819876 0.878882
+I0111 17:52:36.151340  5016 mtcnn_euclidean_loss_layer.cu:43] -0.055901 -0.28882 0.819876 0.878882
+I0111 17:52:36.160362  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.161375  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.164374  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.176429  5016 base_data_layer.cu:23] 0.20303 0.060606 0.942424 1
+I0111 17:52:36.176429  5016 base_data_layer.cu:30] 0.20303 0.060606 0.942424 1
+I0111 17:52:36.180433  5016 mtcnn_euclidean_loss_layer.cu:43] 0.20303 0.060606 0.942424 1
+I0111 17:52:36.190444  5016 base_data_layer.cu:23] -0.128289 0.075658 1.46382 1.07566
+I0111 17:52:36.190444  5016 base_data_layer.cu:30] -0.128289 0.075658 1.46382 1.07566
+I0111 17:52:36.194480  5016 mtcnn_euclidean_loss_layer.cu:43] -0.128289 0.075658 1.46382 1.07566
+I0111 17:52:36.203501  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.204497  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.207512  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.217515  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.218519  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.221557  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.230583  5016 base_data_layer.cu:23] -0.454167 0.104167 0.945833 1.20417
+I0111 17:52:36.231554  5016 base_data_layer.cu:30] -0.454167 0.104167 0.945833 1.20417
+I0111 17:52:36.234562  5016 mtcnn_euclidean_loss_layer.cu:43] -0.454167 0.104167 0.945833 1.20417
+I0111 17:52:36.244587  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.244587  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.247596  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.257647  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.257647  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.261632  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.270683  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.271662  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.274700  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.284695  5016 base_data_layer.cu:23] -0.21547 0.099448 1.04972 1.20994
+I0111 17:52:36.284695  5016 base_data_layer.cu:30] -0.21547 0.099448 1.04972 1.20994
+I0111 17:52:36.287720  5016 mtcnn_euclidean_loss_layer.cu:43] -0.21547 0.099448 1.04972 1.20994
+I0111 17:52:36.296751  5016 base_data_layer.cu:23] -0.193662 0.098592 1.53873 1.0493
+I0111 17:52:36.297752  5016 base_data_layer.cu:30] -0.193662 0.098592 1.53873 1.0493
+I0111 17:52:36.300736  5016 mtcnn_euclidean_loss_layer.cu:43] -0.193662 0.098592 1.53873 1.0493
+I0111 17:52:36.310796  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.310796  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.314774  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.323797  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.324826  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.327810  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.337834  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.337834  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.340842  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.349941  5016 base_data_layer.cu:23] 0 -0.060976 0.865854 1.04878
+I0111 17:52:36.349941  5016 base_data_layer.cu:30] 0 -0.060976 0.865854 1.04878
+I0111 17:52:36.349941  5016 mtcnn_euclidean_loss_layer.cu:43] 0 -0.060976 0.865854 1.04878
+I0111 17:52:36.349941  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.349941  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.365600  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.365600  5016 base_data_layer.cu:23] -0.451613 0.129032 1.43548 0.887097
+I0111 17:52:36.365600  5016 base_data_layer.cu:30] -0.451613 0.129032 1.43548 0.887097
+I0111 17:52:36.365600  5016 mtcnn_euclidean_loss_layer.cu:43] -0.451613 0.129032 1.43548 0.887097
+I0111 17:52:36.381218  5016 base_data_layer.cu:23] -0.058065 0.077419 0.929032 0.935484
+I0111 17:52:36.381218  5016 base_data_layer.cu:30] -0.058065 0.077419 0.929032 0.935484
+I0111 17:52:36.381218  5016 mtcnn_euclidean_loss_layer.cu:43] -0.058065 0.077419 0.929032 0.935484
+I0111 17:52:36.396838  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.396838  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.396838  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.412448  5016 base_data_layer.cu:23] -0.044554 0.079208 0.846535 0.80198
+I0111 17:52:36.412448  5016 base_data_layer.cu:30] -0.044554 0.079208 0.846535 0.80198
+I0111 17:52:36.412448  5016 mtcnn_euclidean_loss_layer.cu:43] -0.044554 0.079208 0.846535 0.80198
+I0111 17:52:36.412448  5016 base_data_layer.cu:23] -0.168712 0 1.18098 1.01227
+I0111 17:52:36.412448  5016 base_data_layer.cu:30] -0.168712 0 1.18098 1.01227
+I0111 17:52:36.428073  5016 mtcnn_euclidean_loss_layer.cu:43] -0.168712 0 1.18098 1.01227
+I0111 17:52:36.428073  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.428073  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.443701  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.443701  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.443701  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.443701  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.459329  5016 base_data_layer.cu:23] 0.122449 0.145408 0.964286 0.920918
+I0111 17:52:36.459329  5016 base_data_layer.cu:30] 0.122449 0.145408 0.964286 0.920918
+I0111 17:52:36.459329  5016 mtcnn_euclidean_loss_layer.cu:43] 0.122449 0.145408 0.964286 0.920918
+I0111 17:52:36.474956  5016 base_data_layer.cu:23] -0.095238 0.035714 0.97619 1.00397
+I0111 17:52:36.474956  5016 base_data_layer.cu:30] -0.095238 0.035714 0.97619 1.00397
+I0111 17:52:36.474956  5016 mtcnn_euclidean_loss_layer.cu:43] -0.095238 0.035714 0.97619 1.00397
+I0111 17:52:36.490582  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.490582  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.490582  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.490582  5016 base_data_layer.cu:23] 0.013636 0.215909 0.818182 1.04318
+I0111 17:52:36.490582  5016 base_data_layer.cu:30] 0.013636 0.215909 0.818182 1.04318
+I0111 17:52:36.506222  5016 mtcnn_euclidean_loss_layer.cu:43] 0.013636 0.215909 0.818182 1.04318
+I0111 17:52:36.506222  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.506222  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.506222  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.521836  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.521836  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.521836  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.537461  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.537461  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.537461  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.553088  5016 base_data_layer.cu:23] -0.268362 0.237288 0.861582 1.0226
+I0111 17:52:36.553088  5016 base_data_layer.cu:30] -0.268362 0.237288 0.861582 1.0226
+I0111 17:52:36.553088  5016 mtcnn_euclidean_loss_layer.cu:43] -0.268362 0.237288 0.861582 1.0226
+I0111 17:52:36.568745  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.568745  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.568745  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.568745  5016 base_data_layer.cu:23] -0.141129 0.165323 1.53629 1.19758
+I0111 17:52:36.568745  5016 base_data_layer.cu:30] -0.141129 0.165323 1.53629 1.19758
+I0111 17:52:36.584342  5016 mtcnn_euclidean_loss_layer.cu:43] -0.141129 0.165323 1.53629 1.19758
+I0111 17:52:36.584342  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.584342  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.584342  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.599968  5016 base_data_layer.cu:23] -0.044811 0.073113 1.0967 0.903302
+I0111 17:52:36.599968  5016 base_data_layer.cu:30] -0.044811 0.073113 1.0967 0.903302
+I0111 17:52:36.599968  5016 mtcnn_euclidean_loss_layer.cu:43] -0.044811 0.073113 1.0967 0.903302
+I0111 17:52:36.615612  5016 base_data_layer.cu:23] 0.01269 0.208122 0.906091 1.15736
+I0111 17:52:36.615612  5016 base_data_layer.cu:30] 0.01269 0.208122 0.906091 1.15736
+I0111 17:52:36.615612  5016 mtcnn_euclidean_loss_layer.cu:43] 0.01269 0.208122 0.906091 1.15736
+I0111 17:52:36.631245  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.631245  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.631245  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.631245  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.631245  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.646849  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.646849  5016 base_data_layer.cu:23] 0.104027 0.154362 0.922819 1.19463
+I0111 17:52:36.646849  5016 base_data_layer.cu:30] 0.104027 0.154362 0.922819 1.19463
+I0111 17:52:36.662505  5016 mtcnn_euclidean_loss_layer.cu:43] 0.104027 0.154362 0.922819 1.19463
+I0111 17:52:36.662505  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.662505  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.662505  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.678100  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.678100  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.678100  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.693727  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.693727  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.693727  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.709379  5016 base_data_layer.cu:23] -0.11658 0.194301 0.992228 0.888601
+I0111 17:52:36.709379  5016 base_data_layer.cu:30] -0.11658 0.194301 0.992228 0.888601
+I0111 17:52:36.709379  5016 mtcnn_euclidean_loss_layer.cu:43] -0.11658 0.194301 0.992228 0.888601
+I0111 17:52:36.724982  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.724982  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.724982  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.724982  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.740627  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.740627  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.740627  5016 base_data_layer.cu:23] -0.106061 0.083333 1.15909 1.25758
+I0111 17:52:36.740627  5016 base_data_layer.cu:30] -0.106061 0.083333 1.15909 1.25758
+I0111 17:52:36.756238  5016 mtcnn_euclidean_loss_layer.cu:43] -0.106061 0.083333 1.15909 1.25758
+I0111 17:52:36.756238  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.756238  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.756238  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.771862  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.771862  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.771862  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.787488  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.787488  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.787488  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.803115  5016 base_data_layer.cu:23] 0.142857 -0.02795 1.10559 1.12733
+I0111 17:52:36.803115  5016 base_data_layer.cu:30] 0.142857 -0.02795 1.10559 1.12733
+I0111 17:52:36.803115  5016 mtcnn_euclidean_loss_layer.cu:43] 0.142857 -0.02795 1.10559 1.12733
+I0111 17:52:36.818742  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.818742  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.818742  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.834368  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.834368  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.834368  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.849995  5016 base_data_layer.cu:23] 0 0.07672 1.02116 0.92328
+I0111 17:52:36.849995  5016 base_data_layer.cu:30] 0 0.07672 1.02116 0.92328
+I0111 17:52:36.849995  5016 mtcnn_euclidean_loss_layer.cu:43] 0 0.07672 1.02116 0.92328
+I0111 17:52:36.849995  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.849995  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.866827  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.875849  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.875849  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.878859  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.888885  5016 base_data_layer.cu:23] 0 0.188192 1.0738 0.874539
+I0111 17:52:36.888885  5016 base_data_layer.cu:30] 0 0.188192 1.0738 0.874539
+I0111 17:52:36.891892  5016 mtcnn_euclidean_loss_layer.cu:43] 0 0.188192 1.0738 0.874539
+I0111 17:52:36.898056  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.898056  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.898056  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.913683  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.913683  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.913683  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.913683  5016 base_data_layer.cu:23] 0.103125 0.140625 1.29062 1.10312
+I0111 17:52:36.913683  5016 base_data_layer.cu:30] 0.103125 0.140625 1.29062 1.10312
+I0111 17:52:36.929311  5016 mtcnn_euclidean_loss_layer.cu:43] 0.103125 0.140625 1.29062 1.10312
+I0111 17:52:36.929311  5016 base_data_layer.cu:23] -0.47973 0.087838 1.2027 1.27027
+I0111 17:52:36.929311  5016 base_data_layer.cu:30] -0.47973 0.087838 1.2027 1.27027
+I0111 17:52:36.929311  5016 mtcnn_euclidean_loss_layer.cu:43] -0.47973 0.087838 1.2027 1.27027
+I0111 17:52:36.944936  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.944936  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.944936  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.960562  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.960562  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.968397  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.968397  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.968397  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.968397  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:36.990701  5016 base_data_layer.cu:23] 0.079755 -0.076687 1.0184 0.819018
+I0111 17:52:36.991705  5016 base_data_layer.cu:30] 0.079755 -0.076687 1.0184 0.819018
+I0111 17:52:36.994712  5016 mtcnn_euclidean_loss_layer.cu:43] 0.079755 -0.076687 1.0184 0.819018
+I0111 17:52:36.998903  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:36.998903  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:36.998903  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:37.014549  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:37.014549  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer data, top blob data data: 0.447773
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer data, top blob label data: 0.484375
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer data, top blob roi data: 0.793073
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_0 data: 0.484375
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_1 data: 0.484375
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer label_data_1_split, top blob label_data_1_split_2 data: 0.484375
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.358534
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.181431
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.18723
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer PReLU1, top blob conv1 data: 0.160864
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer PReLU1, param blob 0 data: 0.270188
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.185591
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.358397
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.092593
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.124801
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer PReLU2, top blob conv2 data: 0.136894
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer PReLU2, param blob 0 data: 0.243456
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv3, top blob conv3 data: 0.180223
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv3, param blob 0 data: 0.0716711
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv3, param blob 1 data: 0.140186
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer PReLU3, top blob conv3 data: 0.0923557
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer PReLU3, param blob 0 data: 0.240793
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_0 data: 0.0923557
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv3_PReLU3_0_split, top blob conv3_PReLU3_0_split_1 data: 0.0923557
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv4-1, top blob conv4-1 data: 0.441442
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv4-1, param blob 0 data: 0.163173
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv4-1, param blob 1 data: 0.29067
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv4-1_conv4-1_0_split, top blob conv4-1_conv4-1_0_split_0 data: 0.441442
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv4-1_conv4-1_0_split, top blob conv4-1_conv4-1_0_split_1 data: 0.441442
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer cls_loss, top blob cls_loss data: 0.553343
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer cls_Acc, top blob cls_acc data: 0.717391
+I0111 17:52:37.014549  5016 net.cpp:591]     [Forward] Layer conv4-2, top blob conv4-2 data: 0.575425
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv4-2, param blob 0 data: 0.136249
+I0111 17:52:37.014549  5016 net.cpp:603]     [Forward] Layer conv4-2, param blob 1 data: 0.504387
+I0111 17:52:37.014549  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:37.030155  5016 net.cpp:591]     [Forward] Layer roi_loss, top blob roi_loss data: 0.0287828
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer roi_loss, bottom blob conv4-2 diff: 0.0223338
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer conv4-2, bottom blob conv3_PReLU3_0_split_1 diff: 0.00712539
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv4-2, param blob 0 diff: 0.0371154
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv4-2, param blob 1 diff: 0.395891
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer cls_loss, bottom blob conv4-1_conv4-1_0_split_0 diff: 0.00606363
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer conv4-1_conv4-1_0_split, bottom blob conv4-1 diff: 0.00606363
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer conv4-1, bottom blob conv3_PReLU3_0_split_0 diff: 0.00110222
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv4-1, param blob 0 diff: 0.00741319
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv4-1, param blob 1 diff: 0.00221436
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer conv3_PReLU3_0_split, bottom blob conv3 diff: 0.00773714
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer PReLU3, bottom blob conv3 diff: 0.00446951
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer PReLU3, param blob 0 diff: 0.0155426
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer conv3, bottom blob conv2 diff: 0.00262997
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv3, param blob 0 diff: 0.00882914
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv3, param blob 1 diff: 0.0543369
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer PReLU2, bottom blob conv2 diff: 0.00119076
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer PReLU2, param blob 0 diff: 0.0498481
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer conv2, bottom blob pool1 diff: 0.00107466
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv2, param blob 0 diff: 0.0124555
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv2, param blob 1 diff: 0.0508448
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer pool1, bottom blob conv1 diff: 0.000268665
+I0111 17:52:37.030155  5016 net.cpp:619]     [Backward] Layer PReLU1, bottom blob conv1 diff: 0.000150668
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer PReLU1, param blob 0 diff: 0.0262712
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv1, param blob 0 diff: 0.0449624
+I0111 17:52:37.030155  5016 net.cpp:630]     [Backward] Layer conv1, param blob 1 diff: 0.0396608
+E0111 17:52:37.045784  5016 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (565.72, 82.0802); L2 norm = (8.52987, 2.09462)
+I0111 17:52:37.045784  5016 solver.cpp:224] Iteration 300 (75.9609 iter/s, 1.31647s/100 iters), loss = 0.567734
+I0111 17:52:37.045784  5016 solver.cpp:243]     Train net output #0: cls_acc = 0.717391
+I0111 17:52:37.045784  5016 solver.cpp:243]     Train net output #1: cls_loss = 0.553343 (* 1 = 0.553343 loss)
+I0111 17:52:37.045784  5016 solver.cpp:243]     Train net output #2: roi_loss = 0.0287828 (* 0.5 = 0.0143914 loss)
+I0111 17:52:37.045784  5016 sgd_solver.cpp:137] Iteration 300, lr = 0.001
+I0111 17:52:37.045784  5016 sgd_solver.cpp:185] prelu slope:0.270188 0.243456 0.240793 
+I0111 17:52:37.045784  5016 sgd_solver.cpp:200] weight diff/data:0.001679 0.001842 0.001412 0.001087 0.001074 
+I0111 17:52:37.045784  5016 base_data_layer.cu:23] -0.137821 0.035256 1.13141 0.945513
+I0111 17:52:37.045784  5016 base_data_layer.cu:30] -0.137821 0.035256 1.13141 0.945513
+I0111 17:52:37.045784  5016 mtcnn_euclidean_loss_layer.cu:43] -0.137821 0.035256 1.13141 0.945513
+I0111 17:52:37.061409  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:37.061409  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:37.061409  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:37.061409  5016 base_data_layer.cu:23] -0.128743 0.01497 1.05689 1.22455
+I0111 17:52:37.061409  5016 base_data_layer.cu:30] -0.128743 0.01497 1.05689 1.22455
+I0111 17:52:37.077036  5016 mtcnn_euclidean_loss_layer.cu:43] -0.128743 0.01497 1.05689 1.22455
+I0111 17:52:37.077036  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:37.077036  5016 base_data_layer.cu:30] -1 -1 -1 -1
+I0111 17:52:37.077036  5016 mtcnn_euclidean_loss_layer.cu:43] -1 -1 -1 -1
+I0111 17:52:37.092686  5016 base_data_layer.cu:23] -1 -1 -1 -1
+I0111 17:52:37.092686  5016 base_data_layer.cu

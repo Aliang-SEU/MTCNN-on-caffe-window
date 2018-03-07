@@ -1,0 +1,25 @@
+Log file created at: 2018/01/10 20:57:30
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0110 20:57:30.972096 53104 caffe.cpp:219] Using GPUs 0
+I0110 20:57:31.223870 53104 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0110 20:57:31.613904 53104 solver.cpp:44] Initializing solver from parameters: 
+base_lr: 0.001
+display: 100
+max_iter: 500000
+lr_policy: "step"
+gamma: 0.8
+momentum: 0.9
+weight_decay: 0.004
+stepsize: 30000
+snapshot: 10000
+snapshot_prefix: "E:/DeepLearning/mtcnn_train/models-12/"
+solver_mode: GPU
+device_id: 0
+net: "det1_train.prototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0110 20:57:31.614907 53104 solver.cpp:87] Creating training net from net file: det1_train.prototxt
+F0110 20:57:31.614907 53104 io.cpp:41] Check failed: fd != -1 (-1 vs. -1) File not found: det1_train.prototxt

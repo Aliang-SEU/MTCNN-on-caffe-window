@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerEnvironment>PATH=E:\DeepLearning\caffe-windows\windows\thirdparty\debug_bins;%PATH% $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>
+    </LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>--resize_width=35 --resize_height=35 --shuffle E:/拍摄视频/自动采集1/闭嘴/ E:/MyProject/ConsoleApplication9/ConsoleApplication9/train.txt E:/DeepLearning/caffe-windows/examples/imagenet/train</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+</Project>

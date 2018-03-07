@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommand>E:\DeepLearning\caffe-windows\Build\x64\Debug\caffe.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommandArguments>train  --solver=E:\DeepLearning\caffe-windows\examples\mnist\lenet_solver.prototxt</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>E:\DeepLearning\caffe-windows\</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerEnvironment>PATH=E:\DeepLearning\caffe-windows\windows\thirdparty\debug_bins;%PATH%; $(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+  </PropertyGroup>
+</Project>

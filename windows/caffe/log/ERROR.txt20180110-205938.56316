@@ -1,0 +1,4 @@
+Log file created at: 2018/01/10 20:59:38
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0110 20:59:38.885646 54484 layer.hpp:400] Check failed: MaxTopBlobs() >= top.size() (2 vs. 3) MTCNNData Layer produces at most 2 top blob(s) as output.

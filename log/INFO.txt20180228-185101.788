@@ -1,0 +1,1801 @@
+Log file created at: 2018/02/28 18:51:01
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0228 18:51:01.013620  8824 caffe.cpp:219] Using GPUs 0
+I0228 18:51:01.236225  8824 caffe.cpp:224] GPU 0: GeForce GTX 1060
+I0228 18:51:01.606187  8824 solver.cpp:44] Initializing solver from parameters: 
+test_iter: 1000
+test_interval: 1000
+base_lr: 0.01
+display: 20
+max_iter: 450000
+lr_policy: "step"
+gamma: 0.1
+momentum: 0.9
+weight_decay: 0.0005
+stepsize: 100000
+snapshot: 10000
+snapshot_prefix: "examples/mydata/caffenet_train"
+solver_mode: GPU
+device_id: 0
+net: "E:/DeepLearning/caffe-windows/examples/mydata/lenet.prototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0228 18:51:01.608183  8824 solver.cpp:87] Creating training net from net file: E:/DeepLearning/caffe-windows/examples/mydata/lenet.prototxt
+I0228 18:51:01.610189  8824 net.cpp:51] Initializing net from parameters: 
+name: "LeNet"
+state {
+  phase: TRAIN
+  level: 0
+  stage: ""
+}
+layer {
+  name: "data"
+  type: "Input"
+  top: "data"
+  input_param {
+    shape {
+      dim: 32
+      dim: 1
+      dim: 35
+      dim: 35
+    }
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool2"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "prob"
+  type: "Softmax"
+  bottom: "ip2"
+  top: "prob"
+}
+I0228 18:51:01.611217  8824 layer_factory.hpp:77] Creating layer data
+I0228 18:51:01.612195  8824 net.cpp:84] Creating Layer data
+I0228 18:51:01.612195  8824 net.cpp:380] data -> data
+I0228 18:51:01.613198  8824 net.cpp:122] Setting up data
+I0228 18:51:01.613198  8824 net.cpp:129] Top shape: 32 1 35 35 (39200)
+I0228 18:51:01.614199  8824 net.cpp:137] Memory required for data: 156800
+I0228 18:51:01.614199  8824 layer_factory.hpp:77] Creating layer conv1
+I0228 18:51:01.614199  8824 net.cpp:84] Creating Layer conv1
+I0228 18:51:01.615201  8824 net.cpp:406] conv1 <- data
+I0228 18:51:01.615201  8824 net.cpp:380] conv1 -> conv1
+I0228 18:51:02.233849  8824 net.cpp:122] Setting up conv1
+I0228 18:51:02.233849  8824 net.cpp:129] Top shape: 32 20 31 31 (615040)
+I0228 18:51:02.234850  8824 net.cpp:137] Memory required for data: 2616960
+I0228 18:51:02.234850  8824 layer_factory.hpp:77] Creating layer pool1
+I0228 18:51:02.234850  8824 net.cpp:84] Creating Layer pool1
+I0228 18:51:02.234850  8824 net.cpp:406] pool1 <- conv1
+I0228 18:51:02.235853  8824 net.cpp:380] pool1 -> pool1
+I0228 18:51:02.235853  8824 net.cpp:122] Setting up pool1
+I0228 18:51:02.235853  8824 net.cpp:129] Top shape: 32 20 16 16 (163840)
+I0228 18:51:02.235853  8824 net.cpp:137] Memory required for data: 3272320
+I0228 18:51:02.235853  8824 layer_factory.hpp:77] Creating layer conv2
+I0228 18:51:02.236855  8824 net.cpp:84] Creating Layer conv2
+I0228 18:51:02.237857  8824 net.cpp:406] conv2 <- pool1
+I0228 18:51:02.237857  8824 net.cpp:380] conv2 -> conv2
+I0228 18:51:02.241868  8824 net.cpp:122] Setting up conv2
+I0228 18:51:02.245878  8824 net.cpp:129] Top shape: 32 50 12 12 (230400)
+I0228 18:51:02.246881  8824 net.cpp:137] Memory required for data: 4193920
+I0228 18:51:02.246881  8824 layer_factory.hpp:77] Creating layer pool2
+I0228 18:51:02.246881  8824 net.cpp:84] Creating Layer pool2
+I0228 18:51:02.247896  8824 net.cpp:406] pool2 <- conv2
+I0228 18:51:02.247896  8824 net.cpp:380] pool2 -> pool2
+I0228 18:51:02.247896  8824 net.cpp:122] Setting up pool2
+I0228 18:51:02.248903  8824 net.cpp:129] Top shape: 32 50 6 6 (57600)
+I0228 18:51:02.248903  8824 net.cpp:137] Memory required for data: 4424320
+I0228 18:51:02.248903  8824 layer_factory.hpp:77] Creating layer ip1
+I0228 18:51:02.248903  8824 net.cpp:84] Creating Layer ip1
+I0228 18:51:02.249889  8824 net.cpp:406] ip1 <- pool2
+I0228 18:51:02.249889  8824 net.cpp:380] ip1 -> ip1
+I0228 18:51:02.256907  8824 net.cpp:122] Setting up ip1
+I0228 18:51:02.257910  8824 net.cpp:129] Top shape: 32 500 (16000)
+I0228 18:51:02.257910  8824 net.cpp:137] Memory required for data: 4488320
+I0228 18:51:02.257910  8824 layer_factory.hpp:77] Creating layer relu1
+I0228 18:51:02.258931  8824 net.cpp:84] Creating Layer relu1
+I0228 18:51:02.258931  8824 net.cpp:406] relu1 <- ip1
+I0228 18:51:02.259917  8824 net.cpp:367] relu1 -> ip1 (in-place)
+I0228 18:51:02.259917  8824 net.cpp:122] Setting up relu1
+I0228 18:51:02.259917  8824 net.cpp:129] Top shape: 32 500 (16000)
+I0228 18:51:02.259917  8824 net.cpp:137] Memory required for data: 4552320
+I0228 18:51:02.260918  8824 layer_factory.hpp:77] Creating layer ip2
+I0228 18:51:02.260918  8824 net.cpp:84] Creating Layer ip2
+I0228 18:51:02.260918  8824 net.cpp:406] ip2 <- ip1
+I0228 18:51:02.260918  8824 net.cpp:380] ip2 -> ip2
+I0228 18:51:02.261921  8824 net.cpp:122] Setting up ip2
+I0228 18:51:02.261921  8824 net.cpp:129] Top shape: 32 2 (64)
+I0228 18:51:02.261921  8824 net.cpp:137] Memory required for data: 4552576
+I0228 18:51:02.261921  8824 layer_factory.hpp:77] Creating layer prob
+I0228 18:51:02.261921  8824 net.cpp:84] Creating Layer prob
+I0228 18:51:02.261921  8824 net.cpp:406] prob <- ip2
+I0228 18:51:02.262923  8824 net.cpp:380] prob -> prob
+I0228 18:51:02.264930  8824 net.cpp:122] Setting up prob
+I0228 18:51:02.264930  8824 net.cpp:129] Top shape: 32 2 (64)
+I0228 18:51:02.264930  8824 net.cpp:137] Memory required for data: 4552832
+I0228 18:51:02.265933  8824 net.cpp:200] prob does not need backward computation.
+I0228 18:51:02.265933  8824 net.cpp:200] ip2 does not need backward computation.
+I0228 18:51:02.265933  8824 net.cpp:200] relu1 does not need backward computation.
+I0228 18:51:02.265933  8824 net.cpp:200] ip1 does not need backward computation.
+I0228 18:51:02.265933  8824 net.cpp:200] pool2 does not need backward computation.
+I0228 18:51:02.266934  8824 net.cpp:200] conv2 does not need backward computation.
+I0228 18:51:02.266934  8824 net.cpp:200] pool1 does not need backward computation.
+I0228 18:51:02.266934  8824 net.cpp:200] conv1 does not need backward computation.
+I0228 18:51:02.266934  8824 net.cpp:200] data does not need backward computation.
+I0228 18:51:02.266934  8824 net.cpp:242] This network produces output prob
+I0228 18:51:02.267937  8824 net.cpp:255] Network initialization done.
+I0228 18:51:02.267937  8824 solver.cpp:172] Creating test net (#0) specified by net file: E:/DeepLearning/caffe-windows/examples/mydata/lenet.prototxt
+I0228 18:51:02.267937  8824 net.cpp:51] Initializing net from parameters: 
+name: "LeNet"
+state {
+  phase: TEST
+}
+layer {
+  name: "data"
+  type: "Input"
+  top: "data"
+  input_param {
+    shape {
+      dim: 32
+      dim: 1
+      dim: 35
+      dim: 35
+    }
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool2"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "prob"
+  type: "Softmax"
+  bottom: "ip2"
+  top: "prob"
+}
+I0228 18:51:02.268940  8824 layer_factory.hpp:77] Creating layer data
+I0228 18:51:02.268940  8824 net.cpp:84] Creating Layer data
+I0228 18:51:02.269942  8824 net.cpp:380] data -> data
+I0228 18:51:02.269942  8824 net.cpp:122] Setting up data
+I0228 18:51:02.269942  8824 net.cpp:129] Top shape: 32 1 35 35 (39200)
+I0228 18:51:02.269942  8824 net.cpp:137] Memory required for data: 156800
+I0228 18:51:02.269942  8824 layer_factory.hpp:77] Creating layer conv1
+I0228 18:51:02.270946  8824 net.cpp:84] Creating Layer conv1
+I0228 18:51:02.270946  8824 net.cpp:406] conv1 <- data
+I0228 18:51:02.270946  8824 net.cpp:380] conv1 -> conv1
+I0228 18:51:02.273953  8824 net.cpp:122] Setting up conv1
+I0228 18:51:02.275959  8824 net.cpp:129] Top shape: 32 20 31 31 (615040)
+I0228 18:51:02.275959  8824 net.cpp:137] Memory required for data: 2616960
+I0228 18:51:02.275959  8824 layer_factory.hpp:77] Creating layer pool1
+I0228 18:51:02.276962  8824 net.cpp:84] Creating Layer pool1
+I0228 18:51:02.276962  8824 net.cpp:406] pool1 <- conv1
+I0228 18:51:02.276962  8824 net.cpp:380] pool1 -> pool1
+I0228 18:51:02.277963  8824 net.cpp:122] Setting up pool1
+I0228 18:51:02.277963  8824 net.cpp:129] Top shape: 32 20 16 16 (163840)
+I0228 18:51:02.277963  8824 net.cpp:137] Memory required for data: 3272320
+I0228 18:51:02.277963  8824 layer_factory.hpp:77] Creating layer conv2
+I0228 18:51:02.277963  8824 net.cpp:84] Creating Layer conv2
+I0228 18:51:02.277963  8824 net.cpp:406] conv2 <- pool1
+I0228 18:51:02.278966  8824 net.cpp:380] conv2 -> conv2
+I0228 18:51:02.280972  8824 net.cpp:122] Setting up conv2
+I0228 18:51:02.280972  8824 net.cpp:129] Top shape: 32 50 12 12 (230400)
+I0228 18:51:02.281975  8824 net.cpp:137] Memory required for data: 4193920
+I0228 18:51:02.281975  8824 layer_factory.hpp:77] Creating layer pool2
+I0228 18:51:02.281975  8824 net.cpp:84] Creating Layer pool2
+I0228 18:51:02.281975  8824 net.cpp:406] pool2 <- conv2
+I0228 18:51:02.281975  8824 net.cpp:380] pool2 -> pool2
+I0228 18:51:02.282977  8824 net.cpp:122] Setting up pool2
+I0228 18:51:02.282977  8824 net.cpp:129] Top shape: 32 50 6 6 (57600)
+I0228 18:51:02.283980  8824 net.cpp:137] Memory required for data: 4424320
+I0228 18:51:02.283980  8824 layer_factory.hpp:77] Creating layer ip1
+I0228 18:51:02.283980  8824 net.cpp:84] Creating Layer ip1
+I0228 18:51:02.283980  8824 net.cpp:406] ip1 <- pool2
+I0228 18:51:02.283980  8824 net.cpp:380] ip1 -> ip1
+I0228 18:51:02.290998  8824 net.cpp:122] Setting up ip1
+I0228 18:51:02.290998  8824 net.cpp:129] Top shape: 32 500 (16000)
+I0228 18:51:02.292018  8824 net.cpp:137] Memory required for data: 4488320
+I0228 18:51:02.292018  8824 layer_factory.hpp:77] Creating layer relu1
+I0228 18:51:02.292018  8824 net.cpp:84] Creating Layer relu1
+I0228 18:51:02.293004  8824 net.cpp:406] relu1 <- ip1
+I0228 18:51:02.293004  8824 net.cpp:367] relu1 -> ip1 (in-place)
+I0228 18:51:02.295009  8824 net.cpp:122] Setting up relu1
+I0228 18:51:02.295009  8824 net.cpp:129] Top shape: 32 500 (16000)
+I0228 18:51:02.295009  8824 net.cpp:137] Memory required for data: 4552320
+I0228 18:51:02.296026  8824 layer_factory.hpp:77] Creating layer ip2
+I0228 18:51:02.297014  8824 net.cpp:84] Creating Layer ip2
+I0228 18:51:02.297014  8824 net.cpp:406] ip2 <- ip1
+I0228 18:51:02.298017  8824 net.cpp:380] ip2 -> ip2
+I0228 18:51:02.298017  8824 net.cpp:122] Setting up ip2
+I0228 18:51:02.299019  8824 net.cpp:129] Top shape: 32 2 (64)
+I0228 18:51:02.299019  8824 net.cpp:137] Memory required for data: 4552576
+I0228 18:51:02.299019  8824 layer_factory.hpp:77] Creating layer prob
+I0228 18:51:02.299019  8824 net.cpp:84] Creating Layer prob
+I0228 18:51:02.300022  8824 net.cpp:406] prob <- ip2
+I0228 18:51:02.300022  8824 net.cpp:380] prob -> prob
+I0228 18:51:02.301025  8824 net.cpp:122] Setting up prob
+I0228 18:51:02.301025  8824 net.cpp:129] Top shape: 32 2 (64)
+I0228 18:51:02.301025  8824 net.cpp:137] Memory required for data: 4552832
+I0228 18:51:02.301025  8824 net.cpp:200] prob does not need backward computation.
+I0228 18:51:02.301025  8824 net.cpp:200] ip2 does not need backward computation.
+I0228 18:51:02.302027  8824 net.cpp:200] relu1 does not need backward computation.
+I0228 18:51:02.302027  8824 net.cpp:200] ip1 does not need backward computation.
+I0228 18:51:02.302027  8824 net.cpp:200] pool2 does not need backward computation.
+I0228 18:51:02.302027  8824 net.cpp:200] conv2 does not need backward computation.
+I0228 18:51:02.303030  8824 net.cpp:200] pool1 does not need backward computation.
+I0228 18:51:02.303030  8824 net.cpp:200] conv1 does not need backward computation.
+I0228 18:51:02.303030  8824 net.cpp:200] data does not need backward computation.
+I0228 18:51:02.303030  8824 net.cpp:242] This network produces output prob
+I0228 18:51:02.304035  8824 net.cpp:255] Network initialization done.
+I0228 18:51:02.304035  8824 solver.cpp:56] Solver scaffolding done.
+I0228 18:51:02.304035  8824 caffe.cpp:249] Starting Optimization
+I0228 18:51:02.304035  8824 solver.cpp:278] Solving LeNet
+I0228 18:51:02.305035  8824 solver.cpp:279] Learning Rate Policy: step
+I0228 18:51:02.306038  8824 solver.cpp:336] Iteration 0, Testing net (#0)
+I0228 18:51:03.119201  8824 solver.cpp:403]     Test net output #0: prob = 0.5
+I0228 18:51:03.120203  8824 solver.cpp:403]     Test net output #1: prob = 0.5
+I0228 18:51:03.120203  8824 solver.cpp:403]     Test net output #2: prob = 0.5
+I0228 18:51:03.121207  8824 solver.cpp:403]     Test net output #3: prob = 0.5
+I0228 18:51:03.121207  8824 solver.cpp:403]     Test net output #4: prob = 0.5
+I0228 18:51:03.121207  8824 solver.cpp:403]     Test net output #5: prob = 0.5
+I0228 18:51:03.121207  8824 solver.cpp:403]     Test net output #6: prob = 0.5
+I0228 18:51:03.122210  8824 solver.cpp:403]     Test net output #7: prob = 0.5
+I0228 18:51:03.122210  8824 solver.cpp:403]     Test net output #8: prob = 0.5
+I0228 18:51:03.122210  8824 solver.cpp:403]     Test net output #9: prob = 0.5
+I0228 18:51:03.122210  8824 solver.cpp:403]     Test net output #10: prob = 0.5
+I0228 18:51:03.123212  8824 solver.cpp:403]     Test net output #11: prob = 0.5
+I0228 18:51:03.123212  8824 solver.cpp:403]     Test net output #12: prob = 0.5
+I0228 18:51:03.123212  8824 solver.cpp:403]     Test net output #13: prob = 0.5
+I0228 18:51:03.123212  8824 solver.cpp:403]     Test net output #14: prob = 0.5
+I0228 18:51:03.124223  8824 solver.cpp:403]     Test net output #15: prob = 0.5
+I0228 18:51:03.124223  8824 solver.cpp:403]     Test net output #16: prob = 0.5
+I0228 18:51:03.124223  8824 solver.cpp:403]     Test net output #17: prob = 0.5
+I0228 18:51:03.124223  8824 solver.cpp:403]     Test net output #18: prob = 0.5
+I0228 18:51:03.124223  8824 solver.cpp:403]     Test net output #19: prob = 0.5
+I0228 18:51:03.125217  8824 solver.cpp:403]     Test net output #20: prob = 0.5
+I0228 18:51:03.125217  8824 solver.cpp:403]     Test net output #21: prob = 0.5
+I0228 18:51:03.125217  8824 solver.cpp:403]     Test net output #22: prob = 0.5
+I0228 18:51:03.125217  8824 solver.cpp:403]     Test net output #23: prob = 0.5
+I0228 18:51:03.126221  8824 solver.cpp:403]     Test net output #24: prob = 0.5
+I0228 18:51:03.126221  8824 solver.cpp:403]     Test net output #25: prob = 0.5
+I0228 18:51:03.126221  8824 solver.cpp:403]     Test net output #26: prob = 0.5
+I0228 18:51:03.126221  8824 solver.cpp:403]     Test net output #27: prob = 0.5
+I0228 18:51:03.127223  8824 solver.cpp:403]     Test net output #28: prob = 0.5
+I0228 18:51:03.127223  8824 solver.cpp:403]     Test net output #29: prob = 0.5
+I0228 18:51:03.128226  8824 solver.cpp:403]     Test net output #30: prob = 0.5
+I0228 18:51:03.128226  8824 solver.cpp:403]     Test net output #31: prob = 0.5
+I0228 18:51:03.128226  8824 solver.cpp:403]     Test net output #32: prob = 0.5
+I0228 18:51:03.128226  8824 solver.cpp:403]     Test net output #33: prob = 0.5
+I0228 18:51:03.129227  8824 solver.cpp:403]     Test net output #34: prob = 0.5
+I0228 18:51:03.132236  8824 solver.cpp:403]     Test net output #35: prob = 0.5
+I0228 18:51:03.132236  8824 solver.cpp:403]     Test net output #36: prob = 0.5
+I0228 18:51:03.132236  8824 solver.cpp:403]     Test net output #37: prob = 0.5
+I0228 18:51:03.133239  8824 solver.cpp:403]     Test net output #38: prob = 0.5
+I0228 18:51:03.133239  8824 solver.cpp:403]     Test net output #39: prob = 0.5
+I0228 18:51:03.133239  8824 solver.cpp:403]     Test net output #40: prob = 0.5
+I0228 18:51:03.133239  8824 solver.cpp:403]     Test net output #41: prob = 0.5
+I0228 18:51:03.133239  8824 solver.cpp:403]     Test net output #42: prob = 0.5
+I0228 18:51:03.134240  8824 solver.cpp:403]     Test net output #43: prob = 0.5
+I0228 18:51:03.134240  8824 solver.cpp:403]     Test net output #44: prob = 0.5
+I0228 18:51:03.134240  8824 solver.cpp:403]     Test net output #45: prob = 0.5
+I0228 18:51:03.134240  8824 solver.cpp:403]     Test net output #46: prob = 0.5
+I0228 18:51:03.134240  8824 solver.cpp:403]     Test net output #47: prob = 0.5
+I0228 18:51:03.135243  8824 solver.cpp:403]     Test net output #48: prob = 0.5
+I0228 18:51:03.135243  8824 solver.cpp:403]     Test net output #49: prob = 0.5
+I0228 18:51:03.135243  8824 solver.cpp:403]     Test net output #50: prob = 0.5
+I0228 18:51:03.135243  8824 solver.cpp:403]     Test net output #51: prob = 0.5
+I0228 18:51:03.135243  8824 solver.cpp:403]     Test net output #52: prob = 0.5
+I0228 18:51:03.136246  8824 solver.cpp:403]     Test net output #53: prob = 0.5
+I0228 18:51:03.136246  8824 solver.cpp:403]     Test net output #54: prob = 0.5
+I0228 18:51:03.136246  8824 solver.cpp:403]     Test net output #55: prob = 0.5
+I0228 18:51:03.136246  8824 solver.cpp:403]     Test net output #56: prob = 0.5
+I0228 18:51:03.137248  8824 solver.cpp:403]     Test net output #57: prob = 0.5
+I0228 18:51:03.137248  8824 solver.cpp:403]     Test net output #58: prob = 0.5
+I0228 18:51:03.137248  8824 solver.cpp:403]     Test net output #59: prob = 0.5
+I0228 18:51:03.137248  8824 solver.cpp:403]     Test net output #60: prob = 0.5
+I0228 18:51:03.137248  8824 solver.cpp:403]     Test net output #61: prob = 0.5
+I0228 18:51:03.138253  8824 solver.cpp:403]     Test net output #62: prob = 0.5
+I0228 18:51:03.138253  8824 solver.cpp:403]     Test net output #63: prob = 0.5
+I0228 18:51:03.140259  8824 solver.cpp:224] Iteration 0 (-9.79508e-43 iter/s, 0.834508s/20 iters), loss = 0
+I0228 18:51:03.142261  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.142261  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.143265  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.143265  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.143265  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.143265  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.144268  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.144268  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.144268  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.144268  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.144268  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.145270  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.145270  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.145270  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.145270  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.146275  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.146275  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.146275  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.146275  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.146275  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.147275  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.148278  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.149281  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.149281  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.149281  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.149281  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.150285  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.150285  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.150285  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.150285  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.150285  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.151286  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.153291  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.154294  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.154294  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.154294  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.154294  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.154294  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.155297  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.155297  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.155297  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.155297  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.155297  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.156299  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.156299  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.156299  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.156299  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.157301  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.157301  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.157301  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.157301  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.157301  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.158304  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.158304  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.159308  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.159308  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.159308  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.159308  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.159308  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.160310  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.160310  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.160310  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.160310  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.160310  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.161314  8824 sgd_solver.cpp:137] Iteration 0, lr = 0.01
+I0228 18:51:03.167330  8824 sgd_solver.cpp:200] weight diff/data:0.000005 0.000005 0.000005 0.000005 
+I0228 18:51:03.190389  8824 solver.cpp:224] Iteration 20 (420.078 iter/s, 0.0476102s/20 iters), loss = 0
+I0228 18:51:03.190389  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.190389  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.191395  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.192395  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.192395  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.192395  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.193399  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.193399  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.193399  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.194401  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.194401  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.194401  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.194401  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.195403  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.195403  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.195403  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.195403  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.196406  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.196406  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.196406  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.197409  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.197409  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.197409  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.197409  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.197409  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.198411  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.198411  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.198411  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.198411  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.198411  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.199414  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.202424  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.202424  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.202424  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.202424  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.203424  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.203424  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.203424  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.204429  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.204429  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.204429  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.204429  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.205430  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.206434  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.206434  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.206434  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.207435  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.207435  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.207435  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.207435  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.208437  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.208437  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.208437  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.208437  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.209441  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.209441  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.209441  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.209441  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.209441  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.210443  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.212450  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.212450  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.213451  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.213451  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.213451  8824 sgd_solver.cpp:137] Iteration 20, lr = 0.01
+I0228 18:51:03.217463  8824 sgd_solver.cpp:200] weight diff/data:0.000045 0.000045 0.000045 0.000045 
+I0228 18:51:03.239521  8824 solver.cpp:224] Iteration 40 (406.178 iter/s, 0.0492395s/20 iters), loss = 0
+I0228 18:51:03.239521  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.240523  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.240523  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.240523  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.240523  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.241528  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.242530  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.242530  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.242530  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.242530  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.243532  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.243532  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.243532  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.243532  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.243532  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.244535  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.244535  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.244535  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.244535  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.245537  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.245537  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.245537  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.245537  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.246541  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.246541  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.246541  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.246541  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.247544  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.247544  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.247544  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.251554  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.251554  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.251554  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.252557  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.252557  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.252557  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.253559  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.254562  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.254562  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.254562  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.254562  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.255564  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.255564  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.255564  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.255564  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.255564  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.256567  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.256567  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.256567  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.256567  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.257570  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.257570  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.257570  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.257570  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.258572  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.258572  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.258572  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.258572  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.259575  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.259575  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.259575  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.259575  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.260576  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.262581  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.263584  8824 sgd_solver.cpp:137] Iteration 40, lr = 0.01
+I0228 18:51:03.268599  8824 sgd_solver.cpp:200] weight diff/data:0.000049 0.000049 0.000049 0.000049 
+I0228 18:51:03.290657  8824 solver.cpp:224] Iteration 60 (391.165 iter/s, 0.0511293s/20 iters), loss = 0
+I0228 18:51:03.290657  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.291661  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.292663  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.292663  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.292663  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.292663  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.292663  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.293665  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.293665  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.293665  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.293665  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.293665  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.294668  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.294668  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.294668  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.294668  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.294668  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.295670  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.295670  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.295670  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.295670  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.295670  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.296672  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.296672  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.296672  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.296672  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.297675  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.297675  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.297675  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.297675  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.297675  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.298678  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.298678  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.298678  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.298678  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.298678  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.299682  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.300684  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.302690  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.302690  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.303691  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.303691  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.303691  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.303691  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.304694  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.304694  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.304694  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.304694  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.305697  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.305697  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.305697  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.305697  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.306699  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.306699  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.306699  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.306699  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.306699  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.307701  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.307701  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.307701  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.307701  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.307701  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.308704  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.308704  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.308704  8824 sgd_solver.cpp:137] Iteration 60, lr = 0.01
+I0228 18:51:03.313719  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.336781  8824 solver.cpp:224] Iteration 80 (436.07 iter/s, 0.0458642s/20 iters), loss = 0
+I0228 18:51:03.336781  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.337782  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.337782  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.337782  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.338785  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.338785  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.338785  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.338785  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.338785  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.339788  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.339788  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.339788  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.339788  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.339788  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.340790  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.340790  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.340790  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.340790  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.341792  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.341792  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.341792  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.341792  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.341792  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.342797  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.342797  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.342797  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.342797  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.343799  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.343799  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.343799  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.343799  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.344801  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.344801  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.344801  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.344801  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.345804  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.345804  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.345804  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.345804  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.345804  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.346807  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.349814  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.349814  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.349814  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.350816  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.350816  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.350816  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.350816  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.351819  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.351819  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.351819  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.351819  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.352821  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.352821  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.352821  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.352821  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.352821  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.353824  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.353824  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.353824  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.353824  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.353824  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.354828  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.354828  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.354828  8824 sgd_solver.cpp:137] Iteration 80, lr = 0.01
+I0228 18:51:03.358839  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.382901  8824 solver.cpp:224] Iteration 100 (436.44 iter/s, 0.0458253s/20 iters), loss = 0
+I0228 18:51:03.382901  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.383904  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.383904  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.383904  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.383904  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.384907  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.384907  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.384907  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.384907  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.385910  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.385910  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.385910  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.385910  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.386912  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.386912  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.386912  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.387915  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.387915  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.387915  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.387915  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.387915  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.388917  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.388917  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.388917  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.389920  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.389920  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.389920  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.389920  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.389920  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.390923  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.390923  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.390923  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.390923  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.394934  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.394934  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.394934  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.395936  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.395936  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.395936  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.396939  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.396939  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.396939  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.397943  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.397943  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.397943  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.398947  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.398947  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.398947  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.399948  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.399948  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.399948  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.400950  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.400950  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.400950  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.400950  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.401953  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.401953  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.401953  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.402956  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.404963  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.404963  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.404963  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.405966  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.405966  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.405966  8824 sgd_solver.cpp:137] Iteration 100, lr = 0.01
+I0228 18:51:03.410977  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.433035  8824 solver.cpp:224] Iteration 120 (398.158 iter/s, 0.0502313s/20 iters), loss = 0
+I0228 18:51:03.433035  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.434041  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.434041  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.435042  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.435042  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.435042  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.435042  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.435042  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.436043  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.436043  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.436043  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.437047  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.437047  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.437047  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.437047  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.437047  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.438048  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.438048  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.438048  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.439051  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.439051  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.439051  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.439051  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.439051  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.441057  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.441057  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.441057  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.441057  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.442059  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.442059  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.442059  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.443063  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.446070  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.446070  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.447073  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.447073  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.447073  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.447073  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.448076  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.448076  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.448076  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.448076  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.448076  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.449079  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.449079  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.449079  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.449079  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.450080  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.450080  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.450080  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.450080  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.451083  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.451083  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.451083  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.451083  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.452085  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.452085  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.452085  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.452085  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.453089  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.453089  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.453089  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.453089  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.454092  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.454092  8824 sgd_solver.cpp:137] Iteration 120, lr = 0.01
+I0228 18:51:03.459105  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.482167  8824 solver.cpp:224] Iteration 140 (410.256 iter/s, 0.04875s/20 iters), loss = 0
+I0228 18:51:03.482167  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.483170  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.483170  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.483170  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.484172  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.484172  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.484172  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.484172  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.485175  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.485175  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.485175  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.485175  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.485175  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.486178  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.487179  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.487179  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.487179  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.487179  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.488183  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.488183  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.488183  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.489184  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.489184  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.489184  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.489184  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.489184  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.490186  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.490186  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.490186  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.490186  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.490186  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.491190  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.491190  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.491190  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.491190  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.492192  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.494199  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.494199  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.495201  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.495201  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.495201  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.495201  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.496206  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.496206  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.496206  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.496206  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.497206  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.497206  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.497206  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.497206  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.498208  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.498208  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.498208  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.498208  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.499212  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.499212  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.499212  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.499212  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.499212  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.500213  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.500213  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.500213  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.501216  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.501216  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.501216  8824 sgd_solver.cpp:137] Iteration 140, lr = 0.01
+I0228 18:51:03.506229  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.528290  8824 solver.cpp:224] Iteration 160 (434.732 iter/s, 0.0460053s/20 iters), loss = 0
+I0228 18:51:03.528290  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.529292  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.529292  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.530294  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.530294  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.531297  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.531297  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.531297  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.531297  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.532299  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.532299  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.532299  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.533303  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.533303  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.533303  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.534304  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.534304  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.534304  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.535308  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.535308  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.535308  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.535308  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.536309  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.536309  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.536309  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.536309  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.536309  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.537313  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.537313  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.537313  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.537313  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.538316  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.540321  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.541323  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.541323  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.541323  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.541323  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.541323  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.542327  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.542327  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.542327  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.542327  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.543330  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.543330  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.543330  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.543330  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.543330  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.544333  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.544333  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.544333  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.544333  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.545336  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.545336  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.545336  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.545336  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.545336  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.546337  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.546337  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.546337  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.546337  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.547339  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.547339  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.547339  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.547339  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.548342  8824 sgd_solver.cpp:137] Iteration 160, lr = 0.01
+I0228 18:51:03.553357  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.576416  8824 solver.cpp:224] Iteration 180 (416.229 iter/s, 0.0480505s/20 iters), loss = 0
+I0228 18:51:03.576416  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.577420  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.577420  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.577420  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.578423  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.578423  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.578423  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.578423  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.579424  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.579424  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.579424  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.579424  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.579424  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.580430  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.581430  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.581430  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.582432  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.582432  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.582432  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.583438  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.583438  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.583438  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.584437  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.584437  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.584437  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.584437  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.584437  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.585440  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.585440  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.585440  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.585440  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.586443  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.588449  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.589450  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.589450  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.589450  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.589450  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.589450  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.590453  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.590453  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.590453  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.590453  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.591457  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.591457  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.591457  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.591457  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.592459  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.592459  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.592459  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.592459  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.593461  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.593461  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.593461  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.593461  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.593461  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.594465  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.594465  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.595468  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.595468  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.595468  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.596469  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.596469  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.597473  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.600492  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.600492  8824 sgd_solver.cpp:137] Iteration 180, lr = 0.01
+I0228 18:51:03.605500  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.627552  8824 solver.cpp:224] Iteration 200 (393.766 iter/s, 0.0507916s/20 iters), loss = 0
+I0228 18:51:03.627552  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.628556  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.628556  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.628556  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.629559  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.629559  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.629559  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.629559  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.630561  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.630561  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.630561  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.631574  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.631574  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.631574  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.632566  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.632566  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.632566  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.632566  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.632566  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.633569  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.633569  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.633569  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.633569  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.634572  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.634572  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.634572  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.634572  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.634572  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.635574  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.635574  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.635574  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.635574  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.636576  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.636576  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.636576  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.636576  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.636576  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.637579  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.639585  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.640588  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.640588  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.640588  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.640588  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.641589  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.641589  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.641589  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.641589  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.641589  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.641589  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.642593  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.643596  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.643596  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.643596  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.643596  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.644598  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.644598  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.644598  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.644598  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.644598  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.645601  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.645601  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.645601  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.645601  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.645601  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.646603  8824 sgd_solver.cpp:137] Iteration 200, lr = 0.01
+I0228 18:51:03.650614  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.672673  8824 solver.cpp:224] Iteration 220 (446.051 iter/s, 0.0448379s/20 iters), loss = 0
+I0228 18:51:03.672673  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.673676  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.673676  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.673676  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.673676  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.673676  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.674679  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.674679  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.675681  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.675681  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.675681  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.675681  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.676683  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.676683  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.676683  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.677687  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.677687  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.677687  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.677687  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.678689  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.678689  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.678689  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.678689  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.679692  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.679692  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.679692  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.679692  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.679692  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.680693  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.680693  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.680693  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.681696  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.683703  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.684718  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.684718  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.684718  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.684718  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.685709  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.685709  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.685709  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.685709  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.685709  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.686712  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.686712  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.686712  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.686712  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.686712  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.686712  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.687714  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.687714  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.687714  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.687714  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.687714  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.688715  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.688715  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.688715  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.688715  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.688715  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.689718  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.689718  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.690721  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.690721  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.690721  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.690721  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.690721  8824 sgd_solver.cpp:137] Iteration 220, lr = 0.01
+I0228 18:51:03.695735  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.717793  8824 solver.cpp:224] Iteration 240 (440.338 iter/s, 0.0454197s/20 iters), loss = 0
+I0228 18:51:03.717793  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.718796  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.718796  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.719799  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.719799  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.719799  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.719799  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.719799  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.720800  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.721803  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.721803  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.721803  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.721803  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.721803  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.722807  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.722807  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.722807  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.722807  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.722807  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.723809  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.723809  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.723809  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.723809  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.724812  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.724812  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.724812  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.724812  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.725813  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.725813  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.725813  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.725813  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.725813  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.726819  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.726819  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.726819  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.726819  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.727819  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.730829  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.730829  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.730829  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.731830  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.731830  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.731830  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.731830  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.731830  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.732833  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.732833  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.732833  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.732833  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.733836  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.733836  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.733836  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.733836  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.734838  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.734838  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.734838  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.734838  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.735841  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.735841  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.735841  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.735841  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.735841  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.736843  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.736843  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.737845  8824 sgd_solver.cpp:137] Iteration 240, lr = 0.01
+I0228 18:51:03.741858  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.763917  8824 solver.cpp:224] Iteration 260 (432.794 iter/s, 0.0462114s/20 iters), loss = 0
+I0228 18:51:03.764931  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.765923  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.765923  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.765923  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.765923  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.765923  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.766924  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.766924  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.766924  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.766924  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.766924  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.767925  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.767925  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.768930  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.768930  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.768930  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.768930  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.768930  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.769932  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.769932  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.769932  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.769932  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.769932  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.770934  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.770934  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.770934  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.770934  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.770934  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.770934  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.771936  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.771936  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.771936  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.771936  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.771936  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.772940  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.772940  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.772940  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.772940  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.772940  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.772940  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.773943  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.775949  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.775949  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.776952  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.776952  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.776952  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.776952  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.776952  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.776952  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.777952  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.777952  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.777952  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.777952  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.777952  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.778956  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.778956  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.778956  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.778956  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.778956  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.779959  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.779959  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.779959  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.779959  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.779959  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.780961  8824 sgd_solver.cpp:137] Iteration 260, lr = 0.01
+I0228 18:51:03.784972  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.809041  8824 solver.cpp:224] Iteration 280 (448.16 iter/s, 0.0446269s/20 iters), loss = 0
+I0228 18:51:03.810050  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.810050  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.811041  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.811041  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.811041  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.811041  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.812044  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.812044  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.812044  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.812044  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.812044  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.813047  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.813047  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.813047  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.813047  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.814050  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.814050  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.814050  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.814050  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.814050  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.814050  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.815052  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.815052  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.816054  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.816054  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.816054  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.816054  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.817056  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.817056  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.817056  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.817056  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.818060  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.818060  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.818060  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.818060  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.818060  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.819062  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.821069  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.821069  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.822070  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.822070  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.822070  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.822070  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.822070  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.823073  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.823073  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.823073  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.824075  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.824075  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.824075  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.824075  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.824075  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.825078  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.825078  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.825078  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.825078  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.825078  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.825078  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.826081  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.826081  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.826081  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.826081  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.826081  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.827083  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.827083  8824 sgd_solver.cpp:137] Iteration 280, lr = 0.01
+I0228 18:51:03.832096  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.856160  8824 solver.cpp:224] Iteration 300 (429.089 iter/s, 0.0466104s/20 iters), loss = 0
+I0228 18:51:03.856160  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.857163  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.857163  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.858166  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.858166  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.858166  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.858166  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.859169  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.859169  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.859169  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.860172  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.860172  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.860172  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.860172  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.861174  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.862176  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.862176  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.862176  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.863179  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.863179  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.863179  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.864184  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.864184  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.865185  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.865185  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.868204  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.868204  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.868204  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.868204  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.869195  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.869195  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.869195  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.870198  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.870198  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.870198  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.871201  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.871201  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.871201  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.872203  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.872203  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.872203  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.873205  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.873205  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.873205  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.874208  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.874208  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.874208  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.875211  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.875211  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.875211  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.875211  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.875211  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.876214  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.879222  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.879222  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.879222  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.880224  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.880224  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.881227  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.881227  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.881227  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.882230  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.882230  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.882230  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.882230  8824 sgd_solver.cpp:137] Iteration 300, lr = 0.01
+I0228 18:51:03.887243  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.912309  8824 solver.cpp:224] Iteration 320 (356.924 iter/s, 0.0560343s/20 iters), loss = 0
+I0228 18:51:03.912309  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.913316  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.914316  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.914316  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.914316  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.915318  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.915318  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.915318  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.915318  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.916321  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.916321  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.916321  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.917325  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.917325  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.917325  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.917325  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.918326  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.918326  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.918326  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.918326  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.919329  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.919329  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.919329  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.919329  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.920331  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.920331  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.920331  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.920331  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.921334  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.921334  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.921334  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.921334  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.922336  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.926348  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.927356  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.927356  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.927356  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.927356  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.928352  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.928352  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.928352  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.929358  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.929358  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.929358  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.929358  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.930358  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.930358  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.930358  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.930358  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.930358  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.931361  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.931361  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.931361  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.931361  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.931361  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.932363  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.932363  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.932363  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.932363  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.932363  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.932363  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.933367  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.935370  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.935370  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.936373  8824 sgd_solver.cpp:137] Iteration 320, lr = 0.01
+I0228 18:51:03.940385  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:03.963445  8824 solver.cpp:224] Iteration 340 (391.926 iter/s, 0.05103s/20 iters), loss = 0
+I0228 18:51:03.963445  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:03.964449  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:03.965451  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:03.965451  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:03.965451  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:03.966454  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:03.966454  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:03.966454  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:03.966454  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:03.967456  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:03.967456  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:03.967456  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:03.967456  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:03.967456  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:03.968464  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:03.968464  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:03.968464  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:03.968464  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:03.969461  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:03.969461  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:03.969461  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:03.969461  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:03.970464  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:03.971468  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:03.971468  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:03.972470  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:03.972470  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:03.972470  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:03.975478  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:03.975478  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:03.976481  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:03.976481  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:03.976481  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:03.976481  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:03.977483  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:03.977483  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:03.977483  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:03.977483  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:03.978487  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:03.978487  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:03.978487  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:03.978487  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:03.979490  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:03.979490  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:03.979490  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:03.979490  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:03.980491  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:03.980491  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:03.980491  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:03.980491  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:03.981494  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:03.981494  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:03.981494  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:03.981494  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:03.982508  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:03.982508  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:03.982508  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:03.982508  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:03.982508  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:03.983500  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:03.983500  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:03.983500  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:03.983500  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:03.986510  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:03.986510  8824 sgd_solver.cpp:137] Iteration 340, lr = 0.01
+I0228 18:51:03.991521  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:04.013578  8824 solver.cpp:224] Iteration 360 (398.262 iter/s, 0.0502182s/20 iters), loss = 0
+I0228 18:51:04.014606  8824 solver.cpp:243]     Train net output #0: prob = 0.5
+I0228 18:51:04.015586  8824 solver.cpp:243]     Train net output #1: prob = 0.5
+I0228 18:51:04.015586  8824 solver.cpp:243]     Train net output #2: prob = 0.5
+I0228 18:51:04.015586  8824 solver.cpp:243]     Train net output #3: prob = 0.5
+I0228 18:51:04.015586  8824 solver.cpp:243]     Train net output #4: prob = 0.5
+I0228 18:51:04.015586  8824 solver.cpp:243]     Train net output #5: prob = 0.5
+I0228 18:51:04.016588  8824 solver.cpp:243]     Train net output #6: prob = 0.5
+I0228 18:51:04.016588  8824 solver.cpp:243]     Train net output #7: prob = 0.5
+I0228 18:51:04.016588  8824 solver.cpp:243]     Train net output #8: prob = 0.5
+I0228 18:51:04.017590  8824 solver.cpp:243]     Train net output #9: prob = 0.5
+I0228 18:51:04.018594  8824 solver.cpp:243]     Train net output #10: prob = 0.5
+I0228 18:51:04.018594  8824 solver.cpp:243]     Train net output #11: prob = 0.5
+I0228 18:51:04.018594  8824 solver.cpp:243]     Train net output #12: prob = 0.5
+I0228 18:51:04.019596  8824 solver.cpp:243]     Train net output #13: prob = 0.5
+I0228 18:51:04.019596  8824 solver.cpp:243]     Train net output #14: prob = 0.5
+I0228 18:51:04.019596  8824 solver.cpp:243]     Train net output #15: prob = 0.5
+I0228 18:51:04.019596  8824 solver.cpp:243]     Train net output #16: prob = 0.5
+I0228 18:51:04.019596  8824 solver.cpp:243]     Train net output #17: prob = 0.5
+I0228 18:51:04.019596  8824 solver.cpp:243]     Train net output #18: prob = 0.5
+I0228 18:51:04.020597  8824 solver.cpp:243]     Train net output #19: prob = 0.5
+I0228 18:51:04.020597  8824 solver.cpp:243]     Train net output #20: prob = 0.5
+I0228 18:51:04.020597  8824 solver.cpp:243]     Train net output #21: prob = 0.5
+I0228 18:51:04.020597  8824 solver.cpp:243]     Train net output #22: prob = 0.5
+I0228 18:51:04.020597  8824 solver.cpp:243]     Train net output #23: prob = 0.5
+I0228 18:51:04.021600  8824 solver.cpp:243]     Train net output #24: prob = 0.5
+I0228 18:51:04.021600  8824 solver.cpp:243]     Train net output #25: prob = 0.5
+I0228 18:51:04.021600  8824 solver.cpp:243]     Train net output #26: prob = 0.5
+I0228 18:51:04.021600  8824 solver.cpp:243]     Train net output #27: prob = 0.5
+I0228 18:51:04.021600  8824 solver.cpp:243]     Train net output #28: prob = 0.5
+I0228 18:51:04.022603  8824 solver.cpp:243]     Train net output #29: prob = 0.5
+I0228 18:51:04.022603  8824 solver.cpp:243]     Train net output #30: prob = 0.5
+I0228 18:51:04.022603  8824 solver.cpp:243]     Train net output #31: prob = 0.5
+I0228 18:51:04.022603  8824 solver.cpp:243]     Train net output #32: prob = 0.5
+I0228 18:51:04.022603  8824 solver.cpp:243]     Train net output #33: prob = 0.5
+I0228 18:51:04.022603  8824 solver.cpp:243]     Train net output #34: prob = 0.5
+I0228 18:51:04.023607  8824 solver.cpp:243]     Train net output #35: prob = 0.5
+I0228 18:51:04.025612  8824 solver.cpp:243]     Train net output #36: prob = 0.5
+I0228 18:51:04.025612  8824 solver.cpp:243]     Train net output #37: prob = 0.5
+I0228 18:51:04.026614  8824 solver.cpp:243]     Train net output #38: prob = 0.5
+I0228 18:51:04.026614  8824 solver.cpp:243]     Train net output #39: prob = 0.5
+I0228 18:51:04.026614  8824 solver.cpp:243]     Train net output #40: prob = 0.5
+I0228 18:51:04.026614  8824 solver.cpp:243]     Train net output #41: prob = 0.5
+I0228 18:51:04.026614  8824 solver.cpp:243]     Train net output #42: prob = 0.5
+I0228 18:51:04.026614  8824 solver.cpp:243]     Train net output #43: prob = 0.5
+I0228 18:51:04.027616  8824 solver.cpp:243]     Train net output #44: prob = 0.5
+I0228 18:51:04.027616  8824 solver.cpp:243]     Train net output #45: prob = 0.5
+I0228 18:51:04.027616  8824 solver.cpp:243]     Train net output #46: prob = 0.5
+I0228 18:51:04.027616  8824 solver.cpp:243]     Train net output #47: prob = 0.5
+I0228 18:51:04.027616  8824 solver.cpp:243]     Train net output #48: prob = 0.5
+I0228 18:51:04.028620  8824 solver.cpp:243]     Train net output #49: prob = 0.5
+I0228 18:51:04.028620  8824 solver.cpp:243]     Train net output #50: prob = 0.5
+I0228 18:51:04.028620  8824 solver.cpp:243]     Train net output #51: prob = 0.5
+I0228 18:51:04.028620  8824 solver.cpp:243]     Train net output #52: prob = 0.5
+I0228 18:51:04.028620  8824 solver.cpp:243]     Train net output #53: prob = 0.5
+I0228 18:51:04.028620  8824 solver.cpp:243]     Train net output #54: prob = 0.5
+I0228 18:51:04.029621  8824 solver.cpp:243]     Train net output #55: prob = 0.5
+I0228 18:51:04.029621  8824 solver.cpp:243]     Train net output #56: prob = 0.5
+I0228 18:51:04.029621  8824 solver.cpp:243]     Train net output #57: prob = 0.5
+I0228 18:51:04.030625  8824 solver.cpp:243]     Train net output #58: prob = 0.5
+I0228 18:51:04.030625  8824 solver.cpp:243]     Train net output #59: prob = 0.5
+I0228 18:51:04.030625  8824 solver.cpp:243]     Train net output #60: prob = 0.5
+I0228 18:51:04.030625  8824 solver.cpp:243]     Train net output #61: prob = 0.5
+I0228 18:51:04.031637  8824 solver.cpp:243]     Train net output #62: prob = 0.5
+I0228 18:51:04.031637  8824 solver.cpp:243]     Train net output #63: prob = 0.5
+I0228 18:51:04.031637  8824 sgd_solver.cpp:137] Iteration 360, lr = 0.01
+I0228 18:51:04.035640  8824 sgd_solver.cpp:200] weight diff/data:0.000050 0.000050 0.000050 0.000050 
+I0228 18:51:04.037642  8824 solver.cpp:453] Snapshotting to binary proto file examples/mydata/caffenet_train_iter_361.caffemodel
+I0228 18:51:04.064716  8824 sgd_solver.cpp:361] Snapshotting solver state to binary proto file examples/mydata/caffenet_train_iter_361.solverstate
+I0228 18:51:04.078752  8824 solver.cpp:300] Optimization stopped early.
+I0228 18:51:04.079756  8824 caffe.cpp:260] Optimization Done.

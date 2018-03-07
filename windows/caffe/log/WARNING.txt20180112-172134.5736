@@ -1,0 +1,5 @@
+Log file created at: 2018/01/12 17:21:34
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0112 17:21:34.337496  3456 net.cpp:719]     [Backward] All net params (data, diff): L1 norm = (553.178, 2413.84); L2 norm = (8.20108, 50.7767)
+F0112 17:21:34.574126 14704 data_transformer.cpp:211] Check failed: channels == datum_channels (3 vs. 12) 

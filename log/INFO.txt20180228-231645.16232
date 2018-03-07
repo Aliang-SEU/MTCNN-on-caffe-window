@@ -1,0 +1,1544 @@
+Log file created at: 2018/02/28 23:16:45
+Running on machine: HZL-PC
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0228 23:16:45.099248 11952 caffe.cpp:276] Use GPU with device ID 0
+I0228 23:16:45.322841 11952 caffe.cpp:280] GPU device name: GeForce GTX 1060
+I0228 23:16:45.629681 11952 net.cpp:294] The NetState phase (1) differed from the phase (0) specified by a rule in layer mnist
+I0228 23:16:45.629681 11952 net.cpp:51] Initializing net from parameters: 
+name: "LeNet"
+state {
+  phase: TEST
+  level: 0
+  stage: ""
+}
+debug_info: true
+layer {
+  name: "mnist"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    scale: 0.00390625
+  }
+  data_param {
+    source: "examples/mydata/val"
+    batch_size: 100
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool2"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "ip2"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "ip2"
+  bottom: "label"
+  top: "loss"
+}
+I0228 23:16:45.630679 11952 layer_factory.hpp:77] Creating layer mnist
+I0228 23:16:45.657732 11952 db_lmdb.cpp:40] Opened lmdb examples/mydata/val
+I0228 23:16:45.664752 11952 net.cpp:84] Creating Layer mnist
+I0228 23:16:45.664752 11952 net.cpp:380] mnist -> data
+I0228 23:16:45.664752 11952 net.cpp:380] mnist -> label
+I0228 23:16:45.736941 11952 data_layer.cpp:45] output data size: 100,3,20,20
+I0228 23:16:45.739954 11952 net.cpp:122] Setting up mnist
+I0228 23:16:45.739954 11952 net.cpp:129] Top shape: 100 3 20 20 (120000)
+I0228 23:16:45.739954 11952 net.cpp:129] Top shape: 100 (100)
+I0228 23:16:45.740954 11952 net.cpp:137] Memory required for data: 480400
+I0228 23:16:45.741967 11952 layer_factory.hpp:77] Creating layer label_mnist_1_split
+I0228 23:16:45.741967 11952 net.cpp:84] Creating Layer label_mnist_1_split
+I0228 23:16:45.741967 11952 net.cpp:406] label_mnist_1_split <- label
+I0228 23:16:45.742959 11952 net.cpp:380] label_mnist_1_split -> label_mnist_1_split_0
+I0228 23:16:45.742959 11952 net.cpp:380] label_mnist_1_split -> label_mnist_1_split_1
+I0228 23:16:45.742959 11952 net.cpp:122] Setting up label_mnist_1_split
+I0228 23:16:45.742959 11952 net.cpp:129] Top shape: 100 (100)
+I0228 23:16:45.743962 11952 net.cpp:129] Top shape: 100 (100)
+I0228 23:16:45.743962 11952 net.cpp:137] Memory required for data: 481200
+I0228 23:16:45.743962 11952 layer_factory.hpp:77] Creating layer conv1
+I0228 23:16:45.743962 11952 net.cpp:84] Creating Layer conv1
+I0228 23:16:45.744964 11952 net.cpp:406] conv1 <- data
+I0228 23:16:45.744964 11952 net.cpp:380] conv1 -> conv1
+I0228 23:16:45.788079  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.362606 11952 net.cpp:122] Setting up conv1
+I0228 23:16:46.362606 11952 net.cpp:129] Top shape: 100 20 16 16 (512000)
+I0228 23:16:46.382659 11952 net.cpp:137] Memory required for data: 2529200
+I0228 23:16:46.385669 11952 layer_factory.hpp:77] Creating layer pool1
+I0228 23:16:46.385669 11952 net.cpp:84] Creating Layer pool1
+I0228 23:16:46.385669 11952 net.cpp:406] pool1 <- conv1
+I0228 23:16:46.386672 11952 net.cpp:380] pool1 -> pool1
+I0228 23:16:46.386672 11952 net.cpp:122] Setting up pool1
+I0228 23:16:46.386672 11952 net.cpp:129] Top shape: 100 20 8 8 (128000)
+I0228 23:16:46.386672 11952 net.cpp:137] Memory required for data: 3041200
+I0228 23:16:46.387675 11952 layer_factory.hpp:77] Creating layer conv2
+I0228 23:16:46.387675 11952 net.cpp:84] Creating Layer conv2
+I0228 23:16:46.387675 11952 net.cpp:406] conv2 <- pool1
+I0228 23:16:46.387675 11952 net.cpp:380] conv2 -> conv2
+I0228 23:16:46.390682 11952 net.cpp:122] Setting up conv2
+I0228 23:16:46.390682 11952 net.cpp:129] Top shape: 100 50 4 4 (80000)
+I0228 23:16:46.390682 11952 net.cpp:137] Memory required for data: 3361200
+I0228 23:16:46.390682 11952 layer_factory.hpp:77] Creating layer pool2
+I0228 23:16:46.391685 11952 net.cpp:84] Creating Layer pool2
+I0228 23:16:46.391685 11952 net.cpp:406] pool2 <- conv2
+I0228 23:16:46.391685 11952 net.cpp:380] pool2 -> pool2
+I0228 23:16:46.391685 11952 net.cpp:122] Setting up pool2
+I0228 23:16:46.391685 11952 net.cpp:129] Top shape: 100 50 2 2 (20000)
+I0228 23:16:46.392688 11952 net.cpp:137] Memory required for data: 3441200
+I0228 23:16:46.394692 11952 layer_factory.hpp:77] Creating layer ip1
+I0228 23:16:46.394692 11952 net.cpp:84] Creating Layer ip1
+I0228 23:16:46.394692 11952 net.cpp:406] ip1 <- pool2
+I0228 23:16:46.394692 11952 net.cpp:380] ip1 -> ip1
+I0228 23:16:46.397701 11952 net.cpp:122] Setting up ip1
+I0228 23:16:46.397701 11952 net.cpp:129] Top shape: 100 500 (50000)
+I0228 23:16:46.397701 11952 net.cpp:137] Memory required for data: 3641200
+I0228 23:16:46.397701 11952 layer_factory.hpp:77] Creating layer relu1
+I0228 23:16:46.398703 11952 net.cpp:84] Creating Layer relu1
+I0228 23:16:46.398703 11952 net.cpp:406] relu1 <- ip1
+I0228 23:16:46.398703 11952 net.cpp:367] relu1 -> ip1 (in-place)
+I0228 23:16:46.399705 11952 net.cpp:122] Setting up relu1
+I0228 23:16:46.399705 11952 net.cpp:129] Top shape: 100 500 (50000)
+I0228 23:16:46.399705 11952 net.cpp:137] Memory required for data: 3841200
+I0228 23:16:46.399705 11952 layer_factory.hpp:77] Creating layer ip2
+I0228 23:16:46.400708 11952 net.cpp:84] Creating Layer ip2
+I0228 23:16:46.400708 11952 net.cpp:406] ip2 <- ip1
+I0228 23:16:46.400708 11952 net.cpp:380] ip2 -> ip2
+I0228 23:16:46.400708 11952 net.cpp:122] Setting up ip2
+I0228 23:16:46.401711 11952 net.cpp:129] Top shape: 100 2 (200)
+I0228 23:16:46.401711 11952 net.cpp:137] Memory required for data: 3842000
+I0228 23:16:46.401711 11952 layer_factory.hpp:77] Creating layer ip2_ip2_0_split
+I0228 23:16:46.401711 11952 net.cpp:84] Creating Layer ip2_ip2_0_split
+I0228 23:16:46.403717 11952 net.cpp:406] ip2_ip2_0_split <- ip2
+I0228 23:16:46.404719 11952 net.cpp:380] ip2_ip2_0_split -> ip2_ip2_0_split_0
+I0228 23:16:46.404719 11952 net.cpp:380] ip2_ip2_0_split -> ip2_ip2_0_split_1
+I0228 23:16:46.404719 11952 net.cpp:122] Setting up ip2_ip2_0_split
+I0228 23:16:46.404719 11952 net.cpp:129] Top shape: 100 2 (200)
+I0228 23:16:46.405722 11952 net.cpp:129] Top shape: 100 2 (200)
+I0228 23:16:46.405722 11952 net.cpp:137] Memory required for data: 3843600
+I0228 23:16:46.405722 11952 layer_factory.hpp:77] Creating layer accuracy
+I0228 23:16:46.406724 11952 net.cpp:84] Creating Layer accuracy
+I0228 23:16:46.406724 11952 net.cpp:406] accuracy <- ip2_ip2_0_split_0
+I0228 23:16:46.406724 11952 net.cpp:406] accuracy <- label_mnist_1_split_0
+I0228 23:16:46.406724 11952 net.cpp:380] accuracy -> accuracy
+I0228 23:16:46.407727 11952 net.cpp:122] Setting up accuracy
+I0228 23:16:46.407727 11952 net.cpp:129] Top shape: (1)
+I0228 23:16:46.407727 11952 net.cpp:137] Memory required for data: 3843604
+I0228 23:16:46.407727 11952 layer_factory.hpp:77] Creating layer loss
+I0228 23:16:46.407727 11952 net.cpp:84] Creating Layer loss
+I0228 23:16:46.408730 11952 net.cpp:406] loss <- ip2_ip2_0_split_1
+I0228 23:16:46.408730 11952 net.cpp:406] loss <- label_mnist_1_split_1
+I0228 23:16:46.408730 11952 net.cpp:380] loss -> loss
+I0228 23:16:46.408730 11952 layer_factory.hpp:77] Creating layer loss
+I0228 23:16:46.409732 11952 net.cpp:122] Setting up loss
+I0228 23:16:46.409732 11952 net.cpp:129] Top shape: (1)
+I0228 23:16:46.409732 11952 net.cpp:132]     with loss weight 1
+I0228 23:16:46.410735 11952 net.cpp:137] Memory required for data: 3843608
+I0228 23:16:46.410735 11952 net.cpp:198] loss needs backward computation.
+I0228 23:16:46.410735 11952 net.cpp:200] accuracy does not need backward computation.
+I0228 23:16:46.410735 11952 net.cpp:198] ip2_ip2_0_split needs backward computation.
+I0228 23:16:46.410735 11952 net.cpp:198] ip2 needs backward computation.
+I0228 23:16:46.411737 11952 net.cpp:198] relu1 needs backward computation.
+I0228 23:16:46.411737 11952 net.cpp:198] ip1 needs backward computation.
+I0228 23:16:46.414746 11952 net.cpp:198] pool2 needs backward computation.
+I0228 23:16:46.414746 11952 net.cpp:198] conv2 needs backward computation.
+I0228 23:16:46.414746 11952 net.cpp:198] pool1 needs backward computation.
+I0228 23:16:46.415748 11952 net.cpp:198] conv1 needs backward computation.
+I0228 23:16:46.415748 11952 net.cpp:200] label_mnist_1_split does not need backward computation.
+I0228 23:16:46.416749 11952 net.cpp:200] mnist does not need backward computation.
+I0228 23:16:46.416749 11952 net.cpp:242] This network produces output accuracy
+I0228 23:16:46.416749 11952 net.cpp:242] This network produces output loss
+I0228 23:16:46.416749 11952 net.cpp:255] Network initialization done.
+I0228 23:16:46.419785 11952 caffe.cpp:291] Running for 50 iterations.
+I0228 23:16:46.419785 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.531564
+I0228 23:16:46.419785 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.69
+I0228 23:16:46.420760 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.69
+I0228 23:16:46.420760 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.69
+I0228 23:16:46.421763 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.640594
+I0228 23:16:46.422765 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.422765 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.423768 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.647227
+I0228 23:16:46.426776 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.823189
+I0228 23:16:46.427781 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.428782 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.428782 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.813557
+I0228 23:16:46.429785 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.814507
+I0228 23:16:46.430786 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.430786 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.430786 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438927
+I0228 23:16:46.431789 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.03699
+I0228 23:16:46.431789 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.431789 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.431789 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.03699
+I0228 23:16:46.432798 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.03699
+I0228 23:16:46.432798 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.433799 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.391551
+I0228 23:16:46.433799 11952 caffe.cpp:314] Batch 0, accuracy = 0.82
+I0228 23:16:46.434800 11952 caffe.cpp:314] Batch 0, loss = 0.391551
+I0228 23:16:46.436805 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530549
+I0228 23:16:46.437806 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.65
+I0228 23:16:46.437806 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.65
+I0228 23:16:46.437806 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.65
+I0228 23:16:46.438808 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641109
+I0228 23:16:46.438808 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.438808 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.439826 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.647683
+I0228 23:16:46.439826 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.825892
+I0228 23:16:46.439826 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.440814 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.440814 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.815809
+I0228 23:16:46.440814 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.814113
+I0228 23:16:46.441817 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.441817 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.441817 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438742
+I0228 23:16:46.442819 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.86586
+I0228 23:16:46.442819 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.442819 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.443822 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.86586
+I0228 23:16:46.443822 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.86586
+I0228 23:16:46.443822 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.8
+I0228 23:16:46.444833 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.431381
+I0228 23:16:46.446830 11952 caffe.cpp:314] Batch 1, accuracy = 0.8
+I0228 23:16:46.447832 11952 caffe.cpp:314] Batch 1, loss = 0.431381
+I0228 23:16:46.448839 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.534035
+I0228 23:16:46.449838 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.56
+I0228 23:16:46.449838 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.56
+I0228 23:16:46.449838 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.56
+I0228 23:16:46.450840 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.646077
+I0228 23:16:46.450840 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.451843 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.451843 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.652754
+I0228 23:16:46.452848 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.833545
+I0228 23:16:46.452848 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.452848 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.453848 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.823247
+I0228 23:16:46.453848 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.821456
+I0228 23:16:46.453848 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.454851 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.454851 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.443052
+I0228 23:16:46.454851 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.92913
+I0228 23:16:46.455854 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.457860 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.457860 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.92913
+I0228 23:16:46.458863 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.92913
+I0228 23:16:46.458863 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.86
+I0228 23:16:46.459866 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.380848
+I0228 23:16:46.459866 11952 caffe.cpp:314] Batch 2, accuracy = 0.86
+I0228 23:16:46.459866 11952 caffe.cpp:314] Batch 2, loss = 0.380848
+I0228 23:16:46.460867 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.531963
+I0228 23:16:46.460867  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.460867 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.64
+I0228 23:16:46.462872 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.64
+I0228 23:16:46.462872 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.64
+I0228 23:16:46.463876 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.642042
+I0228 23:16:46.463876 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.463876 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.464879 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648725
+I0228 23:16:46.464879 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.824703
+I0228 23:16:46.464879 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.465880 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.465880 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.815229
+I0228 23:16:46.465880 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.815335
+I0228 23:16:46.466883 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.466883 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.469892 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439391
+I0228 23:16:46.469892 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.97522
+I0228 23:16:46.470893 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.471902 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.472899 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.97522
+I0228 23:16:46.472899 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.97522
+I0228 23:16:46.472899 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.84
+I0228 23:16:46.473902 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.370949
+I0228 23:16:46.473902 11952 caffe.cpp:314] Batch 3, accuracy = 0.84
+I0228 23:16:46.474916 11952 caffe.cpp:314] Batch 3, loss = 0.370949
+I0228 23:16:46.474916 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.528597
+I0228 23:16:46.475917 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.7
+I0228 23:16:46.475917 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.7
+I0228 23:16:46.475917 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.7
+I0228 23:16:46.476918 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.638259
+I0228 23:16:46.476918 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.477912 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.478915 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.644928
+I0228 23:16:46.479918 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.822381
+I0228 23:16:46.479918 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.480921 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.480921 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.812264
+I0228 23:16:46.481923 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.811491
+I0228 23:16:46.481923 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.481923 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.481923 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437358
+I0228 23:16:46.482925 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.89838
+I0228 23:16:46.482925 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.482925 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.482925 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.89838
+I0228 23:16:46.483928 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.89838
+I0228 23:16:46.483928 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.81
+I0228 23:16:46.484931 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.41288
+I0228 23:16:46.484931 11952 caffe.cpp:314] Batch 4, accuracy = 0.81
+I0228 23:16:46.484931 11952 caffe.cpp:314] Batch 4, loss = 0.41288
+I0228 23:16:46.485934 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.53629
+I0228 23:16:46.485934 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.54
+I0228 23:16:46.485934 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.54
+I0228 23:16:46.485934 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.54
+I0228 23:16:46.486937 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.64787
+I0228 23:16:46.486937 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.486937 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.486937 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.654415
+I0228 23:16:46.487939 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.834514
+I0228 23:16:46.489944 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.490947 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.490947 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.824472
+I0228 23:16:46.491950 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.822936
+I0228 23:16:46.491950 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.491950 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.492952 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.443831
+I0228 23:16:46.492952 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.96832
+I0228 23:16:46.492952 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.493969 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.493969 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.96832
+I0228 23:16:46.493969 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.96832
+I0228 23:16:46.494957 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.84
+I0228 23:16:46.495960 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.390302
+I0228 23:16:46.495960 11952 caffe.cpp:314] Batch 5, accuracy = 0.84
+I0228 23:16:46.495960 11952 caffe.cpp:314] Batch 5, loss = 0.390302
+I0228 23:16:46.496963 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530332
+I0228 23:16:46.496963 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.64
+I0228 23:16:46.496963 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.64
+I0228 23:16:46.496963  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.497965 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.64
+I0228 23:16:46.497965 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.640446
+I0228 23:16:46.498968 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.498968 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.502979 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.647221
+I0228 23:16:46.502979 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.823111
+I0228 23:16:46.503983 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.503983 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.504984 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.813337
+I0228 23:16:46.504984 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.813342
+I0228 23:16:46.504984 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.505987 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.505987 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438415
+I0228 23:16:46.505987 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.99631
+I0228 23:16:46.505987 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.506989 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.506989 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.99631
+I0228 23:16:46.506989 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.99631
+I0228 23:16:46.507992 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.84
+I0228 23:16:46.507992 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.383145
+I0228 23:16:46.507992 11952 caffe.cpp:314] Batch 6, accuracy = 0.84
+I0228 23:16:46.508994 11952 caffe.cpp:314] Batch 6, loss = 0.383145
+I0228 23:16:46.508994 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530132
+I0228 23:16:46.509999 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.69
+I0228 23:16:46.509999 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.69
+I0228 23:16:46.509999 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.69
+I0228 23:16:46.511003 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639426
+I0228 23:16:46.514010 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.514010 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.514010 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.646091
+I0228 23:16:46.515022 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.823795
+I0228 23:16:46.515022 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.516013 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.516013 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.813337
+I0228 23:16:46.517017 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.813482
+I0228 23:16:46.517017 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.517017 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.517017 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438426
+I0228 23:16:46.518021 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.97764
+I0228 23:16:46.518021 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.518021 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.518021 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.97764
+I0228 23:16:46.519024 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.97764
+I0228 23:16:46.519024 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.83
+I0228 23:16:46.520025 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.3872
+I0228 23:16:46.520025 11952 caffe.cpp:314] Batch 7, accuracy = 0.83
+I0228 23:16:46.520025 11952 caffe.cpp:314] Batch 7, loss = 0.3872
+I0228 23:16:46.521028 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.535111
+I0228 23:16:46.521028 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.57
+I0228 23:16:46.522032 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.57
+I0228 23:16:46.525053 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.57
+I0228 23:16:46.526041 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.646998
+I0228 23:16:46.526041 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.526041 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.527043 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.653532
+I0228 23:16:46.527043 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.83402
+I0228 23:16:46.527043 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.528048 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.528048 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.824197
+I0228 23:16:46.529049 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.821706
+I0228 23:16:46.529049 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.529049 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.529049 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.442937
+I0228 23:16:46.530052 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.86342
+I0228 23:16:46.530052 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.530052 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.531054 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.86342
+I0228 23:16:46.531054 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.86342
+I0228 23:16:46.531054 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.532058 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.41995
+I0228 23:16:46.532058 11952 caffe.cpp:314] Batch 8, accuracy = 0.82
+I0228 23:16:46.532058 11952 caffe.cpp:314] Batch 8, loss = 0.41995
+I0228 23:16:46.534063 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530182
+I0228 23:16:46.534063  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.537071 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.66
+I0228 23:16:46.537071 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.66
+I0228 23:16:46.538074 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.66
+I0228 23:16:46.538074 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639715
+I0228 23:16:46.538074 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.539077 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.539077 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.646423
+I0228 23:16:46.539077 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.820871
+I0228 23:16:46.539077 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.540079 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.540079 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.81102
+I0228 23:16:46.540079 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.811803
+I0228 23:16:46.541081 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.541081 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.541081 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437773
+I0228 23:16:46.542084 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.07829
+I0228 23:16:46.542084 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.542084 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.542084 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.07829
+I0228 23:16:46.543087 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.07829
+I0228 23:16:46.543087 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.86
+I0228 23:16:46.544090 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.310031
+I0228 23:16:46.544090 11952 caffe.cpp:314] Batch 9, accuracy = 0.86
+I0228 23:16:46.544090 11952 caffe.cpp:314] Batch 9, loss = 0.310031
+I0228 23:16:46.545091 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530113
+I0228 23:16:46.548100 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.67
+I0228 23:16:46.548100 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.67
+I0228 23:16:46.549108 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.67
+I0228 23:16:46.549108 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639485
+I0228 23:16:46.550107 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.550107 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.550107 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.646259
+I0228 23:16:46.551107 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.823629
+I0228 23:16:46.551107 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.552110 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.552110 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.813161
+I0228 23:16:46.552110 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.813229
+I0228 23:16:46.553113 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.553113 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.553113 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438231
+I0228 23:16:46.554116 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.96197
+I0228 23:16:46.554116 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.554116 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.554116 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.96197
+I0228 23:16:46.555119 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.96197
+I0228 23:16:46.555119 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.81
+I0228 23:16:46.556120 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.411344
+I0228 23:16:46.556120 11952 caffe.cpp:314] Batch 10, accuracy = 0.81
+I0228 23:16:46.556120 11952 caffe.cpp:314] Batch 10, loss = 0.411344
+I0228 23:16:46.556120 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.534397
+I0228 23:16:46.556120 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.6
+I0228 23:16:46.557123 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.6
+I0228 23:16:46.560132 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.6
+I0228 23:16:46.560132 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.646384
+I0228 23:16:46.560132 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.560132 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.561133 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.652825
+I0228 23:16:46.561133 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.83458
+I0228 23:16:46.561133 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.561133 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.562136 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.824843
+I0228 23:16:46.562136 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.822141
+I0228 23:16:46.562136 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.563139 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.563139 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.443112
+I0228 23:16:46.563139 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.86827
+I0228 23:16:46.563139 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.564142 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.564142 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.86827
+I0228 23:16:46.564142 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.86827
+I0228 23:16:46.565145 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.565145 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.466242
+I0228 23:16:46.565145 11952 caffe.cpp:314] Batch 11, accuracy = 0.82
+I0228 23:16:46.566148 11952 caffe.cpp:314] Batch 11, loss = 0.466242
+I0228 23:16:46.567152 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530655
+I0228 23:16:46.567152 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.63
+I0228 23:16:46.568153 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.63
+I0228 23:16:46.568153 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.63
+I0228 23:16:46.571163 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641652
+I0228 23:16:46.571163 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.572165 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.572165 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648367
+I0228 23:16:46.573166 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.826183
+I0228 23:16:46.573166 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.573166 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.573166 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.815763
+I0228 23:16:46.574187 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.815545
+I0228 23:16:46.574187 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.574187 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.575173 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439837
+I0228 23:16:46.575173 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.98497
+I0228 23:16:46.575173 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.576175 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.576175 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.98497
+I0228 23:16:46.577178 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.98497
+I0228 23:16:46.577178 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.85
+I0228 23:16:46.578181 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.330914
+I0228 23:16:46.578181 11952 caffe.cpp:314] Batch 12, accuracy = 0.85
+I0228 23:16:46.578181 11952 caffe.cpp:314] Batch 12, loss = 0.330914
+I0228 23:16:46.578181  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.578181 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.531347
+I0228 23:16:46.579183 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.68
+I0228 23:16:46.582191 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.68
+I0228 23:16:46.582191 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.68
+I0228 23:16:46.583194 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639984
+I0228 23:16:46.583194 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.583194 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.584197 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.646731
+I0228 23:16:46.584197 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.822251
+I0228 23:16:46.584197 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.584197 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.585201 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.812587
+I0228 23:16:46.585201 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.812864
+I0228 23:16:46.585201 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.586202 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.586202 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438022
+I0228 23:16:46.586202 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.00482
+I0228 23:16:46.587205 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.587205 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.587205 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.00482
+I0228 23:16:46.587205 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.00482
+I0228 23:16:46.588207 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.588207 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.399661
+I0228 23:16:46.588207 11952 caffe.cpp:314] Batch 13, accuracy = 0.82
+I0228 23:16:46.589210 11952 caffe.cpp:314] Batch 13, loss = 0.399661
+I0228 23:16:46.589210 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.531202
+I0228 23:16:46.589210 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.62
+I0228 23:16:46.590212 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.62
+I0228 23:16:46.590212 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.62
+I0228 23:16:46.593220 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.642368
+I0228 23:16:46.593220 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.593220 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.594223 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648839
+I0228 23:16:46.594223 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.827627
+I0228 23:16:46.594223 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.594223 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.595226 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.817647
+I0228 23:16:46.595226 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.81597
+I0228 23:16:46.595226 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.596228 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.596228 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439812
+I0228 23:16:46.597231 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.88866
+I0228 23:16:46.597231 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.597231 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.597231 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.88866
+I0228 23:16:46.598233 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.88866
+I0228 23:16:46.598233 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.599236 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.402268
+I0228 23:16:46.599236 11952 caffe.cpp:314] Batch 14, accuracy = 0.82
+I0228 23:16:46.599236 11952 caffe.cpp:314] Batch 14, loss = 0.402268
+I0228 23:16:46.600239 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.53379
+I0228 23:16:46.600239 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.58
+I0228 23:16:46.601240 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.58
+I0228 23:16:46.604249 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.58
+I0228 23:16:46.604249 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.645508
+I0228 23:16:46.605257 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.605257 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.605257 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.652212
+I0228 23:16:46.606253 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.831674
+I0228 23:16:46.606253 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.606253 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.606253 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.82158
+I0228 23:16:46.607256 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.820078
+I0228 23:16:46.607256 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.607256 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.607256 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.442235
+I0228 23:16:46.608258 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.92822
+I0228 23:16:46.608258 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.608258 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.608258 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.92822
+I0228 23:16:46.609261 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.92822
+I0228 23:16:46.609261 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.86
+I0228 23:16:46.610265 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.366635
+I0228 23:16:46.610265 11952 caffe.cpp:314] Batch 15, accuracy = 0.86
+I0228 23:16:46.610265 11952 caffe.cpp:314] Batch 15, loss = 0.366635
+I0228 23:16:46.611268 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.53104
+I0228 23:16:46.611268  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.611268 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.67
+I0228 23:16:46.611268 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.67
+I0228 23:16:46.612270 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.67
+I0228 23:16:46.612270 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.640598
+I0228 23:16:46.614275 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.615278 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.615278 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.647257
+I0228 23:16:46.616281 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.822981
+I0228 23:16:46.616281 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.617285 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.617285 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.813398
+I0228 23:16:46.617285 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.814175
+I0228 23:16:46.617285 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.618288 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.618288 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438757
+I0228 23:16:46.618288 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.0518
+I0228 23:16:46.618288 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.619288 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.619288 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.0518
+I0228 23:16:46.619288 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.0518
+I0228 23:16:46.619288 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.83
+I0228 23:16:46.620290 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.384158
+I0228 23:16:46.620290 11952 caffe.cpp:314] Batch 16, accuracy = 0.83
+I0228 23:16:46.620290 11952 caffe.cpp:314] Batch 16, loss = 0.384158
+I0228 23:16:46.621294 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.529619
+I0228 23:16:46.621294 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.68
+I0228 23:16:46.621294 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.68
+I0228 23:16:46.622297 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.68
+I0228 23:16:46.622297 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639512
+I0228 23:16:46.622297 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.622297 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.623299 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.646111
+I0228 23:16:46.626307 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.82365
+I0228 23:16:46.626307 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.626307 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.626307 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.813379
+I0228 23:16:46.627310 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.81234
+I0228 23:16:46.627310 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.627310 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.627310 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437776
+I0228 23:16:46.628312 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.8685
+I0228 23:16:46.628312 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.629317 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.629317 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.8685
+I0228 23:16:46.629317 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.8685
+I0228 23:16:46.629317 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.79
+I0228 23:16:46.630319 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.440603
+I0228 23:16:46.630319 11952 caffe.cpp:314] Batch 17, accuracy = 0.79
+I0228 23:16:46.630319 11952 caffe.cpp:314] Batch 17, loss = 0.440603
+I0228 23:16:46.631320 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.535029
+I0228 23:16:46.631320 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.54
+I0228 23:16:46.632324 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.54
+I0228 23:16:46.632324 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.54
+I0228 23:16:46.633327 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.64746
+I0228 23:16:46.633327 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.633327 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.633327 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.654133
+I0228 23:16:46.634330 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.835665
+I0228 23:16:46.636334 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.637337 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.637337 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.825435
+I0228 23:16:46.637337 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.823352
+I0228 23:16:46.638340 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.638340 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.638340 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.444085
+I0228 23:16:46.639343 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.93527
+I0228 23:16:46.639343 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.639343 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.639343 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.93527
+I0228 23:16:46.640347 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.93527
+I0228 23:16:46.640347 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.86
+I0228 23:16:46.640347 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.381256
+I0228 23:16:46.640347 11952 caffe.cpp:314] Batch 18, accuracy = 0.86
+I0228 23:16:46.641348 11952 caffe.cpp:314] Batch 18, loss = 0.381256
+I0228 23:16:46.641348 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.532289
+I0228 23:16:46.642349 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.63
+I0228 23:16:46.642349  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.642349 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.63
+I0228 23:16:46.643353 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.63
+I0228 23:16:46.643353 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.642169
+I0228 23:16:46.643353 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.644356 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.644356 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648783
+I0228 23:16:46.644356 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.8242
+I0228 23:16:46.644356 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.645359 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.648366 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.814855
+I0228 23:16:46.648366 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.81492
+I0228 23:16:46.648366 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.648366 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.649369 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439237
+I0228 23:16:46.649369 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.99712
+I0228 23:16:46.649369 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.650372 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.650372 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.99712
+I0228 23:16:46.650372 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.99712
+I0228 23:16:46.650372 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.85
+I0228 23:16:46.651373 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.361963
+I0228 23:16:46.651373 11952 caffe.cpp:314] Batch 19, accuracy = 0.85
+I0228 23:16:46.651373 11952 caffe.cpp:314] Batch 19, loss = 0.361963
+I0228 23:16:46.652376 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.528272
+I0228 23:16:46.652376 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.73
+I0228 23:16:46.653379 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.73
+I0228 23:16:46.653379 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.73
+I0228 23:16:46.653379 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.637558
+I0228 23:16:46.654381 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.654381 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.654381 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.644285
+I0228 23:16:46.654381 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.821403
+I0228 23:16:46.655385 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.655385 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.655385 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.810989
+I0228 23:16:46.655385 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.810767
+I0228 23:16:46.656388 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.658392 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.659395 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.436935
+I0228 23:16:46.659395 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.9085
+I0228 23:16:46.659395 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.660398 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.660398 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.9085
+I0228 23:16:46.660398 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.9085
+I0228 23:16:46.660398 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.81
+I0228 23:16:46.661401 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.410457
+I0228 23:16:46.661401 11952 caffe.cpp:314] Batch 20, accuracy = 0.81
+I0228 23:16:46.661401 11952 caffe.cpp:314] Batch 20, loss = 0.410457
+I0228 23:16:46.662403 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.536017
+I0228 23:16:46.663408 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.53
+I0228 23:16:46.663408 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.53
+I0228 23:16:46.663408 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.53
+I0228 23:16:46.664410 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.648255
+I0228 23:16:46.664410 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.664410 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.664410 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.654819
+I0228 23:16:46.665411 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.835957
+I0228 23:16:46.665411 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.665411 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.666415 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.82619
+I0228 23:16:46.666415 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.823737
+I0228 23:16:46.666415 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.667418 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.669422 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.444175
+I0228 23:16:46.670424 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.88682
+I0228 23:16:46.670424 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.670424 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.670424 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.88682
+I0228 23:16:46.670424 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.88682
+I0228 23:16:46.671427 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.83
+I0228 23:16:46.671427 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.401425
+I0228 23:16:46.671427 11952 caffe.cpp:314] Batch 21, accuracy = 0.83
+I0228 23:16:46.671427 11952 caffe.cpp:314] Batch 21, loss = 0.401425
+I0228 23:16:46.672430 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530024
+I0228 23:16:46.672430 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.66
+I0228 23:16:46.672430  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.672430 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.66
+I0228 23:16:46.673432 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.66
+I0228 23:16:46.673432 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639077
+I0228 23:16:46.674434 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.674434 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.674434 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.645797
+I0228 23:16:46.674434 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.819911
+I0228 23:16:46.675437 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.675437 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.675437 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.810046
+I0228 23:16:46.675437 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.810985
+I0228 23:16:46.676440 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.676440 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.676440 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437201
+I0228 23:16:46.676440 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.08578
+I0228 23:16:46.677443 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.677443 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.677443 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.08578
+I0228 23:16:46.677443 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.08578
+I0228 23:16:46.677443 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.85
+I0228 23:16:46.681454 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.37387
+I0228 23:16:46.681454 11952 caffe.cpp:314] Batch 22, accuracy = 0.85
+I0228 23:16:46.681454 11952 caffe.cpp:314] Batch 22, loss = 0.37387
+I0228 23:16:46.682456 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.53082
+I0228 23:16:46.682456 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.67
+I0228 23:16:46.682456 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.67
+I0228 23:16:46.683459 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.67
+I0228 23:16:46.683459 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.640846
+I0228 23:16:46.683459 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.684463 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.684463 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.647526
+I0228 23:16:46.684463 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.826616
+I0228 23:16:46.684463 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.685465 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.685465 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.816075
+I0228 23:16:46.685465 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.815747
+I0228 23:16:46.685465 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.686468 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.686468 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439657
+I0228 23:16:46.686468 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.95395
+I0228 23:16:46.686468 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.687469 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.687469 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.95395
+I0228 23:16:46.687469 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.95395
+I0228 23:16:46.687469 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.83
+I0228 23:16:46.688473 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.385948
+I0228 23:16:46.688473 11952 caffe.cpp:314] Batch 23, accuracy = 0.83
+I0228 23:16:46.688473 11952 caffe.cpp:314] Batch 23, loss = 0.385948
+I0228 23:16:46.689476 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.535097
+I0228 23:16:46.691480 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.57
+I0228 23:16:46.691480 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.57
+I0228 23:16:46.692483 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.57
+I0228 23:16:46.692483 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.647061
+I0228 23:16:46.692483 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.693485 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.693485 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.653554
+I0228 23:16:46.693485 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.833828
+I0228 23:16:46.693485 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.694489 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.694489 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.823912
+I0228 23:16:46.694489 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.821451
+I0228 23:16:46.694489 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.695492 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.695492 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.442789
+I0228 23:16:46.695492 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.87072
+I0228 23:16:46.695492 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.695492 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.696494 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.87072
+I0228 23:16:46.696494 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.87072
+I0228 23:16:46.696494 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.697496 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.418117
+I0228 23:16:46.697496 11952 caffe.cpp:314] Batch 24, accuracy = 0.82
+I0228 23:16:46.697496 11952 caffe.cpp:314] Batch 24, loss = 0.418117
+I0228 23:16:46.697496 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.529845
+I0228 23:16:46.698498 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.65
+I0228 23:16:46.698498  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.698498 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.65
+I0228 23:16:46.699502 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.65
+I0228 23:16:46.700505 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639763
+I0228 23:16:46.702510 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.702510 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.703512 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.646522
+I0228 23:16:46.703512 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.82229
+I0228 23:16:46.703512 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.703512 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.704515 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.812383
+I0228 23:16:46.704515 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.812901
+I0228 23:16:46.704515 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.704515 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.705518 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.43839
+I0228 23:16:46.705518 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.04541
+I0228 23:16:46.705518 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.705518 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.706521 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.04541
+I0228 23:16:46.706521 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.04541
+I0228 23:16:46.706521 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.86
+I0228 23:16:46.707523 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.317501
+I0228 23:16:46.707523 11952 caffe.cpp:314] Batch 25, accuracy = 0.86
+I0228 23:16:46.707523 11952 caffe.cpp:314] Batch 25, loss = 0.317501
+I0228 23:16:46.708526 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530243
+I0228 23:16:46.708526 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.68
+I0228 23:16:46.708526 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.68
+I0228 23:16:46.708526 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.68
+I0228 23:16:46.709529 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639259
+I0228 23:16:46.709529 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.709529 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.709529 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.646022
+I0228 23:16:46.710531 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.822382
+I0228 23:16:46.710531 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.710531 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.711534 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.812093
+I0228 23:16:46.714541 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.812204
+I0228 23:16:46.714541 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.715544 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.715544 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437613
+I0228 23:16:46.716547 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.94685
+I0228 23:16:46.716547 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.716547 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.717550 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.94685
+I0228 23:16:46.717550 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.94685
+I0228 23:16:46.717550 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.8
+I0228 23:16:46.718552 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.418536
+I0228 23:16:46.718552 11952 caffe.cpp:314] Batch 26, accuracy = 0.8
+I0228 23:16:46.719555 11952 caffe.cpp:314] Batch 26, loss = 0.418536
+I0228 23:16:46.719555 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.533759
+I0228 23:16:46.719555 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.61
+I0228 23:16:46.720558 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.61
+I0228 23:16:46.720558 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.61
+I0228 23:16:46.720558 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.645726
+I0228 23:16:46.720558 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.721560 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.721560 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.652154
+I0228 23:16:46.721560 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.833611
+I0228 23:16:46.721560 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.722563 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.722563 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.823899
+I0228 23:16:46.722563 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.821401
+I0228 23:16:46.722563 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.723567 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.725571 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.442704
+I0228 23:16:46.726574 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.8866
+I0228 23:16:46.726574 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.726574 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.726574 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.8866
+I0228 23:16:46.727576 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.8866
+I0228 23:16:46.727576 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.728579 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.458394
+I0228 23:16:46.728579 11952 caffe.cpp:314] Batch 27, accuracy = 0.82
+I0228 23:16:46.728579 11952 caffe.cpp:314] Batch 27, loss = 0.458394
+I0228 23:16:46.729583 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530965
+I0228 23:16:46.729583 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.63
+I0228 23:16:46.729583 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.63
+I0228 23:16:46.730584 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.63
+I0228 23:16:46.730584 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641422
+I0228 23:16:46.730584 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.731587 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.731587 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648156
+I0228 23:16:46.731587 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.825289
+I0228 23:16:46.732589 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.732589 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.732589 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.814673
+I0228 23:16:46.733593 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.814833
+I0228 23:16:46.733593 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.733593 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.733593 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439465
+I0228 23:16:46.734596 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.01808
+I0228 23:16:46.736600 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.737603 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.737603 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.01808
+I0228 23:16:46.737603 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.01808
+I0228 23:16:46.737603 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.85
+I0228 23:16:46.738605 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.329294
+I0228 23:16:46.738605 11952 caffe.cpp:314] Batch 28, accuracy = 0.85
+I0228 23:16:46.738605 11952 caffe.cpp:314] Batch 28, loss = 0.329294
+I0228 23:16:46.739609  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.739609 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.531766
+I0228 23:16:46.739609 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.66
+I0228 23:16:46.740612 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.66
+I0228 23:16:46.740612 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.66
+I0228 23:16:46.740612 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641148
+I0228 23:16:46.740612 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.741613 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.741613 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.647863
+I0228 23:16:46.741613 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.82463
+I0228 23:16:46.742616 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.742616 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.742616 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.815117
+I0228 23:16:46.742616 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.81493
+I0228 23:16:46.743619 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.743619 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.743619 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439143
+I0228 23:16:46.743619 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.96905
+I0228 23:16:46.744621 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.744621 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.744621 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.96905
+I0228 23:16:46.744621 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.96905
+I0228 23:16:46.744621 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.745625 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.408589
+I0228 23:16:46.747629 11952 caffe.cpp:314] Batch 29, accuracy = 0.82
+I0228 23:16:46.747629 11952 caffe.cpp:314] Batch 29, loss = 0.408589
+I0228 23:16:46.748632 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530351
+I0228 23:16:46.748632 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.64
+I0228 23:16:46.748632 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.64
+I0228 23:16:46.749635 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.64
+I0228 23:16:46.749635 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641314
+I0228 23:16:46.750638 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.750638 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.750638 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.647832
+I0228 23:16:46.750638 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.82566
+I0228 23:16:46.751641 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.752643 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.752643 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.815753
+I0228 23:16:46.752643 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.813958
+I0228 23:16:46.752643 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.753646 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.753646 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438694
+I0228 23:16:46.753646 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.86359
+I0228 23:16:46.753646 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.754648 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.754648 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.86359
+I0228 23:16:46.754648 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.86359
+I0228 23:16:46.754648 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.755651 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.396627
+I0228 23:16:46.755651 11952 caffe.cpp:314] Batch 30, accuracy = 0.82
+I0228 23:16:46.755651 11952 caffe.cpp:314] Batch 30, loss = 0.396627
+I0228 23:16:46.756654 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.533836
+I0228 23:16:46.758659 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.58
+I0228 23:16:46.758659 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.58
+I0228 23:16:46.759662 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.58
+I0228 23:16:46.759662 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.64566
+I0228 23:16:46.759662 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.760664 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.760664 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.652318
+I0228 23:16:46.760664 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.832089
+I0228 23:16:46.761667 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.761667 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.761667 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.821974
+I0228 23:16:46.761667 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.820812
+I0228 23:16:46.762670 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.762670 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.762670 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.442667
+I0228 23:16:46.762670 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.9651
+I0228 23:16:46.763672 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.763672 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.763672 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.9651
+I0228 23:16:46.763672 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.9651
+I0228 23:16:46.763672 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.87
+I0228 23:16:46.764675 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.359635
+I0228 23:16:46.764675 11952 caffe.cpp:314] Batch 31, accuracy = 0.87
+I0228 23:16:46.764675 11952 caffe.cpp:314] Batch 31, loss = 0.359635
+I0228 23:16:46.765678 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.532106
+I0228 23:16:46.765678 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.66
+I0228 23:16:46.765678  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.765678 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.66
+I0228 23:16:46.766680 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.66
+I0228 23:16:46.766680 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641538
+I0228 23:16:46.769688 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.769688 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.770690 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.64821
+I0228 23:16:46.770690 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.824388
+I0228 23:16:46.770690 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.770690 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.771693 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.814822
+I0228 23:16:46.771693 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.815135
+I0228 23:16:46.772697 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.772697 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.772697 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.43928
+I0228 23:16:46.773699 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.03601
+I0228 23:16:46.773699 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.773699 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.773699 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.03601
+I0228 23:16:46.773699 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.03601
+I0228 23:16:46.773699 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.774701 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.394318
+I0228 23:16:46.774701 11952 caffe.cpp:314] Batch 32, accuracy = 0.82
+I0228 23:16:46.774701 11952 caffe.cpp:314] Batch 32, loss = 0.394318
+I0228 23:16:46.775704 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.528898
+I0228 23:16:46.775704 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.68
+I0228 23:16:46.775704 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.68
+I0228 23:16:46.776707 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.68
+I0228 23:16:46.776707 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.638691
+I0228 23:16:46.776707 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.777709 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.777709 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.645286
+I0228 23:16:46.777709 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.822301
+I0228 23:16:46.778712 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.781721 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.781721 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.811933
+I0228 23:16:46.782723 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.811254
+I0228 23:16:46.782723 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.782723 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.783726 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437211
+I0228 23:16:46.783726 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.89996
+I0228 23:16:46.783726 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.783726 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.784729 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.89996
+I0228 23:16:46.784729 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.89996
+I0228 23:16:46.784729 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.81
+I0228 23:16:46.785732 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.40897
+I0228 23:16:46.785732 11952 caffe.cpp:314] Batch 33, accuracy = 0.81
+I0228 23:16:46.785732 11952 caffe.cpp:314] Batch 33, loss = 0.40897
+I0228 23:16:46.786733 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.535464
+I0228 23:16:46.786733 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.56
+I0228 23:16:46.786733 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.56
+I0228 23:16:46.786733 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.56
+I0228 23:16:46.787739 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.646885
+I0228 23:16:46.787739 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.787739 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.787739 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.653534
+I0228 23:16:46.788739 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.833864
+I0228 23:16:46.788739 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.788739 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.789741 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.824152
+I0228 23:16:46.789741 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.822394
+I0228 23:16:46.789741 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.790745 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.793753 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.443607
+I0228 23:16:46.793753 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.96575
+I0228 23:16:46.794755 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.794755 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.794755 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.96575
+I0228 23:16:46.794755 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.96575
+I0228 23:16:46.795758 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.85
+I0228 23:16:46.795758 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.404388
+I0228 23:16:46.795758 11952 caffe.cpp:314] Batch 34, accuracy = 0.85
+I0228 23:16:46.796761 11952 caffe.cpp:314] Batch 34, loss = 0.404388
+I0228 23:16:46.796761 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.531992
+I0228 23:16:46.796761  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.796761 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.62
+I0228 23:16:46.797763 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.62
+I0228 23:16:46.797763 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.62
+I0228 23:16:46.798765 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.642652
+I0228 23:16:46.798765 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.798765 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.799769 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.649341
+I0228 23:16:46.799769 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.825263
+I0228 23:16:46.799769 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.800771 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.800771 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.815621
+I0228 23:16:46.800771 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.815557
+I0228 23:16:46.801774 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.801774 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.801774 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439549
+I0228 23:16:46.802778 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.95454
+I0228 23:16:46.805784 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.805784 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.806787 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.95454
+I0228 23:16:46.806787 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.95454
+I0228 23:16:46.806787 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.84
+I0228 23:16:46.807790 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.362689
+I0228 23:16:46.807790 11952 caffe.cpp:314] Batch 35, accuracy = 0.84
+I0228 23:16:46.807790 11952 caffe.cpp:314] Batch 35, loss = 0.362689
+I0228 23:16:46.808792 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.528446
+I0228 23:16:46.808792 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.71
+I0228 23:16:46.808792 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.71
+I0228 23:16:46.808792 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.71
+I0228 23:16:46.809795 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.637569
+I0228 23:16:46.809795 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.809795 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.810797 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.644297
+I0228 23:16:46.810797 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.821837
+I0228 23:16:46.810797 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.811800 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.811800 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.81126
+I0228 23:16:46.811800 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.81098
+I0228 23:16:46.811800 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.812803 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.812803 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437074
+I0228 23:16:46.812803 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.93056
+I0228 23:16:46.812803 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.813807 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.813807 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.93056
+I0228 23:16:46.813807 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.93056
+I0228 23:16:46.813807 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.817816 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.403161
+I0228 23:16:46.817816 11952 caffe.cpp:314] Batch 36, accuracy = 0.82
+I0228 23:16:46.817816 11952 caffe.cpp:314] Batch 36, loss = 0.403161
+I0228 23:16:46.818819 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.536233
+I0228 23:16:46.818819 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.53
+I0228 23:16:46.818819 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.53
+I0228 23:16:46.818819 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.53
+I0228 23:16:46.819823 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.649252
+I0228 23:16:46.819823 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.819823 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.820824 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.655737
+I0228 23:16:46.820824 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.837566
+I0228 23:16:46.820824 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.821827 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.821827 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.827831
+I0228 23:16:46.821827 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.825118
+I0228 23:16:46.821827 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.822829 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.822829 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.444898
+I0228 23:16:46.822829 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.8767
+I0228 23:16:46.822829 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.823833 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.823833 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.8767
+I0228 23:16:46.823833 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.8767
+I0228 23:16:46.823833 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.84
+I0228 23:16:46.824836 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.382032
+I0228 23:16:46.824836 11952 caffe.cpp:314] Batch 37, accuracy = 0.84
+I0228 23:16:46.824836 11952 caffe.cpp:314] Batch 37, loss = 0.382032
+I0228 23:16:46.825837 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530369
+I0228 23:16:46.825837  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.827842 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.66
+I0228 23:16:46.828845 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.66
+I0228 23:16:46.828845 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.66
+I0228 23:16:46.828845 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639282
+I0228 23:16:46.828845 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.829849 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.829849 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.646019
+I0228 23:16:46.829849 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.819684
+I0228 23:16:46.829849 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.830852 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.830852 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.809561
+I0228 23:16:46.830852 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.810886
+I0228 23:16:46.830852 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.831853 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.831853 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437195
+I0228 23:16:46.831853 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.05871
+I0228 23:16:46.831853 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.832856 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.832856 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.05871
+I0228 23:16:46.833859 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.05871
+I0228 23:16:46.833859 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.84
+I0228 23:16:46.833859 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.372023
+I0228 23:16:46.834862 11952 caffe.cpp:314] Batch 38, accuracy = 0.84
+I0228 23:16:46.834862 11952 caffe.cpp:314] Batch 38, loss = 0.372023
+I0228 23:16:46.834862 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.529262
+I0228 23:16:46.834862 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.69
+I0228 23:16:46.835865 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.69
+I0228 23:16:46.835865 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.69
+I0228 23:16:46.835865 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.638406
+I0228 23:16:46.836868 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.836868 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.838872 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.645196
+I0228 23:16:46.839875 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.823397
+I0228 23:16:46.839875 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.839875 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.840878 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.813146
+I0228 23:16:46.840878 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.812962
+I0228 23:16:46.840878 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.840878 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.841881 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438121
+I0228 23:16:46.841881 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.97691
+I0228 23:16:46.841881 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.841881 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.842883 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.97691
+I0228 23:16:46.842883 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.97691
+I0228 23:16:46.842883 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.83
+I0228 23:16:46.842883 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.38246
+I0228 23:16:46.843886 11952 caffe.cpp:314] Batch 39, accuracy = 0.83
+I0228 23:16:46.843886 11952 caffe.cpp:314] Batch 39, loss = 0.38246
+I0228 23:16:46.843886 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.536673
+I0228 23:16:46.843886 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.55
+I0228 23:16:46.844888 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.55
+I0228 23:16:46.844888 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.55
+I0228 23:16:46.844888 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.649423
+I0228 23:16:46.845891 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.845891 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.845891 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.655813
+I0228 23:16:46.845891 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.836997
+I0228 23:16:46.846894 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.846894 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.846894 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.827032
+I0228 23:16:46.846894 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.824074
+I0228 23:16:46.847896 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.847896 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.850905 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.444121
+I0228 23:16:46.850905 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.86224
+I0228 23:16:46.851908 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.851908 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.851908 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.86224
+I0228 23:16:46.852910 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.86224
+I0228 23:16:46.852910 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.853914 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.444496
+I0228 23:16:46.853914 11952 caffe.cpp:314] Batch 40, accuracy = 0.82
+I0228 23:16:46.853914 11952 caffe.cpp:314] Batch 40, loss = 0.444496
+I0228 23:16:46.854915 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.529389
+I0228 23:16:46.854915 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.67
+I0228 23:16:46.854915  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.854915 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.67
+I0228 23:16:46.855918 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.67
+I0228 23:16:46.855918 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.639053
+I0228 23:16:46.855918 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.856920 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.856920 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.645846
+I0228 23:16:46.856920 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.822005
+I0228 23:16:46.857923 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.857923 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.857923 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.812005
+I0228 23:16:46.857923 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.812708
+I0228 23:16:46.860931 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.860931 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.861933 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438336
+I0228 23:16:46.861933 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.05506
+I0228 23:16:46.861933 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.861933 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.862936 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.05506
+I0228 23:16:46.862936 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.05506
+I0228 23:16:46.862936 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.86
+I0228 23:16:46.863940 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.315086
+I0228 23:16:46.863940 11952 caffe.cpp:314] Batch 41, accuracy = 0.86
+I0228 23:16:46.863940 11952 caffe.cpp:314] Batch 41, loss = 0.315086
+I0228 23:16:46.864941 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.529802
+I0228 23:16:46.864941 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.69
+I0228 23:16:46.864941 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.69
+I0228 23:16:46.865944 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.69
+I0228 23:16:46.865944 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.638637
+I0228 23:16:46.866947 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.866947 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.866947 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.645396
+I0228 23:16:46.867949 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.821385
+I0228 23:16:46.867949 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.867949 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.867949 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.811517
+I0228 23:16:46.868952 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.811305
+I0228 23:16:46.868952 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.868952 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.868952 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.437112
+I0228 23:16:46.869954 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.94133
+I0228 23:16:46.871960 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.871960 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.872963 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.94133
+I0228 23:16:46.872963 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.94133
+I0228 23:16:46.872963 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.8
+I0228 23:16:46.873965 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.422789
+I0228 23:16:46.873965 11952 caffe.cpp:314] Batch 42, accuracy = 0.8
+I0228 23:16:46.873965 11952 caffe.cpp:314] Batch 42, loss = 0.422789
+I0228 23:16:46.874969 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.533919
+I0228 23:16:46.874969 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.58
+I0228 23:16:46.874969 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.58
+I0228 23:16:46.875970 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.58
+I0228 23:16:46.875970 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.645861
+I0228 23:16:46.875970 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.876973 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.876973 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.652292
+I0228 23:16:46.877976 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.832849
+I0228 23:16:46.877976 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.877976 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.878979 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.822688
+I0228 23:16:46.879981 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.8205
+I0228 23:16:46.879981 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.879981 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.880985 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.442297
+I0228 23:16:46.883992 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.86076
+I0228 23:16:46.883992 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.883992 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.884995 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.86076
+I0228 23:16:46.884995 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.86076
+I0228 23:16:46.884995 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.885998 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.428714
+I0228 23:16:46.885998 11952 caffe.cpp:314] Batch 43, accuracy = 0.82
+I0228 23:16:46.885998 11952 caffe.cpp:314] Batch 43, loss = 0.428714
+I0228 23:16:46.887001 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.530965
+I0228 23:16:46.887001 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.63
+I0228 23:16:46.887001 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.63
+I0228 23:16:46.887001 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.63
+I0228 23:16:46.888002 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641915
+I0228 23:16:46.888002 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.888002 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.889006 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648642
+I0228 23:16:46.889006 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.826942
+I0228 23:16:46.889006 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.890010 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.890010 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.816616
+I0228 23:16:46.890010 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.816419
+I0228 23:16:46.890010 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.891010 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.891010 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.44022
+I0228 23:16:46.892014 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 2.01697
+I0228 23:16:46.894021 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.895021 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.895021 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 2.01697
+I0228 23:16:46.895021 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 2.01697
+I0228 23:16:46.895021 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.85
+I0228 23:16:46.896025 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.363541
+I0228 23:16:46.896025 11952 caffe.cpp:314] Batch 44, accuracy = 0.85
+I0228 23:16:46.896025 11952 caffe.cpp:314] Batch 44, loss = 0.363541
+I0228 23:16:46.897028 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.532136
+I0228 23:16:46.897028  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.897028 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.67
+I0228 23:16:46.898031 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.67
+I0228 23:16:46.898031 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.67
+I0228 23:16:46.898031 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641466
+I0228 23:16:46.898031 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.899034 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.899034 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648108
+I0228 23:16:46.899034 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.824299
+I0228 23:16:46.900038 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.900038 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.900038 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.814678
+I0228 23:16:46.901039 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.815062
+I0228 23:16:46.901039 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.901039 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.901039 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439282
+I0228 23:16:46.902041 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.99515
+I0228 23:16:46.902041 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.902041 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.903043 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.99515
+I0228 23:16:46.905048 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.99515
+I0228 23:16:46.905048 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.906051 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.39921
+I0228 23:16:46.906051 11952 caffe.cpp:314] Batch 45, accuracy = 0.82
+I0228 23:16:46.906051 11952 caffe.cpp:314] Batch 45, loss = 0.39921
+I0228 23:16:46.907054 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.53072
+I0228 23:16:46.907054 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.63
+I0228 23:16:46.907054 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.63
+I0228 23:16:46.908057 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.63
+I0228 23:16:46.908057 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641716
+I0228 23:16:46.908057 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.909060 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.909060 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648253
+I0228 23:16:46.909060 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.82628
+I0228 23:16:46.910063 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.910063 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.910063 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.816245
+I0228 23:16:46.910063 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.814455
+I0228 23:16:46.911065 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.911065 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.911065 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.438971
+I0228 23:16:46.912067 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.86629
+I0228 23:16:46.912067 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.912067 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.912067 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.86629
+I0228 23:16:46.913070 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.86629
+I0228 23:16:46.913070 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.83
+I0228 23:16:46.914073 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.388322
+I0228 23:16:46.916079 11952 caffe.cpp:314] Batch 46, accuracy = 0.83
+I0228 23:16:46.916079 11952 caffe.cpp:314] Batch 46, loss = 0.388322
+I0228 23:16:46.917081 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.533891
+I0228 23:16:46.917081 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.58
+I0228 23:16:46.918083 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.58
+I0228 23:16:46.918083 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.58
+I0228 23:16:46.918083 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.645534
+I0228 23:16:46.919085 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.919085 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.919085 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.65222
+I0228 23:16:46.919085 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.832143
+I0228 23:16:46.920089 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.920089 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.920089 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.821907
+I0228 23:16:46.920089 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.820421
+I0228 23:16:46.921092 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.921092 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.921092 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.442464
+I0228 23:16:46.921092 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.97156
+I0228 23:16:46.922094 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.922094 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.922094 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.97156
+I0228 23:16:46.922094 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.97156
+I0228 23:16:46.922094 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.86
+I0228 23:16:46.923097 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.367444
+I0228 23:16:46.923097 11952 caffe.cpp:314] Batch 47, accuracy = 0.86
+I0228 23:16:46.923097 11952 caffe.cpp:314] Batch 47, loss = 0.367444
+I0228 23:16:46.924098 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.531796
+I0228 23:16:46.924098  9348 data_layer.cpp:73] Restarting data prefetching from start.
+I0228 23:16:46.924098 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.65
+I0228 23:16:46.924098 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.65
+I0228 23:16:46.925101 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.65
+I0228 23:16:46.928110 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.641866
+I0228 23:16:46.928110 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.928110 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.928110 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.648539
+I0228 23:16:46.929112 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.825756
+I0228 23:16:46.929112 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.929112 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.929112 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.816255
+I0228 23:16:46.930114 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.815977
+I0228 23:16:46.930114 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.930114 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.930114 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.439625
+I0228 23:16:46.931118 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.95371
+I0228 23:16:46.931118 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.931118 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.932121 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.95371
+I0228 23:16:46.932121 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.95371
+I0228 23:16:46.932121 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.81
+I0228 23:16:46.933123 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.414863
+I0228 23:16:46.933123 11952 caffe.cpp:314] Batch 48, accuracy = 0.81
+I0228 23:16:46.933123 11952 caffe.cpp:314] Batch 48, loss = 0.414863
+I0228 23:16:46.934126 11952 net.cpp:591]     [Forward] Layer mnist, top blob data data: 0.528511
+I0228 23:16:46.934126 11952 net.cpp:591]     [Forward] Layer mnist, top blob label data: 0.7
+I0228 23:16:46.934126 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_0 data: 0.7
+I0228 23:16:46.934126 11952 net.cpp:591]     [Forward] Layer label_mnist_1_split, top blob label_mnist_1_split_1 data: 0.7
+I0228 23:16:46.935129 11952 net.cpp:591]     [Forward] Layer conv1, top blob conv1 data: 0.637892
+I0228 23:16:46.935129 11952 net.cpp:603]     [Forward] Layer conv1, param blob 0 data: 0.101269
+I0228 23:16:46.935129 11952 net.cpp:603]     [Forward] Layer conv1, param blob 1 data: 0.0410099
+I0228 23:16:46.935129 11952 net.cpp:591]     [Forward] Layer pool1, top blob pool1 data: 0.64453
+I0228 23:16:46.938136 11952 net.cpp:591]     [Forward] Layer conv2, top blob conv2 data: 0.820683
+I0228 23:16:46.938136 11952 net.cpp:603]     [Forward] Layer conv2, param blob 0 data: 0.0388772
+I0228 23:16:46.939139 11952 net.cpp:603]     [Forward] Layer conv2, param blob 1 data: 0.0121125
+I0228 23:16:46.939139 11952 net.cpp:591]     [Forward] Layer pool2, top blob pool2 data: 0.810448
+I0228 23:16:46.939139 11952 net.cpp:591]     [Forward] Layer ip1, top blob ip1 data: 0.810311
+I0228 23:16:46.939139 11952 net.cpp:603]     [Forward] Layer ip1, param blob 0 data: 0.0610181
+I0228 23:16:46.940142 11952 net.cpp:603]     [Forward] Layer ip1, param blob 1 data: 0.00205441
+I0228 23:16:46.940142 11952 net.cpp:591]     [Forward] Layer relu1, top blob ip1 data: 0.436818
+I0228 23:16:46.940142 11952 net.cpp:591]     [Forward] Layer ip2, top blob ip2 data: 1.94996
+I0228 23:16:46.940142 11952 net.cpp:603]     [Forward] Layer ip2, param blob 0 data: 0.047645
+I0228 23:16:46.941144 11952 net.cpp:603]     [Forward] Layer ip2, param blob 1 data: 0.0293532
+I0228 23:16:46.941144 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_0 data: 1.94996
+I0228 23:16:46.941144 11952 net.cpp:591]     [Forward] Layer ip2_ip2_0_split, top blob ip2_ip2_0_split_1 data: 1.94996
+I0228 23:16:46.941144 11952 net.cpp:591]     [Forward] Layer accuracy, top blob accuracy data: 0.82
+I0228 23:16:46.942147 11952 net.cpp:591]     [Forward] Layer loss, top blob loss data: 0.383703
+I0228 23:16:46.942147 11952 caffe.cpp:314] Batch 49, accuracy = 0.82
+I0228 23:16:46.942147 11952 caffe.cpp:314] Batch 49, loss = 0.383703
+I0228 23:16:46.942147 11952 caffe.cpp:319] Loss: 0.390798
+I0228 23:16:46.943150 11952 caffe.cpp:331] accuracy = 0.831
+I0228 23:16:46.943150 11952 caffe.cpp:331] loss = 0.390798 (* 1 = 0.390798 loss)
